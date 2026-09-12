@@ -1,9 +1,14 @@
-# Problem Statement and Target Users:
+# Project Initial Details Submission
+
+**Project Title:** Scam Message Risk Detector
+
+## 1. Problem Statement and Target Users
+
 Scam messages have become increasingly common through SMS, email, messaging applications, and social media platforms. Many users find it difficult to distinguish legitimate messages from fraudulent ones, which can lead to financial losses, identity theft, and exposure of personal information.
 
 The proposed application, Scam Message Risk Detector, aims to help users identify potentially fraudulent messages by using AI to analyze message content and assess the likelihood that a message is a scam.
 
-The intended users are:
+**Target Users:**
 
 - General smartphone and internet users
 - Students
@@ -11,32 +16,42 @@ The intended users are:
 - Small business owners
 - Anyone who receives suspicious digital messages
 
-# User Input:
-Text message (include phone number)
+## 2. User Inputs
 
-# Use of AI:
+- The text content of the message the user wants checked.
+- The sender's phone number, included alongside the message so the AI can verify the country code and cross-reference it against known scam-sender patterns.
+
+## 3. Use of AI
+
 The AI component will analyze the submitted message and identify characteristics commonly associated with scams, such as:
 
-suspiscious links
-spelling errors
-urgency levels
-too informal
-incentives
+- Suspicious links
+- Spelling errors
+- Urgency levels
+- Overly informal tone
+- Incentives/rewards offered
 
 The AI is the core engine of the application because every message must be analyzed by AI before a decision can be made.
 
-## AI Output:
+**AI Output:**
+
 The AI will provide:
 
-Scam probability score
-Scam category
-Risk level
-Detected scam indicators
-Explanation of why the message is suspicious
+- Scam probability score
+- Scam category
+- Risk level
+- Detected scam indicators
+- Explanation of why the message is suspicious
 
-# Business Rules:
+## 4. Business Rules
+
 Categorise the scam message based on High, Medium and Low risk.
 
-## Input validation rules
-Message content cannot be empty.
-Include phone number (check country code using AI) with text message
+**Input Validation Rules:**
+
+- Message content cannot be empty.
+- The submission must include a phone number (country code checked using AI) alongside the text message.
+
+## Repository Information
+
+**Repository URL:** https://github.com/Jon1oh/DevOps-Team-6
