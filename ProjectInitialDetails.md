@@ -37,6 +37,7 @@ The AI is the core engine of the application because every message must be analy
 
 The AI will provide:
 
+- Timestamp
 - Scam probability score
 - Scam category
 - Risk level
@@ -50,7 +51,13 @@ Categorise the scam message based on High, Medium and Low risk.
 **Input Validation Rules:**
 
 - Message content cannot be empty.
+- Validate user input and AI response format.
 - The submission must include a phone number (country code checked using AI) alongside the text message.
+- Classify messages as Safe, Suspicious or Scam based on AI-generated scam probability.
+- Generate scam-specific recommendations for users, based on their provided message input.
+- Store all analyzed messages and output from AI manager inside a database.
+- Generate historical summaries of risk levels and categories of all received messages.
+- Database storage to persist for all program runs.
 
 ## Repository Information
 
