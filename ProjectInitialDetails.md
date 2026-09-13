@@ -14,10 +14,7 @@ The proposed application, AI Scam Message Detector, aims to help users identify 
 
 **Target Users:**
 
-- General smartphone and internet users
-- Students
-- Elderly individuals
-- Small business owners
+- General smartphone and internet users (e.g. students,  adults, elderly)
 - Anyone who receives suspicious digital messages
 
 ## 2. User Inputs
@@ -65,19 +62,16 @@ These are the decisions made from the AI output:
 - Generate scam-specific recommendations for users, based on their provided message input.
 
 **Data Management Rules:**
-- Store all analyzed messages and output from AI manager inside a database.
-- Database storage to persist for all program runs.
+- Store all analyzed messages and output from AI manager in JSON format.
+- Records of previously processed user inputs from other process runs to be persistent.
 - Generate historical summaries of risk levels and categories of all received messages.
-- Load previous scam message records from the database on program start up.
+- Load previous scam message records from the JSON file on program start up.
 
 ## 5. Programs / API to be used
 
-**List of potential AI API's we can use**
-- OpenAi API (GPT-4o)
+**Primary AI API:**
+- OpenAI API (GPT-4o)
+
+**Alternative AI APIs (Subject to Evaluation):**
 - VirusTotal API
 - PhishText.Ai
-- Netcraft Anti-Phishing API
-
-**Programs to be used**
-- Python on VS Code
-- JSON (database)
