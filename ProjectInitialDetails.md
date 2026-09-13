@@ -69,3 +69,15 @@ These are the decisions made from the AI output:
 - Database storage to persist for all program runs.
 - Generate historical summaries of risk levels and categories of all received messages.
 - Load previous scam message records from the database on program start up.
+
+## 5. Programs / API to be used
+
+**List of potential AI API's we can use**
+- OpenAi API (GPT-4o)
+- VirusTotal API
+- PhishText.Ai
+- Netcraft Anti-Phishing API
+
+**Programs to be used**
+Python on VS Code
+JSON (database)
