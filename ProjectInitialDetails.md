@@ -79,5 +79,5 @@ These are the decisions made from the AI output:
 - Netcraft Anti-Phishing API
 
 **Programs to be used**
-Python on VS Code
-JSON (database)
+- Python on VS Code
+- JSON (database)
