@@ -2,11 +2,15 @@
 
 **Project Title:** Scam Message Risk Detector
 
+**Domain**: Safety, Risk and Compliance (Scam and Fraud Prevention)
+
+**Repository URL:** https://github.com/Jon1oh/DevOps-Team-6
+
 ## 1. Problem Statement and Target Users
 
 Scam messages have become increasingly common through SMS, email, messaging applications, and social media platforms. Many users find it difficult to distinguish legitimate messages from fraudulent ones, which can lead to financial losses, identity theft, and exposure of personal information.
 
-The proposed application, Scam Message Risk Detector, aims to help users identify potentially fraudulent messages by using AI to analyze message content and assess the likelihood that a message is a scam.
+The proposed application, AI Scam Message Detector, aims to help users identify potentially fraudulent SMS messages by using AI to analyze message content, assess scam risk, explain suspicious indicators, and provide recommendations to help users make informed decisions.
 
 **Target Users:**
 
@@ -35,7 +39,7 @@ The AI is the core engine of the application because every message must be analy
 
 **AI Output:**
 
-The AI will provide:
+Upon analysing the user's messaeg input, the AI will provide:
 
 - Timestamp
 - Scam probability score
@@ -46,19 +50,22 @@ The AI will provide:
 
 ## 4. Business Rules
 
-Categorise the scam message based on High, Medium and Low risk.
-
 **Input Validation Rules:**
 
 - Message content cannot be empty.
-- Validate user input and AI response format.
+- User input must be in string format.
 - The submission must include a phone number (country code checked using AI) alongside the text message.
-- Classify messages as Safe, Suspicious or Scam based on AI-generated scam probability.
+
+**Logic Management Rules:**
+
+These are the decisions made from the AI output:
+
+- Categorise the scam message based on High, Medium and Low risk and categories.
+- Determine risk level of the scam message
 - Generate scam-specific recommendations for users, based on their provided message input.
+
+**Data Management Rules:**
 - Store all analyzed messages and output from AI manager inside a database.
-- Generate historical summaries of risk levels and categories of all received messages.
 - Database storage to persist for all program runs.
-
-## Repository Information
-
-**Repository URL:** https://github.com/Jon1oh/DevOps-Team-6
+- Generate historical summaries of risk levels and categories of all received messages.
+- Load previous scam message records from the database on program start up.
