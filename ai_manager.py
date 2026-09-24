@@ -46,7 +46,7 @@ def analyse_message():
     # {source_content}
     
     # Return a JSON object with the following fields:
-    # - time_stamp
+    # - timestamp
     # - scam_probability
     # - risk_level
     # - scam_type
