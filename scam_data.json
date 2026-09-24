@@ -1,0 +1,91 @@
+[
+    {
+        "message_id": 1,
+        "time_stamp": "2026-09-07 15:30:00",
+        "phone_number": "+6591234567",
+        "country_code": "+65",
+        "message_content": "Congratulati0ns! You have win a $5,000 cash prize!!! Click this link to cl@im your reward: http://cashprice-govsg.com",
+        "scam_probability (%)": 96,
+        "risk_level": "High",
+        "scam_type": "Prize Scam",
+        "indicators": [
+            "Unexpected prize claim",
+            "Spelling mistakes",
+            "Suspicious link",
+            "Large financial reward"
+        ],
+        "explanation": "The message claims that the recipient has won a large prize without any prior participation and directs them to a suspicious link.",
+        "recommendation": "Do not click the link or provide personal information. Verify the promotion through the organisation's official website and report the message as suspicious."
+    },
+    {
+        "message_id": 2,
+        "time_stamp": "2026-09-09 10:15:00",
+        "phone_number": "+6587654321",
+        "country_code": "+65",
+        "message_content": "Your bank account has been temporarily suspended. Verify your account immediately using this link: http://db5-bank-login.com",
+        "scam_probability (%)": 92,
+        "risk_level": "High",
+        "scam_type": "Bank Impersonation Scam",
+        "indicators": [
+            "Impersonates a bank",
+            "Creates urgency",
+            "Requests account verification",
+            "Suspicious login link"
+        ],
+        "explanation": "The message impersonates a bank and uses an urgent account suspension claim to encourage the recipient to access a suspicious login page.",
+        "recommendation": "Do not click the link or enter banking credentials. Open your bank's official application or website directly to check your account."
+    },
+    {
+        "message_id": 3,
+        "time_stamp": "2026-09-12 18:45:00",
+        "phone_number": "+6588123456",
+        "country_code": "+65",
+        "message_content": "We found your resume online and would like to offer you a work-from-home position. Earn up to $500 per day!! Contact us for more information.",
+        "scam_probability (%)": 68,
+        "risk_level": "Medium",
+        "scam_type": "Job Scam",
+        "indicators": [
+            "Unsolicited job offer",
+            "Unusually high income claim",
+            "Vague job description"
+        ],
+        "explanation": "The message offers unusually high earnings for a vague work-from-home position without providing details about the employer or job responsibilities.",
+        "recommendation": "Do not provide personal information or pay any fees. Research the company independently using official sources before continuing."
+    },
+    {
+        "message_id": 4,
+        "time_stamp": "2026-09-15 09:20:00",
+        "phone_number": "+447700900123",
+        "country_code": "+44",
+        "message_content": "Your account has been selected for a special investment opportunity. Deposit $200 today and receive guaranteed returns of $2,000.",
+        "scam_probability (%)": 89,
+        "risk_level": "High",
+        "scam_type": "Investment Scam",
+        "indicators": [
+            "Overseas phone number",
+            "Guaranteed returns",
+            "Unsolicited investment offer",
+            "Requests money"
+        ],
+        "explanation": "The message originates from an overseas phone number and promises unusually high guaranteed returns while requesting an upfront payment.",
+        "recommendation": "Do not transfer money or provide financial information. Verify the investment company independently through official sources and report the suspicious message."
+    },
+    {
+        "message_id": 5,
+        "time_stamp": "2026-09-18 14:30:00",
+        "phone_number": "+14155550123",
+        "country_code": "+1",
+        "message_content": "Your parcel is waiting for delivery. Please confirm delivery address by clicking the link below: http://sh0ppedelivery.com",
+        "scam_probability (%)": 74,
+        "risk_level": "Medium",
+        "scam_type": "Delivery/Parcel Scam",
+        "indicators": [
+            "Overseas phone number",
+            "Unexpected delivery notification",
+            "Suspicious link",
+            "Requests personal information"
+        ],
+        "explanation": "The message comes from an overseas number and requests the recipient's delivery information through a suspicious link.",
+        "recommendation": "Do not click the link or provide your address or personal information. Check your parcel status through the courier's official website or application."
+    }
+]
