@@ -4,7 +4,7 @@ def check_ai_output(ai_output):
         "timestamp", # str
         "phone_number", # str
         "message_content", # str
-        "scam_probability (%)", # int
+        "scam_probability", # int
         "risk_level", # str 
         "scam_type", # str
         "indicators", # list
