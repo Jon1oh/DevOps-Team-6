@@ -4,7 +4,7 @@
 ```json
 {
     "message_id": 1,
-    "time_stamp": "2026-09-07 15:30:00",
+    "timestamp": "2026-09-07 15:30:00",
     "phone_number": "",
     "message_content": "", # the actual message
 
