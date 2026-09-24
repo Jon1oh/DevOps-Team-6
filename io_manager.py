@@ -22,16 +22,16 @@ def mainMenu_Input():
 #function to query 
 def queryAI_Input():
     while True:
+        #variable holds the content of the message
         messageContents = input("Paste message content or quit:\n")
-        sourceContents = ""
         if messageContents != "" and messageContents.isdigit() == False:
             if messageContents.lower() == 'quit':
                 return messageContents
-            sourceContents = input("Source of the message, quit or back: ")
-            if sourceContents.lower() == "quit":
-                return sourceContents
-            elif(sourceContents.lower() != "back"):
-                return {"messageContents":messageContents, "sourceContents":sourceContents}
+            messageSource = input("Source of the message, quit or back: ")
+            if messageSource.lower() == "quit":
+                return messageSource
+            elif(messageSource.lower() != "back"):
+                return {"messageContents":messageContents, "messageSource":messageSource}
         else:
             print("Do not leave the message contents blank or just a number")
         
