@@ -76,7 +76,7 @@
         "phone_number": "+14155550123",
         "country_code": "+1",
         "message_content": "Your parcel is waiting for delivery. Please confirm delivery address by clicking the link below: http://sh0ppedelivery.com",
-        "scam_probability (%)": 74,
+        "scam_probability (%)": 72,
         "risk_level": "Medium",
         "scam_type": "Delivery/Parcel Scam",
         "indicators": [
