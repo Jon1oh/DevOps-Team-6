@@ -46,7 +46,7 @@ def analyse_message():
     # {source_content}
     
     # Return a JSON object with the following fields:
-    # - timestamp
+    # - time_stamp
     # - scam_probability
     # - risk_level
     # - scam_type
@@ -57,7 +57,7 @@ def analyse_message():
     # Rules:
     # - Return the timestamp value as an empty string. Do not modify the timestamp value.
     # - scam_probability must be an integer from 0 to 100.
-    # - risk_level, a string value, must be "High" if scam_probability >= 80 and "Medium" if scam_probability >= 50. Else, must be "Low".
+    # - risk_level, a string value, must be "HIGH" if scam_probability >= 80 and "MEDIUM" if scam_probability >= 50. Else, must be "LOW".
     # - scam_type, a string value, must be one of the following:
     #     - Banking Scam
     #     - Job Scam
@@ -77,7 +77,7 @@ def analyse_message():
     # - Do not include markdown, code blocks, or any text outside the JSON object.
     # """
     
-    prompt = "Return the word: Ready." # * For testing purposes
+    prompt = "Return the phrase: My prompt for the AI." # * For simple testing purposes
     
     # Check API staus before sending prompt to AI model
     api_status = check_api_status()
@@ -98,7 +98,7 @@ def analyse_message():
     
     # * Need to get the ai_output object first before assigning date and time.
     # ai_output["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-    # print(ai_output)
+    # print(ai_output) # to check ai_output value
     return ai_output
 
 analyse_message()
