@@ -8,9 +8,9 @@
     "phone_number": "",
     "message_content": "", # the actual message
 
-    "scam_probability (%)": 0, # in percentage
+    "scam_probability": 0, # to display with % sign
 
-    "risk_level": "Low", # High, Medium, or Low
+    "risk_level": "LOW", # HIGH, MEDIUM, or LOW
 
     "scam_type": "", # Impersonation scam, Loan Scam, Job Scam, etc.
 
