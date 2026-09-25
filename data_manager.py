@@ -17,6 +17,3 @@ def load_records():
     except json.JSONDecodeError:
         print("decode error")
         return []
-
-
-
