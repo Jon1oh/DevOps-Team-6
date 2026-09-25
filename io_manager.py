@@ -1,3 +1,4 @@
+import phonenumbers
 # this file contains the logic regarding user inputs and the main while loop
 
 #Prints the main menu options
@@ -25,6 +26,7 @@ def mainMenu_Input():
 #function to query 
 def queryAI_Input():
     while True:
+        messageSource = []
         #variable holds the content of the message
         messageContents = input("Paste message content or quit:\n")
         #if statement to check if the string is empty or if the string is just a digit
@@ -32,16 +34,36 @@ def queryAI_Input():
             #check if the user type quit in message content
             if messageContents.lower() == 'quit':
                 return messageContents
-            messageSource = input("Source of the message, quit or back: ")
-            #check if user type quit in message source
-            if messageSource.lower() == "quit":
-                return messageSource
-            #check if user did not type back
-            elif(messageSource.lower() != "back"):
-                return {"messageContents":messageContents, "messageSource":messageSource}
+            verifiedPhonenumber = getPhonenumber()
+            if verifiedPhonenumber == "quit":
+                return verifiedPhonenumber
+            elif verifiedPhonenumber != "back":
+                #messageSource.append(verifiedPhonenumber.country_code)
+                #messageSource.append(verifiedPhonenumber.national_number)
+                #print(messageSource)
+                return [messageContents,verifiedPhonenumber.country_code,verifiedPhonenumber.national_number]
         else:
             print("Do not leave the message contents blank or just a number")
-        
+
+def getPhonenumber():
+    while True:
+        unverifiedMessageSource = input("Enter the phone number with country code, quit or back: ")
+        if unverifiedMessageSource.lower() == "quit" or unverifiedMessageSource.lower() == "back":
+            return unverifiedMessageSource.lower()
+        else:
+            if "+" not in unverifiedMessageSource:
+                unverifiedMessageSource = "+" + unverifiedMessageSource.replace(" ", "")
+                
+            try:
+                messageSource = phonenumbers.parse(unverifiedMessageSource,None)
+                if phonenumbers.is_possible_number(messageSource):
+                    print(messageSource)
+                    return messageSource
+                else:
+                    print("invalid phone number try again")
+            except phonenumbers.phonenumberutil.NumberParseException:
+                print("invalid phone number try again")
+
 #main loop of program
 while True:
     mainMenu_options()
