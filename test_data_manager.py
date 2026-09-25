@@ -19,3 +19,5 @@ for record in scam_records:
     print(f"Indicators       : {', '.join(record['indicators'])}")
     print(f"Explanation      : {record['explanation']}")
     print(f"Recommendation   : {record['recommendation']}")
+
+    #test comment
