@@ -1,4 +1,5 @@
 #Read and write json format data
+#Test
 import json
 
 DATA_FILE = "scam_data.json"
