@@ -6,31 +6,6 @@ import os, json, logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
-
-# class FakeResponse:
-#     text = "this is not JSON"
-    
-# class ValidResponse:
-#     text = """
-#     some text before the json object
-    
-#     {
-#         "phone_number": "+6591234567",
-#         "message_content": "URGENT: Your bank account has been suspended. Click the link to verify your identity.",
-#         "scam_probability": 91,
-#         "risk_level": "HIGH",
-#         "scam_type": "Banking Scam",
-#         "indicators": [
-#             "Urgency Language",
-#             "Account Suspension Threat",
-#             "Request for Verification"
-#         ],
-#         "explanation": "The message creates urgency and attempts to impersonate a bank to trick the recipient into revealing information.",
-#         "recommendation": "Do not click any links. Contact the bank using official contact channels."
-#     }
-    
-#     some text after the json object
-#     """
     
     
 # function to get response from AI model, based on the prompt argument parsed
@@ -40,6 +15,7 @@ def get_ai_output(prompt_to_ai):
         contents=prompt_to_ai
     )
     return response
+
 
 # grab only the JSON object in the AI output if there are strings before and after it
 def extract_json_object(text):
@@ -61,6 +37,7 @@ def log_error(error):
         
 # check if the API is available to use or down due to high demand etc.
 def check_api_status():
+    print("Checking API Status. Please wait...")
     try:
         get_ai_output("Reply with the phrase: API IS OK.")
         return True
@@ -68,18 +45,17 @@ def check_api_status():
         return e
 
 
-# check if message is a scam or not
-def analyse_message(message_content, source_content):
+def build_prompt(message, source):
     # the prompt to send to the AI model
     prompt = f"""
     You are an AI Scam Risk Investigation Assistant.
     Analyse the following message and determine if it is potentially a scam.
     
     Message:
-    {message_content}
+    {message}
     
     Source:
-    {source_content}
+    {source}
     
     Return a JSON object with the following fields:
     - scam_probability
@@ -122,7 +98,12 @@ def analyse_message(message_content, source_content):
     """
     
     # * message_id field will be added when writing to database.
+    return prompt    
     
+
+# check if message is a scam or not
+def analyse_message(message_content, source_content):
+    prompt = build_prompt(message_content, source_content)
     # prompt = "Return the phrase: My prompt for the AI." # * For simple testing purposes
     
     # Check API staus before sending prompt to AI model
