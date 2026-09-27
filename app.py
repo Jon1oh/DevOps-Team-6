@@ -20,7 +20,7 @@ while True:
                 print("query ai now")
             print(queryOutput)
             if queryOutput == False:
-                backupAI = io_manager.queryAIFail()
+                backupAI = io_manager.queryAI_Backup()
             #match case for backup ai to see if quit, go to mainmenu or query backup
             match backupAI:
                 case 3:

@@ -65,7 +65,7 @@ def getPhonenumber():
                 print("Invalid phone number try again")
 
 #this function is ask the user if they want to query the backup ai
-def queryAI_Fail():
+def queryAI_Backup():
     print("============================================================")
     print("Our primary AI API failed to respond in a timely manner")        
     print("What do you want to do?:")
