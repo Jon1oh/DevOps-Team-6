@@ -41,7 +41,20 @@ def queryAI_Input():
             if verifiedPhonenumber == "quit":
                 return verifiedPhonenumber
             elif verifiedPhonenumber != "back":
-                return [messageContents, verifiedPhonenumber]
+                print("=========================================")
+                print("Message Contents: " + messageContents)
+                print("Phone No.: " + verifiedPhonenumber )
+                print("Is that correct? ")
+                print("1.Yes(Query AI)")
+                print("2.No(Reenter Input)")
+                try:
+                    checkUserinput = int(input("please enter 1 or 2: "))
+                    if checkUserinput == 1:
+                        return [messageContents, verifiedPhonenumber]
+                    elif checkUserinput < 1 or checkUserinput > 2:
+                        print("Incorrect input try again.")
+                except ValueError:
+                    print("Incorrect input try again.")
         else:
             print("The message cannot be blank or just a number. Please try again.")
 
