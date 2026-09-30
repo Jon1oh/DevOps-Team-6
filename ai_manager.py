@@ -6,19 +6,20 @@ import os, json, logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
+ai_model = "3.5-flash"
     
 
 # function to get response from AI model, based on the prompt argument parsed
 def get_ai_output(prompt_to_ai):
     response = client.models.generate_content(
-        model="gemini-3.8-flash",
+        model=f"gemini-{ai_model}",
         contents=prompt_to_ai
     )
     return response.text
 
 
 def get_ai_output_retry(prompt_to_ai):
-    print("Retrying connection to Google Gemini 3.6-flash API once...")
+    print(f"Retrying connection to Google Gemini {ai_model} API once...")
     try:
         return get_ai_output(prompt_to_ai)
     except Exception as error:
@@ -121,7 +122,7 @@ def analyse_message(message_content, source_content):
     
     if api_status is True:
         print("API status is OK.")
-        print(f"Message analysis in progress using Google Gemini 3.6 Flash. This may take a few seconds... \n")     
+        print(f"Message analysis in progress using Google Gemini {ai_model}. This may take a few seconds... \n")     
         
         # Use a try/except block since the 1st API call with check_api_status() doesn't guarantee a successful 2nd API call with get_ai_output()
         try:
@@ -139,10 +140,15 @@ def analyse_message(message_content, source_content):
 
     # Check the AI Model API output
     # if response is a JSON string, convert it to JSON object. Else, call fallback function
-    if type(response) is str:
+    if isinstance(response, str):
+        try:
+            ai_output = json.loads(response)
+        except json.JSONDecodeError as error:
+            log_error(error)
+            ai_output = extract_json_object(response)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-        ai_output = json.loads(response)        
         ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object        
+        print(ai_output)
         return ai_output
     else:
         # print(f"AI output is {type(response)}")
