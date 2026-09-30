@@ -11,20 +11,30 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
 # function to get response from AI model, based on the prompt argument parsed
 def get_ai_output(prompt_to_ai):
     response = client.models.generate_content(
-        model="gemini-3.6-flash",
+        model="gemini-3.8-flash",
         contents=prompt_to_ai
     )
-    return response
+    return response.text
+
+
+def get_ai_output_retry(prompt_to_ai):
+    print("Retrying connection to Google Gemini 3.6-flash API once...")
+    try:
+        return get_ai_output(prompt_to_ai)
+    except Exception as error:
+        print("The API is still unavailable.")
+        log_error(error)
+        return error
 
 
 # grab only the JSON object in the AI output if there are strings before and after it
 def extract_json_object(text):
     start = text.find("{")
-    end = text.rfind("}")
-    
+    end = text.rfind("}")    
     if start != -1 and end != -1: 
         json_string = text[start:end + 1]       
-        return json.loads(json_string) # return the JSON string as a JSON object
+        json_object = json.loads(json_string)
+        return json_object # return the JSON string as a JSON object
 
 
 # log any API failiures in a log file
@@ -37,7 +47,7 @@ def log_error(error):
         
 # check if the API is available to use or down due to high demand etc.
 def check_api_status():
-    print("Checking API Status. Please wait...")
+    print("Checking API Status. Please wait...\n")
     try:
         get_ai_output("Reply with the phrase: API IS OK.")
         return True
@@ -107,41 +117,40 @@ def analyse_message(message_content, source_content):
     prompt = build_prompt(message_content, source_content)
     # prompt = "Return the phrase: My prompt for the AI." # * For simple testing purposes
     
-    # Check API status before sending prompt to AI model
-    api_status = check_api_status() # check_api_status makes an API call to the AI model to test is availability
+    api_status = check_api_status() # Check API status before sending prompt to AI model. This is the 1st API call.
     
     if api_status is True:
-        print("API status is OK.\n")
+        print("API status is OK.")
         print(f"Message analysis in progress using Google Gemini 3.6 Flash. This may take a few seconds... \n")     
         
-        # Since the first API call with check_api_status() doesn't guarantee a successful 2nd API call with get_ai_output(), use a try/except block
+        # Use a try/except block since the 1st API call with check_api_status() doesn't guarantee a successful 2nd API call with get_ai_output()
         try:
-            response = get_ai_output(prompt) # make API call to model to get AI output
-            try:
-                ai_output = json.loads(response.text)
-            except json.JSONDecodeError:
-                ai_output = extract_json_object(response.text)
+            response = get_ai_output(prompt) # make 2nd API call to model to get AI output
         except Exception as error: 
-            print(f"{error.message}")
+            print(f"{error.message}\n")
             log_error(error)
-            return None # for now
-            # TODO Go to IO mananger, prompt user if want to use our custom AI bot or return to main menu
-            # TODO Call fallback function
+            response = get_ai_output_retry(prompt) # retry API connection once
         
     else:
-        # print error message, log error and use fallback bot function
-        print(api_status.message) # api_status is a ServerError object when api is unavailable
-        log_error(api_status) 
-        return None # for now
-        # TODO: go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
-        # TODO: Call fallback funtion (i.e. prompt user if they want to use our own bot)
-    
-    # * Need to get the ai_output object first before assigning date and time.
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-    ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object
-    print(ai_output) # to check the final value of ai_output
-    return ai_output
+        print("API status is not OK.")
+        print(f"{api_status.message}\n") # api_status is a ServerError object when api is unavailable
+        log_error(api_status) # ? Should the returned error message be formatted? Or keep as is?
+        response = get_ai_output_retry(prompt)
 
+    # Check the AI Model API output
+    # if response is a JSON string, convert it to JSON object. Else, call fallback function
+    if type(response) is str:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
+        ai_output = json.loads(response)        
+        ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object        
+        return ai_output
+    else:
+        # print(f"AI output is {type(response)}")
+        pass
+        # TODO: go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
+        # TODO: Call fallback funtion (i.e. prompt user if they want to use our own bot        
+    
+    
 test_message_content = """
 URGENT: Your DBS account has been suspended due to suspicious activity.
 
