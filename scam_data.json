@@ -6,7 +6,7 @@
         "country_code": "+65",
         "message_content": "Congratulati0ns! You have win a $5,000 cash prize!!! Click this link to cl@im your reward: http://cashprice-govsg.com",
         "scam_probability (%)": 96,
-        "risk_level": "High",
+        "risk_level": "HIGH",
         "scam_type": "Prize Scam",
         "indicators": [
             "Unexpected prize claim",
@@ -24,7 +24,7 @@
         "country_code": "+65",
         "message_content": "Your bank account has been temporarily suspended. Verify your account immediately using this link: http://db5-bank-login.com",
         "scam_probability (%)": 92,
-        "risk_level": "High",
+        "risk_level": "HIGH",
         "scam_type": "Bank Impersonation Scam",
         "indicators": [
             "Impersonates a bank",
@@ -42,14 +42,14 @@
         "country_code": "+65",
         "message_content": "We found your resume online and would like to offer you a work-from-home position. Earn up to $500 per day!! Contact us for more information.",
         "scam_probability (%)": 68,
-        "risk_level": "Medium",
+        "risk_level": "MEDIUM",
         "scam_type": "Job Scam",
         "indicators": [
             "Unsolicited job offer",
-            "Unusually high income claim",
+            "Unusually HIGH income claim",
             "Vague job description"
         ],
-        "explanation": "The message offers unusually high earnings for a vague work-from-home position without providing details about the employer or job responsibilities.",
+        "explanation": "The message offers unusually HIGH earnings for a vague work-from-home position without providing details about the employer or job responsibilities.",
         "recommendation": "Do not provide personal information or pay any fees. Research the company independently using official sources before continuing."
     },
     {
@@ -59,7 +59,7 @@
         "country_code": "+44",
         "message_content": "Your account has been selected for a special investment opportunity. Deposit $200 today and receive guaranteed returns of $2,000.",
         "scam_probability (%)": 89,
-        "risk_level": "High",
+        "risk_level": "HIGH",
         "scam_type": "Investment Scam",
         "indicators": [
             "Overseas phone number",
@@ -67,7 +67,7 @@
             "Unsolicited investment offer",
             "Requests money"
         ],
-        "explanation": "The message originates from an overseas phone number and promises unusually high guaranteed returns while requesting an upfront payment.",
+        "explanation": "The message originates from an overseas phone number and promises unusually HIGH guaranteed returns while requesting an upfront payment.",
         "recommendation": "Do not transfer money or provide financial information. Verify the investment company independently through official sources and report the suspicious message."
     },
     {
@@ -77,7 +77,7 @@
         "country_code": "+1",
         "message_content": "Your parcel is waiting for delivery. Please confirm delivery address by clicking the link below: http://sh0ppedelivery.com",
         "scam_probability (%)": 72,
-        "risk_level": "Medium",
+        "risk_level": "MEDIUM",
         "scam_type": "Delivery/Parcel Scam",
         "indicators": [
             "Overseas phone number",
