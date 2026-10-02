@@ -1,5 +1,6 @@
 from data_manager import load_records
 from data_manager import save_record
+from data_manager import historical_summary
 
 scam_records = load_records()
 
@@ -8,20 +9,20 @@ print("Number of records:", len(scam_records))
 
 #---    PRINT EVERY RECORD     ----
 
-for record in scam_records:
-    print("\n========================================")
-    print(f"          SCAM INCIDENT RECORD {record['message_id']} ")
-    print("========================================")
-    print(f"Timestamp        : {record['time_stamp']}")
-    print(f"Phone Number     : {record['phone_number']}")
-    print(f"Country Code     : {record['country_code']}")
-    print(f"Risk Level       : {record['risk_level']}")
-    print(f"Scam Probability : {record['scam_probability (%)']}%")
-    print(f"Scam Type        : {record['scam_type']}")
-    print(f"Message          : {record['message_content']}")
-    print(f"Indicators       : {', '.join(record['indicators'])}")
-    print(f"Explanation      : {record['explanation']}")
-    print(f"Recommendation   : {record['recommendation']}")
+# for record in scam_records:
+#     print("\n========================================")
+#     print(f"          SCAM INCIDENT RECORD {record['message_id']} ")
+#     print("========================================")
+#     print(f"Timestamp        : {record['time_stamp']}")
+#     print(f"Phone Number     : {record['phone_number']}")
+#     print(f"Country Code     : {record['country_code']}")
+#     print(f"Risk Level       : {record['risk_level']}")
+#     print(f"Scam Probability : {record['scam_probability (%)']}%")
+#     print(f"Scam Type        : {record['scam_type']}")
+#     print(f"Message          : {record['message_content']}")
+#     print(f"Indicators       : {', '.join(record['indicators'])}")
+#     print(f"Explanation      : {record['explanation']}")
+#     print(f"Recommendation   : {record['recommendation']}")
 
     #test comment
 
@@ -46,3 +47,37 @@ for record in scam_records:
 # }
 
 # save_record(new_record)
+
+summary = historical_summary(scam_records)
+
+def print_historical_summary(summary):
+    print("\n==============================")
+    print("      SCAM MESSAGE SUMMARY")
+    print("==============================\n")
+    print(f"Total messages: {summary['total_messages']}\n")
+    print("Risk Level Breakdown")
+    print("------------------------------")
+
+    for risk_level, count in summary["risk_level_breakdown"].items():
+        print(f"{risk_level}: {count}")
+
+    print()
+    print("Scam Category Breakdown")
+    print("------------------------------")
+
+    for scam_type, count in summary["scam_category_breakdown"].items():
+        print(f"{scam_type}: {count}")
+
+    print()
+    print("Country of Origin Breakdown")
+    print("------------------------------")
+
+    for country_code, count in summary["origin_country_breakdown"].items():
+        print(f"{country_code}: {count}")
+
+    print()
+    print("Most Common type of Scam")
+    print("------------------------------")
+    print(summary["most_common_scam"])
+
+print_historical_summary(summary)
