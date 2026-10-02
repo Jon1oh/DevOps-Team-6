@@ -18,17 +18,19 @@ while True:
             queryOutput =  io_manager.queryAI_Input()
             if queryOutput != "quit":
                 print("query ai now")
-            print(queryOutput)
-            if queryOutput == False:
-                backupAI = io_manager.queryAI_Backup()
-                #match case for backup ai to see if quit, go to mainmenu or query backup
-                match backupAI:
-                    case 3:
-                        print("Exiting Program")
-                        break
-                    case 1:
-                        print(queryOutput)
-                        #call the backup ai with the queryoutput as
-                        #call the AI_MANAGER
-                        #if query ai fail give choice to 
+                # TODO call AI manager to analyse message
+                print(queryOutput)
+                
+                if queryOutput == False:
+                    backupAI = io_manager.queryAI_Backup()
+                    #match case for backup ai to see if quit, go to mainmenu or query backup
+                    match backupAI:
+                        case 3:
+                            print("Exiting Program")
+                            break
+                        case 1:
+                            print(queryOutput)
+                            #call the backup ai with the queryoutput as
+                            #call the AI_MANAGER
+                            #if query ai fail give choice to 
                         
