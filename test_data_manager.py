@@ -1,10 +1,10 @@
 from data_manager import load_records
 from data_manager import save_record
-from data_manager import historical_summary
+from data_manager import message_summary
 
 scam_records = load_records()
 
-print("Number of records:", len(scam_records))
+# print("Number of records:", len(scam_records))
 # print("First record:", scam_records[0])
 
 #---    PRINT EVERY RECORD     ----
@@ -13,11 +13,11 @@ print("Number of records:", len(scam_records))
 #     print("\n========================================")
 #     print(f"          SCAM INCIDENT RECORD {record['message_id']} ")
 #     print("========================================")
-#     print(f"Timestamp        : {record['time_stamp']}")
+#     print(f"Time stamp       : {record['timestamp']}")
 #     print(f"Phone Number     : {record['phone_number']}")
 #     print(f"Country Code     : {record['country_code']}")
 #     print(f"Risk Level       : {record['risk_level']}")
-#     print(f"Scam Probability : {record['scam_probability (%)']}%")
+#     print(f"Scam Probability : {record['scam_probability']}%")
 #     print(f"Scam Type        : {record['scam_type']}")
 #     print(f"Message          : {record['message_content']}")
 #     print(f"Indicators       : {', '.join(record['indicators'])}")
@@ -31,11 +31,11 @@ print("Number of records:", len(scam_records))
 
 # new_record = {
 #         "message_id": 6,
-#         "time_stamp": "2026-10-02 11:40:00",
+#         "timestamp": "2026-10-02 11:40:00",
 #         "phone_number": "+6591234567",
 #         "country_code": "+65",
 #         "message_content": "Your account has been suspended. Please click this link to verify: http://acount_recovery.com",
-#         "scam_probability (%)": 90,
+#         "scam_probability": 90,
 #         "risk_level": "HIGH",
 #         "scam_type": "Bank Impersonation Scam",
 #         "indicators": [
@@ -48,9 +48,9 @@ print("Number of records:", len(scam_records))
 
 # save_record(new_record)
 
-summary = historical_summary(scam_records)
+summary = message_summary(scam_records)
 
-def print_historical_summary(summary):
+def print_message_summary(summary):
     print("\n==============================")
     print("      SCAM MESSAGE SUMMARY")
     print("==============================\n")
@@ -80,4 +80,4 @@ def print_historical_summary(summary):
     print("------------------------------")
     print(summary["most_common_scam"])
 
-print_historical_summary(summary)
+print_message_summary(summary)

@@ -33,7 +33,7 @@ def save_record(record):
     with open(DATA_FILE, "w", encoding="utf-8") as file:
         json.dump(records, file, indent=4)
 
-def historical_summary(records):
+def message_summary(records):
     risk_level_breakdown = {}
     scam_category_breakdown = {}
     origin_country_breakdown = {}

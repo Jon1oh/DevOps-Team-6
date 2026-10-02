@@ -1,11 +1,11 @@
 [
     {
         "message_id": 1,
-        "time_stamp": "2026-09-07 15:30:00",
+        "timestamp": "2026-09-07 15:30:00",
         "phone_number": "+6591234567",
         "country_code": "+65",
         "message_content": "Congratulati0ns! You have win a $5,000 cash prize!!! Click this link to cl@im your reward: http://cashprice-govsg.com",
-        "scam_probability (%)": 96,
+        "scam_probability": 96,
         "risk_level": "HIGH",
         "scam_type": "Prize Scam",
         "indicators": [
@@ -19,12 +19,12 @@
     },
     {
         "message_id": 2,
-        "time_stamp": "2026-09-09 10:15:00",
+        "timestamp": "2026-09-09 10:15:00",
         "phone_number": "+6587654321",
         "country_code": "+65",
         "message_content": "Your bank account has been temporarily suspended. Verify your account immediately using this link: http://db5-bank-login.com",
-        "scam_probability (%)": 92,
-        "risk_level": "HIGH",
+        "scam_probability": 92,
+        "risk_level": "LOW",
         "scam_type": "Bank Impersonation Scam",
         "indicators": [
             "Impersonates a bank",
@@ -37,11 +37,11 @@
     },
     {
         "message_id": 3,
-        "time_stamp": "2026-09-12 18:45:00",
+        "timestamp": "2026-09-12 18:45:00",
         "phone_number": "+6588123456",
         "country_code": "+65",
         "message_content": "We found your resume online and would like to offer you a work-from-home position. Earn up to $500 per day!! Contact us for more information.",
-        "scam_probability (%)": 68,
+        "scam_probability": 68,
         "risk_level": "MEDIUM",
         "scam_type": "Job Scam",
         "indicators": [
@@ -54,11 +54,11 @@
     },
     {
         "message_id": 4,
-        "time_stamp": "2026-09-15 09:20:00",
+        "timestamp": "2026-09-15 09:20:00",
         "phone_number": "+447700900123",
         "country_code": "+44",
         "message_content": "Your account has been selected for a special investment opportunity. Deposit $200 today and receive guaranteed returns of $2,000.",
-        "scam_probability (%)": 89,
+        "scam_probability": 89,
         "risk_level": "HIGH",
         "scam_type": "Investment Scam",
         "indicators": [
@@ -72,11 +72,11 @@
     },
     {
         "message_id": 5,
-        "time_stamp": "2026-09-18 14:30:00",
+        "timestamp": "2026-09-18 14:30:00",
         "phone_number": "+14155550123",
         "country_code": "+1",
         "message_content": "Your parcel is waiting for delivery. Please confirm delivery address by clicking the link below: http://sh0ppedelivery.com",
-        "scam_probability (%)": 72,
+        "scam_probability": 72,
         "risk_level": "MEDIUM",
         "scam_type": "Delivery/Parcel Scam",
         "indicators": [
@@ -90,11 +90,11 @@
     },
     {
         "message_id": 6,
-        "time_stamp": "2026-10-02 11:40:00",
+        "timestamp": "2026-10-02 11:40:00",
         "phone_number": "+6591234567",
         "country_code": "+65",
         "message_content": "Your account has been suspended. Please click this link to verify: http://acount_recovery.com",
-        "scam_probability (%)": 90,
+        "scam_probability": 90,
         "risk_level": "HIGH",
         "scam_type": "Bank Impersonation Scam",
         "indicators": [
