@@ -25,7 +25,7 @@ def mainMenu_Input():
             print("Incorrect input try again.")
         
 #function to get query ai inputs
-def queryAI_Input():
+def inputData_verify():
     while True:
         messageSource = []
         #variable holds the content of the message

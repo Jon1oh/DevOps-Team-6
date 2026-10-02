@@ -15,13 +15,13 @@ while True:
             #call the historical analysis function
             print("case 2")
         case 1:
-            queryOutput =  io_manager.queryAI_Input()
-            if queryOutput != "quit":
+            verifiedInputdata =  io_manager.inputData_verify()
+            if verifiedInputdata != "quit":
                 print("query ai now")
                 # TODO call AI manager to analyse message
-                print(queryOutput)
-                
-                if queryOutput == False:
+                print(verifiedInputdata)
+                mainAIoutput = "" #TODO CHANGE TO AI API CALL
+                if mainAIoutput == False:
                     backupAI = io_manager.queryAI_Backup()
                     #match case for backup ai to see if quit, go to mainmenu or query backup
                     match backupAI:
@@ -29,7 +29,7 @@ while True:
                             print("Exiting Program")
                             break
                         case 1:
-                            print(queryOutput)
+                            print(mainAIoutput)
                             #call the backup ai with the queryoutput as
                             #call the AI_MANAGER
                             #if query ai fail give choice to 
