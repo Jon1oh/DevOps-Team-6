@@ -5,7 +5,7 @@ import phonenumbers, re
 def mainMenu_options():
     print("=================================")
     print("1. Check scam message")
-    print("2. View historical analysis of scam messages")
+    print("2. View summary of scam messages")
     print("3. Quit\n")
 
 #loop to get and validate the input from the main menu
