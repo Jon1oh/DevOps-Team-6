@@ -37,7 +37,7 @@ def queryAI_Input():
             #check if the user type quit in message content
             if messageContents.lower() == 'quit':
                 return messageContents
-            verifiedPhonenumber = getPhonenumber()
+            verifiedPhonenumber = get_Phonenumber()
             if verifiedPhonenumber == "quit":
                 return verifiedPhonenumber
             elif verifiedPhonenumber != "back":
@@ -45,10 +45,10 @@ def queryAI_Input():
                 print("Message Contents: " + messageContents)
                 print("Phone No.: " + verifiedPhonenumber )
                 print("Is that correct? ")
-                print("1.Yes(Query AI)")
-                print("2.No(Reenter Input)")
+                print("1.Yes (Query AI)")
+                print("2.No (Re-enter Input)")
                 try:
-                    checkUserinput = int(input("please enter 1 or 2: "))
+                    checkUserinput = int(input("Please enter 1 or 2: "))
                     if checkUserinput == 1:
                         return [messageContents, verifiedPhonenumber]
                     elif checkUserinput < 1 or checkUserinput > 2:
@@ -58,7 +58,7 @@ def queryAI_Input():
         else:
             print("The message cannot be blank or just a number. Please try again.")
 
-def getPhonenumber():
+def get_Phonenumber():
     while True:
         unverifiedMessageSource = input("Enter the phone number with country code, quit or back: ")
         if unverifiedMessageSource.lower() == "quit" or unverifiedMessageSource.lower() == "back":
