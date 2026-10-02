@@ -6,6 +6,7 @@
     "message_id": 1,
     "timestamp": "2026-09-07 15:30:00",
     "phone_number": "",
+    "country_code": "",
     "message_content": "", # the actual message
 
     "scam_probability": 0, # to display with % sign
