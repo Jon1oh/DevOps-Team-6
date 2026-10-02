@@ -25,3 +25,10 @@ def count_risk_levels(phone_number, json_database):
             if entry.get("risk_level") in risk_record.keys():
                 risk_record[entry.get("risk_level")] += 1
     return risk_record
+
+def save_record(record):
+    records = load_records()
+    records.append(record)
+
+    with open(DATA_FILE, "w", encoding="utf-8") as file:
+        json.dump(records, file, indent=4)

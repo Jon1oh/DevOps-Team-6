@@ -87,5 +87,21 @@
         ],
         "explanation": "The message comes from an overseas number and requests the recipient's delivery information through a suspicious link.",
         "recommendation": "Do not click the link or provide your address or personal information. Check your parcel status through the courier's official website or application."
+    },
+    {
+        "message_id": 6,
+        "time_stamp": "2026-10-02 11:40:00",
+        "phone_number": "+6591234567",
+        "country_code": "+65",
+        "message_content": "Your account has been suspended. Please click this link to verify: http://acount_recovery.com",
+        "scam_probability (%)": 90,
+        "risk_level": "HIGH",
+        "scam_type": "Bank Impersonation Scam",
+        "indicators": [
+            "Urgent language",
+            "Suspicious link"
+        ],
+        "explanation": "The message impersonates a bank and asks the recipient to verify their account",
+        "recommendation": "Do not click the link. Contact the bank through its official website."
     }
 ]
