@@ -16,7 +16,7 @@ while True:
             print("case 2")
         case 1:
             verifiedInputdata =  io_manager.inputData_verify()
-            if verifiedInputdata != "quit":
+            if verifiedInputdata != "menu":
                 print("query ai now")
                 # TODO call AI manager to analyse message
                 print(verifiedInputdata)

@@ -3,7 +3,7 @@ import phonenumbers, re
 
 #Prints the main menu options
 def mainMenu_options():
-    print(f"{'='*36}\nScam Message AI Detector Main Menu\n{'='*36}")
+    print(f"\n{'='*36}\nScam Message AI Detector Main Menu\n{'='*36}")
     print("1. Check scam message")
     print("2. View summary of scam messages")
     print("3. Quit\n")
@@ -29,13 +29,13 @@ def inputData_verify():
     while True:
         messageSource = []
         #variable holds the content of the message
-        messageContents = input("Insert message content (or 'back' to return to main menu):\n")
+        messageContents = input("Insert message content (or 'menu' to return to main menu):\n")
         #if statement to check if the string is empty or if the string is just a digit
         if messageContents != "" and messageContents.isdigit() == False:
             #this line is to remove >=2 whitespaces in message content
             messageContents = re.sub(r'\s+', ' ', messageContents).strip()
             #check if the user type quit in message content
-            if messageContents.lower() == 'quit':
+            if messageContents.lower() == 'menu':
                 return messageContents
             verifiedPhonenumber = get_Phonenumber()
             if verifiedPhonenumber == "quit":
@@ -45,8 +45,8 @@ def inputData_verify():
                 print("Message Contents: " + messageContents)
                 print("Phone No.: " + verifiedPhonenumber )
                 print("Is that correct? ")
-                print("1.Yes (Query AI)")
-                print("2.No (Re-enter Input)")
+                print("1. Yes (Analyse message with AI)")
+                print("2. No (Re-enter Input)")
                 try:
                     checkUserinput = int(input("Please enter 1 or 2: "))
                     if checkUserinput == 1:
@@ -60,8 +60,8 @@ def inputData_verify():
 
 def get_Phonenumber():
     while True:
-        unverifiedMessageSource = input("Enter the phone number with country code, quit or back: ")
-        if unverifiedMessageSource.lower() == "quit" or unverifiedMessageSource.lower() == "back":
+        unverifiedMessageSource = input("Enter the phone number with country code ('menu' to return to main menu, or 'back' to go back): ")
+        if unverifiedMessageSource.lower() == "menu" or unverifiedMessageSource.lower() == "back":
             return unverifiedMessageSource.lower()
         else:
             if "+" not in unverifiedMessageSource:
