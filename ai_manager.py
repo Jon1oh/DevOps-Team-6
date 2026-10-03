@@ -152,7 +152,7 @@ def analyse_message(message_content, source_content):
         return ai_output
     else:
         # print(f"AI output is {type(response)}")
-        pass
+        return False
         # TODO: go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
         # TODO: Call fallback funtion (i.e. prompt user if they want to use our own bot        
     
