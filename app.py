@@ -12,7 +12,7 @@ while True:
             print("Exiting Program")
             break
         case 2:
-            #call the historical analysis function
+            #call the message summary function
             print("case 2")
         case 1:
             verifiedInputdata =  io_manager.inputData_verify()

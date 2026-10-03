@@ -3,7 +3,7 @@ import phonenumbers, re
 
 #Prints the main menu options
 def mainMenu_options():
-    print("=================================")
+    print(f"{'='*36}\nScam Message AI Detector Main Menu\n{'='*36}")
     print("1. Check scam message")
     print("2. View summary of scam messages")
     print("3. Quit\n")
@@ -15,7 +15,7 @@ def mainMenu_Input():
         mainMenu_options()
         #try except statement to check if the input can be type casted to interger if valueerror will print then run throgh the loop again
         try:
-            userInput = int(input("Please choose an option(1, 2, 3):"))
+            userInput = int(input("Please choose an option(1, 2, 3): "))
             #check if the input is between 1-3
             if userInput > 0 and userInput < 4:
                 return userInput
@@ -29,7 +29,7 @@ def inputData_verify():
     while True:
         messageSource = []
         #variable holds the content of the message
-        messageContents = input("Insert message content or quit:\n")
+        messageContents = input("Insert message content (or 'back' to return to main menu):\n")
         #if statement to check if the string is empty or if the string is just a digit
         if messageContents != "" and messageContents.isdigit() == False:
             #this line is to remove >=2 whitespaces in message content
@@ -86,7 +86,7 @@ def queryAI_Backup():
     print("2. Return to main menu")
     print("3. Quit program")
     try:
-        userInput = int(input("Please choose an option(1, 2, 3):"))
+        userInput = int(input("Please choose an option(1, 2, 3): "))
         #check if the input is between 1-3
         if userInput > 0 and userInput < 4:
             return userInput
