@@ -38,7 +38,7 @@ def inputData_verify():
             if messageContents.lower() == 'menu':
                 return messageContents
             verifiedPhonenumber = get_Phonenumber()
-            if verifiedPhonenumber == "quit":
+            if verifiedPhonenumber == "menu":
                 return verifiedPhonenumber
             elif verifiedPhonenumber != "back":
                 print("=========================================")
