@@ -1,8 +1,50 @@
+# Determine risk_level value based on scam_probability number
+def calculate_risk_level(probability):
+    if probability >= 80:
+        return "HIGH"
+    elif probability >= 50:
+        return "MEDIUM"
+    else:
+        return "LOW"
+    
+
+# Compare AI's risk level of message against our own logic of calculating risk level. In case AI gives inconsistent risk levels.
+def validate_risk_level_from_ai(ai_output):
+    expected = calculate_risk_level(ai_output["scam_probability"])
+    
+    if ai_output["risk_level"] != expected:
+        ai_output["risk_level"] = expected
+        
+    return ai_output
+
+
+# Compares the Phone Number against past records
+# Function should take in a records dictionary that states the different risk levels associated with the phone number
+# e.g., records = {"HIGH": 1, "MEDIUM": 0, "LOW": 0}
+def check_phone_number(ai_output, records):
+    if records["HIGH"] > 0:
+        ai_output["risk_level"] = "HIGH"
+    return records
+
+
+# check if phone_number field from AI output still contains a country code. If yes, remove it and only keep the number. Else, return the number. 
+# There is no spacing between the country code and number
+def check_country_code_in_phone_number(ai_output):
+    phone_number = ai_output["phone_number"]
+    country_code = ai_output["country_code"]
+    
+    if phone_number.startswith(country_code):
+        ai_output["phone_number"] = phone_number[len(country_code):]
+    
+    return ai_output
+
+
 # Ensure the AI output contains all required fields and fields are not empty. If any field or value is missing or invalid, return False. Otherwise, return True.
-def check_ai_output(ai_output):
+def check_ai_output_fields(ai_output):
     required_fields = [
         "timestamp", # str
         "phone_number", # str
+        "country_code", # str
         "message_content", # str
         "scam_probability", # int
         "risk_level", # str 
@@ -31,36 +73,15 @@ def check_ai_output(ai_output):
     if not 0 <= ai_output["scam_probability"] <= 100:
         return False
     
-    # Ensure risk_level is one of the expected values. Else, return False
-    if ai_output["risk_level"] not in ["LOW", "MEDIUM", "HIGH"]:
-        return False
-
     return True
 
-# Determine risk_level value based on scam_probability number
-# ? Should risk_level be determined by the AI API? (fully dependent on AI)
-# * I feel calculate_risk_level in the logic manager is fine because it can validate the risk_level value returned from the AI API in case it is wrong.
-def calculate_risk_level(probability):
-    if probability >= 80:
-        return "HIGH"
-    elif probability >= 50:
-        return "MEDIUM"
-    else:
-        return "LOW"
 
-# Compare AI's risk level of message against our own logic of calculating risk level. In case AI gives inconsistent risk levels.
-def validate_risk_level_from_ai(ai_output):
-    expected = calculate_risk_level(ai_output["scam_probability"])
+# Ensure data in all fields are in the correct format.
+def format_ai_output(ai_output):
+    # Ensure risk_level is one of the expected values
+    validate_risk_level_from_ai(ai_output)
     
-    if ai_output["risk_level"] != expected:
-        ai_output["risk_level"] = expected
-        
+    # Ensure phone_number does not contain country code
+    check_country_code_in_phone_number(ai_output)
+    
     return ai_output
-
-# Compares the Phone Number against past records
-# Function should take in a records dictionary that states the different risk levels associated with the phone number
-# e.g., records = {"HIGH": 1, "MEDIUM": 0, "LOW": 0}
-def check_phone_number(ai_output, records):
-    if records["HIGH"] > 0:
-        ai_output["risk_level"] = "HIGH"
-    return records
