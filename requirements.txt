@@ -1,0 +1,2 @@
+google-genai # install using the command pip install -q -U google-genai
+python-dotenv
