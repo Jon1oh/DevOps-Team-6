@@ -1,14 +1,14 @@
 import phonenumbers, re
 # this file contains the logic regarding user inputs and the main while loop
 
-#Prints the main menu options
+# Prints the main menu options
 def mainMenu_options():
     print(f"\n{'='*36}\nScam Message AI Detector Main Menu\n{'='*36}")
     print("1. Check scam message")
     print("2. View summary of scam messages")
     print("3. Quit\n")
 
-#loop to get and validate the input from the main menu
+# loop to get and validate the input from the main menu
 def mainMenu_Input():
     #while  loop to check user inputs
     while True:
@@ -23,18 +23,29 @@ def mainMenu_Input():
                 print("Incorrect input try again.")
         except ValueError:
             print("Incorrect input try again.")
+            
+# check if the message input contains legitimate words and punctuation, and not just a string of special characters            
+def is_meaningful_message(message):
+    words = re.findall(r"[A-Za-z]+", message)
+    total_letters = sum(len(word) for word in words)
+    if total_letters >= 4:
+        return True
+    else:
+        return False
         
-#function to get query ai inputs
+# function to get query ai inputs
 def inputData_verify():
     while True:
         messageSource = []
-        #variable holds the content of the message
+        # variable holds the content of the message
         messageContents = input("Insert message content (or 'menu' to return to main menu):\n")
-        #if statement to check if the string is empty or if the string is just a digit
-        if messageContents != "" and messageContents.isdigit() == False:
-            #this line is to remove >=2 whitespaces in message content
-            messageContents = re.sub(r'\s+', ' ', messageContents).strip()
-            #check if the user type quit in message content
+        # if statement to check if the string is empty or if the string is just a digit
+        if messageContents != "" and messageContents.isdigit() == False:            
+            messageContents = re.sub(r'\s+', ' ', messageContents).strip() # this line is to remove >=2 whitespaces in message content
+            if not is_meaningful_message(messageContents):
+                print("The message must contain meaningful text and not just solely special characters.")
+                continue # prompt user for message input again if the message is not meaningful
+            # check if the user type quit in message content 
             if messageContents.lower() == 'menu':
                 return messageContents
             verifiedPhonenumber = get_Phonenumber()
@@ -80,7 +91,7 @@ def get_Phonenumber():
             except phonenumbers.phonenumberutil.NumberParseException:
                 print("Invalid phone number try again")
 
-#this function is ask the user if they want to query the backup ai
+# this function is ask the user if they want to query the backup ai
 def queryAI_Backup():
     print("============================================================")
     print("Our primary AI API failed to respond in a timely manner")        
