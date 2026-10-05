@@ -41,20 +41,23 @@ def inputData_verify():
             if verifiedPhonenumber == "menu":
                 return verifiedPhonenumber
             elif verifiedPhonenumber != "back":
-                print("=========================================")
-                print("Message Contents: " + messageContents)
-                print("Phone No.: " + verifiedPhonenumber )
-                print("Is that correct? ")
-                print("1. Yes (Analyse message with AI)")
-                print("2. No (Re-enter Input)")
-                try:
-                    checkUserinput = int(input("Please enter 1 or 2: "))
-                    if checkUserinput == 1:
-                        return [messageContents, verifiedPhonenumber]
-                    elif checkUserinput < 1 or checkUserinput > 2:
-                        print("Incorrect input try again.")
-                except ValueError:
-                    print("Incorrect input try again.")
+                while True:
+                    print("=========================================")
+                    print("Message Contents: " + messageContents)
+                    print("Phone No.: " + verifiedPhonenumber)
+                    print("Is that correct?")                    
+                    print("1. Yes (Analyse message with AI)")
+                    print("2. No (Re-enter Input)")
+                    try:
+                        checkUserinput = int(input("Please enter 1 or 2: "))
+                        if checkUserinput == 1:
+                            return [messageContents, verifiedPhonenumber]
+                        elif checkUserinput == 2:
+                            break # go back to outer loop and re-enter message
+                        else:
+                            print("Incorrect input. Please enter 1 or 2.\n")
+                    except ValueError:
+                        print("Incorrect input. Please enter 1 or 2.\n")
         else:
             print("The message cannot be blank or just a number. Please try again.")
 
