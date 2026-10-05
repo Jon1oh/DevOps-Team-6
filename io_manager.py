@@ -36,9 +36,7 @@ def is_meaningful_message(message):
 # function to get query ai inputs
 def inputData_verify():
     while True:
-        messageSource = []
-        # variable holds the content of the message
-        messageContents = input("Insert message content (or 'menu' to return to main menu):\n")
+        messageContents = input("Insert message content (or 'menu' to return to main menu):\n") # the message content from the user
         # if statement to check if the string is empty or if the string is just a digit
         if messageContents != "" and messageContents.isdigit() == False:            
             messageContents = re.sub(r'\s+', ' ', messageContents).strip() # this line is to remove >=2 whitespaces in message content

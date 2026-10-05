@@ -10,14 +10,13 @@ while True:
             print("Exiting Program")
             break
         case 2:
-            #call the message summary function
+            # call the message summary function
             print("case 2")
         case 1:
                 verifiedInputdata =  io_manager.inputData_verify() # prompt user for message content and phone number
                 print("query ai now")
-                # TODO call AI manager to analyse message
-                ai_manager.analyse_message(verifiedInputdata[0], verifiedInputdata[1]) # pass message content and phone number to AI manager
-                print(verifiedInputdata) # the message content and phone number in a list from io_manager
+                ai_manager.analyse_message(verifiedInputdata[0], verifiedInputdata[1]) # pass message content and phone number to ai_manager
+                # print(verifiedInputdata) # the message content and phone number in a list from io_manager
                 mainAIoutput = "" #TODO CHANGE TO AI API CALL
                 if mainAIoutput == False:
                     backupAI = io_manager.queryAI_Backup()
