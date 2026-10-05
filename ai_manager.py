@@ -135,7 +135,7 @@ def analyse_message(message_content, source_content):
     else:
         # print("API status is not OK.")
         print(f"{api_status.message}\n") # api_status is a ServerError object when api is unavailable
-        log_error(api_status) # ? Should the returned error message be formatted? Or keep as is?
+        log_error(api_status)
         response = get_ai_output_retry(prompt)
 
     # Check the AI Model API output
