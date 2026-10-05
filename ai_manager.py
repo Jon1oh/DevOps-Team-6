@@ -6,7 +6,7 @@ import os, json, logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
-ai_model = "3.5-flash"
+ai_model = "3.8-flash"
     
 
 # function to get response from AI model, based on the prompt argument parsed
@@ -121,7 +121,7 @@ def analyse_message(message_content, source_content):
     api_status = check_api_status() # Check API status before sending prompt to AI model. This is the 1st API call.
     
     if api_status is True:
-        print("API status is OK.")
+        # print("API status is OK.")
         print(f"Message analysis in progress using Google Gemini {ai_model}. This may take a few seconds... \n")     
         
         # Use a try/except block since the 1st API call with check_api_status() doesn't guarantee a successful 2nd API call with get_ai_output()
@@ -133,7 +133,7 @@ def analyse_message(message_content, source_content):
             response = get_ai_output_retry(prompt) # retry API connection once
         
     else:
-        print("API status is not OK.")
+        # print("API status is not OK.")
         print(f"{api_status.message}\n") # api_status is a ServerError object when api is unavailable
         log_error(api_status) # ? Should the returned error message be formatted? Or keep as is?
         response = get_ai_output_retry(prompt)
