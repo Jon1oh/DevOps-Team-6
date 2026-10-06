@@ -6,7 +6,7 @@ import os, json, logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
-ai_model = "3.8-flash"
+ai_model = "3.5-flash"
     
 
 # function to get response from AI model, based on the prompt argument parsed
@@ -77,6 +77,11 @@ def build_prompt(message, source):
     - recommendation
     
     Rules:
+    - Messages can either be scam messages or legitimate messages.
+    - Do not assume a message is a scam unless there are clear scam indicators.
+    - The absence of scam indicators is evidence that a message is legitimate.
+    - Ordinary greetings, personal conversations, social messages, appointment reminders, work discussions, family messages, scheduling messages, and casual communication should normally be classified as LOW risk.
+    
     - scam_probability must be an integer from 0 to 100.
     - risk_level, a string value, must be "HIGH" if scam_probability >= 80 and "MEDIUM" if scam_probability >= 50. Else, must be "LOW".
     - scam_type, a string value, must be one of the following:
@@ -89,9 +94,19 @@ def build_prompt(message, source):
         - Unexpected Prize Money Scam
         - Government Scam
         - Other Scam
-    - indicators must be a list of detected scam indicators from the analysed message.
-    - explanation, a string value, must explain why the message may be suspicious.
-    - recommendation, a string value, must provide advice to the user on follow up actions based on the severity and type of scam message.
+    - Common scam message indicators include:
+        - Urgency or pressure tactics
+        - Threats or consequences
+        - Requests for money
+        - Requests for personal information
+        - Requests for passwords, OTPs, or account verification
+        - Suspicious links
+        - Unexpected prizes or winnings
+        - Impersonation of banks, government agencies, delivery companies, employers, or known organizations        
+        
+    - indicators must be a list of detected scam indicators from the analysed message. If no scam indicators are detected, indicators may be an empty list.
+    - explanation, a string value, must explain why the message may be suspicious or why the message appears legitimate.
+    - recommendation, a string value, must provide advice appropriate to the analysis result.
     
     Output restrictions:
     - Return only a JSON object in this format:
@@ -169,7 +184,9 @@ Failure to verify within 24 hours may result in account restrictions.
 DBS Security Team
 """
 
+legit_message = "hello there. See you tomorrow for lunch."
+
 test_message_source = "+6591234567"
 
 
-analyse_message(test_message_content, test_message_source)
+analyse_message(legit_message, test_message_source)
