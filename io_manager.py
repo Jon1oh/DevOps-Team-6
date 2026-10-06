@@ -127,9 +127,12 @@ def display_message_analysis(ai_output):
     print(f"Country code: {ai_output['country_code']}")
     
     # Indicators section
-    print("\nIndicators:")
-    for i in ai_output["indicators"]:
-        print(f"- {i}")
+    if type(ai_output["indicators"]) is list:
+        print("\nIndicators:")        
+        for i in ai_output["indicators"]:
+            print(f"- {i}")
+    else:
+        print(f"\nIndicators: {ai_output["indicators"]}")
     
     # Explanation section
     print("\nExplanation:")
