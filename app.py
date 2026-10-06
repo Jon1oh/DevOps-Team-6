@@ -28,6 +28,7 @@ while True:
                         #call the backup ai with the queryoutput as
                         #call the AI_MANAGER
                         #if query ai fail give choice to 
+                        
             else: # when the AI model returns a valid JSON object
                 is_valid_ai_output = logic_manager.check_ai_output_fields(ai_output)
                 if is_valid_ai_output:
@@ -35,6 +36,7 @@ while True:
                     
                     # format and display formatted AI analysis output of message and write to DB
                     formatted_ai_output = logic_manager.format_ai_output(ai_output)
+                    
                     # check if number was flagged out in a High Risk Incident before
                     flagged_number_records = data_manager.count_risk_levels(formatted_ai_output["phone_number"])
                     formatted_ai_output = logic_manager.escalate_flagged_number(ai_output, flagged_number_records)
