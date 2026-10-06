@@ -6,7 +6,7 @@ import os, json, logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
-ai_model = "3.6-flash"
+ai_model = "3.5-flash"
     
 
 # function to get response from AI model, based on the prompt argument parsed
@@ -148,25 +148,8 @@ def analyse_message(message_content, source_content):
             ai_output = extract_json_object(response)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
         ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object        
-        print(ai_output)
+        # print(ai_output)
         return ai_output
     else:
         # print(f"AI output is {type(response)}")
         return False
-        # TODO: go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
-        # TODO: Call fallback funtion (i.e. prompt user if they want to use our own bot        
-    
-    
-test_message_content = """
-URGENT: Your DBS account has been suspended due to suspicious activity.
-
-To avoid permanent suspension, verify your account immediately at:
-
-https://dbs-secure-verify.com
-
-Failure to verify within 24 hours may result in account restrictions.
-
-DBS Security Team
-"""
-
-test_message_source = "+6591234567"

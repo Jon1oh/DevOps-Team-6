@@ -36,7 +36,7 @@ def is_meaningful_message(message):
 # function to get query ai inputs
 def inputData_verify():
     while True:
-        messageContents = input("Insert message content (or 'menu' to return to main menu):\n") # the message content from the user
+        messageContents = input("Insert message content as one line (or 'menu' to return to main menu):\n") # the message content from the user
         # if statement to check if the string is empty or if the string is just a digit
         if messageContents != "" and messageContents.isdigit() == False:            
             messageContents = re.sub(r'\s+', ' ', messageContents).strip() # this line is to remove >=2 whitespaces in message content
@@ -51,7 +51,7 @@ def inputData_verify():
                 return verifiedPhonenumber
             elif verifiedPhonenumber != "back":
                 while True:
-                    print("=========================================")
+                    print(f"\n{'='*38}")
                     print("Message Contents: " + messageContents)
                     print("Phone No.: " + verifiedPhonenumber)
                     print("Is that correct?")                    
@@ -91,7 +91,7 @@ def get_Phonenumber():
 
 # this function is ask the user if they want to query the backup ai
 def queryAI_Backup():
-    print("============================================================")
+    print(f"\n{'='*38}")
     print("Our primary AI API failed to respond in a timely manner")        
     print("What do you want to do?:")
     print("1. Analyse message with backup AI model")
