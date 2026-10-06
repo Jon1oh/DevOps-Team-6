@@ -94,6 +94,7 @@ def build_prompt(message, source):
         - Unexpected Prize Money Scam
         - Government Scam
         - Other Scam
+        - Not Scam
     - Common scam message indicators include:
         - Urgency or pressure tactics
         - Threats or consequences
@@ -189,4 +190,4 @@ legit_message = "hello there. See you tomorrow for lunch."
 test_message_source = "+6591234567"
 
 
-analyse_message(legit_message, test_message_source)
+analyse_message(test_message_content, test_message_source)
