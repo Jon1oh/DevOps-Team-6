@@ -1,4 +1,4 @@
-import phonenumbers, re
+import phonenumbers, re, emoji
 # this file contains the logic regarding user inputs and the main while loop
 
 # Prints the main menu options
@@ -109,10 +109,34 @@ def queryAI_Backup():
     except ValueError:
         print("Incorrect input try again.")
     
+# display the analysis results of the message to the user after analysing it 
+def display_message_analysis(ai_output):
+    print(f"\n{'='*38}SCAM MESSAGE ANALYSIS RESULT{'='*38}\n")
     
-
+    # display message based on risk level of message
+    if ai_output["risk_level"] == "HIGH" or ai_output["risk_level"] == "MEDIUM":
+        print(f"{emoji.emojize(":warning: POTENTIAL SCAM DETECTED")}\n")
+    else:
+        print(f"{emoji.emojize(":check_mark_button: MESSAGE APPEARS SAFE")}\n")
     
-          
+    print(f"Risk Level: {ai_output['risk_level']}")
+    print(f"Scam Probability: {ai_output['scam_probability']}")
+    print(f"Scam Type: {ai_output['scam_type']}")
     
-
+    print(f"Phone number: {ai_output['phone_number']}")
+    print(f"Country code: {ai_output['country_code']}")
     
+    # Indicators section
+    print("\nIndicators:")
+    for i in ai_output["indicators"]:
+        print(f"- {i}")
+    
+    # Explanation section
+    print("\nExplanation:")
+    print(ai_output["explanation"])
+    
+    # Recommendation section
+    print("\nRecommendation:")
+    print(ai_output["recommendation"])
+    
+    print(f"{'='*38}")
