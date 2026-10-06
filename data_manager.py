@@ -197,9 +197,9 @@ def save_record(record: dict) -> tuple[bool, str]:
         return False, "Could not write to the data file."
     return True, ""
 
-def count_risk_levels(phone_number, json_database):
+def count_risk_levels(phone_number):
     risk_record = {"HIGH": 0, "MEDIUM": 0, "LOW": 0}
-    for entry in json_database:
+    for entry in DATA_FILE:
         if entry.get("phone_number") == phone_number:
             if entry.get("risk_level") in risk_record.keys():
                 risk_record[entry.get("risk_level")] += 1
