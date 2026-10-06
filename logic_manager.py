@@ -44,7 +44,8 @@ def validate_scam_indicators(ai_output):
     if (ai_output["risk_level"] in ["HIGH", "MEDIUM"]) and (len(ai_output["indicators"]) == 0): # when the analyzed message is potentially a scam but there aren't any indicators
         return False
     else: # when the risk_level is LOW, the indicators list can be empty
-        return True
+        ai_output["indicators"] = "NIL" # assign a readable value to indicators if risk_level is low and list is empty
+        return ai_output
     
 
 # Ensure the AI output contains all required fields and fields are not empty. If any field or value is missing or invalid, return False. Otherwise, return True.
