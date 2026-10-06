@@ -1,4 +1,4 @@
-import io_manager, ai_manager, logic_manager
+import io_manager, ai_manager, logic_manager, data_manager
 
 # main loop of program
 while True:
@@ -35,6 +35,10 @@ while True:
                     
                     # format and display formatted AI analysis output of message and write to DB
                     formatted_ai_output = logic_manager.format_ai_output(ai_output)
+                    # check if number was flagged out in a High Risk Incident before
+                    flagged_number_records = data_manager.count_risk_levels(formatted_ai_output["phone_number"])
+                    formatted_ai_output = logic_manager.escalate_flagged_number(ai_output, flagged_number_records)
+                    
                     if logic_manager.validate_scam_indicators(formatted_ai_output):
                         io_manager.display_message_analysis(formatted_ai_output)
                         # TODO call db_manager to store the ai output in DB
