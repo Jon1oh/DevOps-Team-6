@@ -36,7 +36,7 @@ The AI is the core engine of the application because every message must be analy
 
 **AI Output:**
 
-Upon analysing the user's messaeg input, the AI will provide:
+Upon analysing the user's message input, the AI will provide:
 
 - Timestamp
 - Scam probability score
