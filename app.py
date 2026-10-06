@@ -32,8 +32,11 @@ while True:
                 is_valid_ai_output = logic_manager.check_ai_output_fields(ai_output)
                 if is_valid_ai_output:
                     print(f"AI analysis completed. Here is the output:\n")
-                    # TODO display formatted AI analysis output of message
+                    
+                    # format and display formatted AI analysis output of message and write to DB
                     formatted_ai_output = logic_manager.format_ai_output(ai_output)
-                    # TODO call db_manager to store the ai output in DB
+                    if logic_manager.validate_scam_indicators(formatted_ai_output):
+                        io_manager.display_message_analysis(formatted_ai_output)
+                        # TODO call db_manager to store the ai output in DB
                 else:
-                    pass
+                    print("One of the fields in the AI output is invalid.")
