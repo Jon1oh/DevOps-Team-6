@@ -13,7 +13,7 @@ def validate_risk_level_from_ai(ai_output):
     expected = calculate_risk_level(ai_output["scam_probability"])
     
     if ai_output["risk_level"] != expected:
-        ai_output["risk_level"] = expected
+        ai_output["risk_level"] = expected # Ensure risk_level is one of the expected values
         
     return ai_output
 
@@ -21,7 +21,7 @@ def validate_risk_level_from_ai(ai_output):
 # Compares the Phone Number against past records
 # Function should take in a records dictionary that states the different risk levels associated with the phone number
 # e.g., records = {"HIGH": 1, "MEDIUM": 0, "LOW": 0}
-def check_phone_number(ai_output, records):
+def escalate_flagged_number(ai_output, records):
     if records["HIGH"] > 0:
         ai_output["risk_level"] = "HIGH"
     return records
@@ -34,14 +34,16 @@ def check_country_code_in_phone_number(ai_output):
     country_code = ai_output["country_code"]
     
     if phone_number.startswith(country_code):
-        ai_output["phone_number"] = phone_number[len(country_code):]
+        ai_output["phone_number"] = phone_number[len(country_code):] # Ensure phone_number does not contain country code
     
     return ai_output
 
 
 # check scam indicators based on risk level of the analyzed message
 def validate_scam_indicators(ai_output):
-    if (ai_output["risk_level"] in ["HIGH", "MEDIUM"]) and (len(ai_output["indicators"]) == 0): # when the analyzed message is potentially a scam but there aren't any indicators
+    if (ai_output["risk_level"] in ["HIGH", "MEDIUM"]) and (len(ai_output["indicators"]) >= 1):
+        return ai_output
+    elif (ai_output["risk_level"] in ["HIGH", "MEDIUM"]) and (len(ai_output["indicators"]) == 0): # when the analyzed message is potentially a scam but there aren't any indicators
         return False
     else: # when the risk_level is LOW, the indicators list can be empty
         ai_output["indicators"] = "NIL" # assign a readable value to indicators if risk_level is low and list is empty
