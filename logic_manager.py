@@ -39,6 +39,14 @@ def check_country_code_in_phone_number(ai_output):
     return ai_output
 
 
+# check scam indicators based on risk level of the analyzed message
+def validate_scam_indicators(ai_output):
+    if (ai_output["risk_level"] in ["HIGH", "MEDIUM"]) and (len(ai_output["indicators"]) == 0): # when the analyzed message is potentially a scam but there aren't any indicators
+        return False
+    else: # when the risk_level is LOW, the indicators list can be empty
+        return True
+    
+
 # Ensure the AI output contains all required fields and fields are not empty. If any field or value is missing or invalid, return False. Otherwise, return True.
 def check_ai_output_fields(ai_output):
     required_fields = [
@@ -59,14 +67,20 @@ def check_ai_output_fields(ai_output):
         if field not in ai_output:
             return False
         
-    # Ensure all fields are not empty
+    # Validate field values
     for field in required_fields:
-        value = ai_output[field]        
-        if (type(value) is str) and (not value.strip()): # if the string value is empty
+        value = ai_output[field]      
+        
+        # Strings must not be empty  
+        if isinstance(value, str) and not value.strip():
             return False
-        elif (type(value) is list) and (not value): # if the list value is empty
+        
+        # Lists must exist, but may be empty (for safe messages)
+        if field == "indicators" and not isinstance(value, list):
             return False
-        elif value is None:
+            
+        # No field value should be None
+        if value is None:
             return False
                 
     # Ensure scam_probability is a number between 0 and 100. Else, return False
