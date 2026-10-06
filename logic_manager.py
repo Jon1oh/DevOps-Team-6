@@ -1,3 +1,5 @@
+import data_manager
+
 # Determine risk_level value based on scam_probability number
 def calculate_risk_level(probability):
     if probability >= 80:
