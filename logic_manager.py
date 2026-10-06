@@ -1,3 +1,5 @@
+import data_manager
+
 # Determine risk_level value based on scam_probability number
 def calculate_risk_level(probability):
     if probability >= 80:
@@ -18,13 +20,15 @@ def validate_risk_level_from_ai(ai_output):
     return ai_output
 
 
-# Compares the Phone Number against past records
+# Escalates Risk Level to HIGH if Phone Number was previously involved in a High Risk Incident
 # Function should take in a records dictionary that states the different risk levels associated with the phone number
 # e.g., records = {"HIGH": 1, "MEDIUM": 0, "LOW": 0}
 def escalate_flagged_number(ai_output, records):
     if records["HIGH"] > 0:
         ai_output["risk_level"] = "HIGH"
-    return records
+        message = f"{ai_output['phone_number']} was found in {records['HIGH']} High Risk Incidents."
+        ai_output["indicators"].append(message)
+    return ai_output
 
 
 # check if phone_number field from AI output still contains a country code. If yes, remove it and only keep the number. Else, return the number. 
@@ -41,15 +45,14 @@ def check_country_code_in_phone_number(ai_output):
 
 # check scam indicators based on risk level of the analyzed message
 def validate_scam_indicators(ai_output):
-    if (ai_output["risk_level"] in ["HIGH", "MEDIUM"]) and (len(ai_output["indicators"]) >= 1):
-        return ai_output
-    elif (ai_output["risk_level"] in ["HIGH", "MEDIUM"]) and (len(ai_output["indicators"]) == 0): # when the analyzed message is potentially a scam but there aren't any indicators
-        return False
-    else: # when the risk_level is LOW, the indicators list can be empty
+    if ai_output["risk_level"] in ["HIGH", "MEDIUM"]:
+        if len(ai_output["indicators"]) == 0: # when the analyzed message is potentially a scam but there aren't any indicators
+            return False
+    elif len(ai_output["indicators"]) == 0 : # when the risk_level is LOW, the indicators list can be empty
         ai_output["indicators"] = "NIL" # assign a readable value to indicators if risk_level is low and list is empty
-        return ai_output
     
-
+    return ai_output
+    
 # Ensure the AI output contains all required fields and fields are not empty. If any field or value is missing or invalid, return False. Otherwise, return True.
 def check_ai_output_fields(ai_output):
     required_fields = [
