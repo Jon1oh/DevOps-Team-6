@@ -124,8 +124,6 @@ def build_prompt(message, source):
     }}
     - Do not include markdown, code blocks, or any text outside the JSON object.
     """
-    
-    # * message_id field will be added when writing to database.
     return prompt    
     
 
@@ -169,25 +167,5 @@ def analyse_message(message_content, source_content):
     else:
         # print(f"AI output is {type(response)}")
         return False
-        # TODO: go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
-        # TODO: Call fallback funtion (i.e. prompt user if they want to use our own bot        
-    
-    
-test_message_content = """
-URGENT: Your DBS account has been suspended due to suspicious activity.
-
-To avoid permanent suspension, verify your account immediately at:
-
-https://dbs-secure-verify.com
-
-Failure to verify within 24 hours may result in account restrictions.
-
-DBS Security Team
-"""
-
-legit_message = "hello there. See you tomorrow for lunch."
-
-test_message_source = "+6591234567"
-
-
-analyse_message(test_message_content, test_message_source)
+        # go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
+        # call fallback funtion (i.e. prompt user if they want to use our own bot
