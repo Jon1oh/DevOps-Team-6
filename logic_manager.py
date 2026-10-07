@@ -100,7 +100,7 @@ def check_ai_output(ai_output):
 # Function will remove that underscore and capitalize the first letter of each word for display
 def format_scam_type(ai_output):
     scam_type = ai_output["scam_type"].split("_")
-    scam_type = " ".join([word.capitalize() for word in scam_type]) # Changes the first letter to Uppercase
+    scam_type = " ".join([word.capitalize() for word in scam_type]) # Changes the first letter of each word to Uppercase and joins them together
     ai_output["scam_type"] = scam_type
     return ai_output
 
