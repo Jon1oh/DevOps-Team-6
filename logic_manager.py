@@ -1,5 +1,3 @@
-import data_manager
-
 # Determine risk_level value based on scam_probability number
 def calculate_risk_level(probability):
     if probability >= 80:
@@ -54,28 +52,31 @@ def validate_scam_indicators(ai_output):
     return ai_output
     
 # Ensure the AI output contains all required fields and fields are not empty. If any field or value is missing or invalid, return False. Otherwise, return True.
-def check_ai_output_fields(ai_output):
-    required_fields = [
-        "timestamp", # str
-        "phone_number", # str
-        "country_code", # str
-        "message_content", # str
-        "scam_probability", # int
-        "risk_level", # str 
-        "scam_type", # str
-        "indicators", # list
-        "explanation", # str
-        "recommendation" # str
-    ]
-    
-    # Ensure all required fields are present in the AI output. Else, return False
-    for field in required_fields:
-        if field not in ai_output:
-            return False
+def check_ai_output(ai_output):
+    required_fields = {
+        "timestamp": str,
+        "phone_number": str,
+        "country_code": str,
+        "message_content": str,
+        "scam_probability": int,
+        "risk_level": str,
+        "scam_type": str,
+        "indicators": list,
+        "explanation": str,
+        "recommendation": str
+    }
         
     # Validate field values
     for field in required_fields:
+         # Ensure all required fields are present in the AI output. Else, return False
+        if field not in ai_output:
+            return False
+        
         value = ai_output[field]      
+        
+        # Type Validation as per required_fields
+        if not isinstance(value, required_fields[field]):
+            return False
         
         # Strings must not be empty  
         if isinstance(value, str) and not value.strip():
@@ -88,13 +89,20 @@ def check_ai_output_fields(ai_output):
         # No field value should be None
         if value is None:
             return False
-                
+    
     # Ensure scam_probability is a number between 0 and 100. Else, return False
     if not 0 <= ai_output["scam_probability"] <= 100:
         return False
     
     return True
 
+# Our Backup AI will return scam_type with an underscore ("_") instead of spacing
+# Function will remove that underscore and capitalize the first letter of each word for display
+def format_scam_type(ai_output):
+    scam_type = ai_output["scam_type"].split("_")
+    scam_type = " ".join([word.capitalize() for word in scam_type]) # Changes the first letter to Uppercase
+    ai_output["scam_type"] = scam_type
+    return ai_output
 
 # Ensure data in all fields are in the correct format.
 def format_ai_output(ai_output):
@@ -103,5 +111,8 @@ def format_ai_output(ai_output):
     
     # Ensure phone_number does not contain country code
     check_country_code_in_phone_number(ai_output)
+    
+    # Display scam_type with no underscore
+    format_scam_type(ai_output)
     
     return ai_output
