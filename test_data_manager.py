@@ -184,6 +184,22 @@ def test_invalid_record_is_not_saved() -> None:
     assert dm.load_records() == []
 
 
+# ---------- message_id ----------
+
+def test_next_message_id() -> None:
+    assert dm.get_next_message_id([]) == 1
+    assert dm.get_next_message_id([{"message_id": 3}, {"message_id": 7}]) == 8
+    assert dm.get_next_message_id([{"message_id": "x"}, "corrupt"]) == 1
+
+
+def test_save_assigns_message_ids_in_order() -> None:
+    use_temp_file(None)
+    dm.save_record(make_valid_record())
+    dm.save_record(make_valid_record())     # same input id (1) on purpose
+    ids = [record["message_id"] for record in dm.load_records()]
+    assert ids == [1, 2]                     # no duplicates
+
+
 # ---------- count_risk_levels ----------
 
 def test_count_risk_levels_for_one_number() -> None:

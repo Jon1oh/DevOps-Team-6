@@ -178,17 +178,32 @@ def load_records() -> list[dict]:
     return records
 
 
-def save_record(record: dict) -> tuple[bool, str]:
-    """Standardize, validate, then append one record to DATA_FILE.
+def get_next_message_id(records: list[dict]) -> int:
+    """Return the next free message_id: highest existing id + 1, or 1 if there are none."""
+    highest = 0
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        message_id = record.get("message_id")
+        if isinstance(message_id, int) and not isinstance(message_id, bool) and message_id > highest:
+            highest = message_id
+    return highest + 1
 
+
+def save_record(record: dict) -> tuple[bool, str]:
+    """Standardize, number, validate, then append one record to DATA_FILE.
+
+    The record is always given the next free message_id, so ids never repeat.
     Returns (True, "") on success or (False, "reason") on failure.
     """
+    records = load_records()
     record = standardize_record(record)
+    record["message_id"] = get_next_message_id(records)
+
     is_valid, error = validate_record(record)
     if not is_valid:
         return False, error
 
-    records = load_records()
     records.append(record)
     try:
         with open(DATA_FILE, "w", encoding="utf-8") as file:
