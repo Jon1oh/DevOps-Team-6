@@ -1,83 +1,265 @@
-from data_manager import load_records
-from data_manager import save_record
-from data_manager import message_summary
+# Test script for data_manager.py
+#
+# This file has two parts:
+#   1. Automated tests  - functions starting with test_ check the results with assert
+#   2. Demo             - prints the summary of the real scam_data.json so we can see it
+#
+# Run with either:
+#   python test_data_manager.py                 (runs the tests, then shows the demo)
+#   python -m pytest test_data_manager.py -v    (runs the tests only)
 
-scam_records = load_records()
+import json
+import os
+import tempfile
 
-# print("Number of records:", len(scam_records))
-# print("First record:", scam_records[0])
+import data_manager as dm
 
-#---    PRINT EVERY RECORD     ----
-
-# for record in scam_records:
-#     print("\n========================================")
-#     print(f"          SCAM INCIDENT RECORD {record['message_id']} ")
-#     print("========================================")
-#     print(f"Time stamp       : {record['timestamp']}")
-#     print(f"Phone Number     : {record['phone_number']}")
-#     print(f"Country Code     : {record['country_code']}")
-#     print(f"Risk Level       : {record['risk_level']}")
-#     print(f"Scam Probability : {record['scam_probability']}%")
-#     print(f"Scam Type        : {record['scam_type']}")
-#     print(f"Message          : {record['message_content']}")
-#     print(f"Indicators       : {', '.join(record['indicators'])}")
-#     print(f"Explanation      : {record['explanation']}")
-#     print(f"Recommendation   : {record['recommendation']}")
-
-    #test comment
+REAL_DATA_FILE = dm.DATA_FILE   # remembered so the demo can switch back to it
 
 
-#---    ADD NEW RECORD AND CHECK IF IT UPDATED  ---
+# =====================================================================
+# PART 1: AUTOMATED TESTS
+# =====================================================================
 
-# new_record = {
-#         "message_id": 6,
-#         "timestamp": "2026-10-02 11:40:00",
-#         "phone_number": "+6591234567",
-#         "country_code": "+65",
-#         "message_content": "Your account has been suspended. Please click this link to verify: http://acount_recovery.com",
-#         "scam_probability": 90,
-#         "risk_level": "HIGH",
-#         "scam_type": "Bank Impersonation Scam",
-#         "indicators": [
-#             "Urgent language",
-#             "Suspicious link",
-#         ],
-#         "explanation": "The message impersonates a bank and asks the recipient to verify their account",
-#         "recommendation": "Do not click the link. Contact the bank through its official website."
-# }
 
-# save_record(new_record)
+def use_temp_file(contents: str | None) -> str:
+    """Point data_manager at a fresh temporary file (optionally with contents)."""
+    folder = tempfile.mkdtemp()
+    path = os.path.join(folder, "scam_data.json")
+    if contents is not None:
+        with open(path, "w", encoding="utf-8") as file:
+            file.write(contents)
+    dm.DATA_FILE = path
+    return path
 
-summary = message_summary(scam_records)
 
-def print_message_summary(summary):
+def make_valid_record() -> dict:
+    return {
+        "message_id": 1,
+        "timestamp": "2026-10-02 11:40:00",
+        "phone_number": "+6591234567",
+        "country_code": "+65",
+        "message_content": "Your account is suspended. Click http://bad.link",
+        "scam_probability": 90,
+        "risk_level": "HIGH",
+        "scam_type": "Bank Impersonation Scam",
+        "indicators": ["Urgent language", "Suspicious link"],
+        "explanation": "Impersonates a bank.",
+        "recommendation": "Do not click the link.",
+    }
+
+
+SAMPLE_RECORDS = [
+    {"country_code": "+65", "scam_type": "Phishing"},
+    {"country_code": "+65", "scam_type": "Phishing"},
+    {"country_code": "+60", "scam_type": "Delivery"},
+    {"country_code": "+65", "scam_type": "Job scam"},
+]
+
+
+# ---------- percentage / most-common ----------
+
+def test_percentage_basic() -> None:
+    assert dm.calculate_percentage({"A": 3, "B": 1}) == {"A": 75.0, "B": 25.0}
+
+
+def test_percentage_empty() -> None:
+    assert dm.calculate_percentage({}) == {}
+
+
+def test_percentage_rounding() -> None:
+    assert dm.calculate_percentage({"A": 1, "B": 2}) == {"A": 33.33, "B": 66.67}
+
+
+def test_most_common_origin() -> None:
+    assert dm.get_most_common_origin(SAMPLE_RECORDS) == ("+65", 75.0)
+    assert dm.get_most_common_origin([]) is None
+
+
+def test_most_common_scam_type() -> None:
+    assert dm.get_most_common_scam_type(SAMPLE_RECORDS) == ("Phishing", 50.0)
+    assert dm.get_most_common_scam_type([]) is None
+
+
+def test_tie_is_alphabetical() -> None:
+    tie = [{"scam_type": "Phishing"}, {"scam_type": "Delivery"}]
+    assert dm.get_most_common_scam_type(tie) == ("Delivery", 50.0)
+
+
+# ---------- schema ----------
+
+def test_valid_record_passes() -> None:
+    assert dm.validate_record(make_valid_record()) == (True, "")
+
+
+def test_missing_field_fails() -> None:
+    record = make_valid_record()
+    del record["scam_type"]
+    assert dm.validate_record(record) == (False, "Missing field: scam_type")
+
+
+def test_wrong_type_fails() -> None:
+    record = make_valid_record()
+    record["scam_probability"] = "90"
+    assert dm.validate_record(record)[0] is False
+
+
+def test_bad_risk_level_fails() -> None:
+    record = make_valid_record()
+    record["risk_level"] = "VERY HIGH"
+    assert dm.validate_record(record)[0] is False
+
+
+def test_probability_out_of_range_fails() -> None:
+    record = make_valid_record()
+    record["scam_probability"] = 150
+    assert dm.validate_record(record)[0] is False
+
+
+def test_standardize_renames_old_keys() -> None:
+    old = {"time_stamp": "2026-10-02", "scam_probability (%)": 80, "risk_level": "High"}
+    fixed = dm.standardize_record(old)
+    assert fixed["timestamp"] == "2026-10-02"
+    assert fixed["scam_probability"] == 80
+    assert fixed["risk_level"] == "HIGH"
+    assert "time_stamp" not in fixed
+
+
+def test_country_code_from_phone() -> None:
+    assert dm.get_country_code("+6591234567") == "+65"
+    assert dm.get_country_code("+2348012345678") == "+234"
+    assert dm.get_country_code("91234567") == "Unknown"
+    assert dm.get_country_name("+65") == "Singapore"
+
+
+# ---------- corrupt JSON handling ----------
+
+def test_missing_file_returns_empty() -> None:
+    use_temp_file(None)
+    assert dm.load_records() == []
+
+
+def test_corrupt_file_is_backed_up() -> None:
+    path = use_temp_file("{ this is not valid json")
+    records, status = dm.load_records_with_status()
+    assert records == []
+    assert "corrupt" in status
+    assert os.path.exists(path.replace(".json", ".corrupt.json"))
+
+
+def test_non_list_file_is_handled() -> None:
+    use_temp_file('{"not": "a list"}')
+    assert dm.load_records() == []
+
+
+def test_corrupt_entries_are_skipped() -> None:
+    use_temp_file(json.dumps([make_valid_record(), "garbage", 42]))
+    records, status = dm.load_records_with_status()
+    assert len(records) == 1
+    assert "Skipped 2" in status
+
+
+def test_summary_survives_records_missing_keys() -> None:
+    use_temp_file(json.dumps([{"phone_number": "+6591234567"}]))
+    records = dm.load_records()
+    summary = dm.summary_with_percentages(records)
+    assert summary["total_messages"] == 1
+
+
+def test_save_then_load() -> None:
+    use_temp_file(None)
+    assert dm.save_record(make_valid_record()) == (True, "")
+    assert len(dm.load_records()) == 1
+
+
+def test_invalid_record_is_not_saved() -> None:
+    use_temp_file(None)
+    bad = make_valid_record()
+    bad["message_content"] = ""
+    ok, _error = dm.save_record(bad)
+    assert ok is False
+    assert dm.load_records() == []
+
+
+# =====================================================================
+# PART 2: DEMO - display the real data (not run by pytest)
+# =====================================================================
+
+def print_all_records(records: list[dict]) -> None:
+    """Print every record in a readable format."""
+    for record in records:
+        print("\n========================================")
+        print(f"          SCAM INCIDENT RECORD {record['message_id']} ")
+        print("========================================")
+        print(f"Time stamp       : {record['timestamp']}")
+        print(f"Phone Number     : {record['phone_number']}")
+        print(f"Country Code     : {record['country_code']}")
+        print(f"Risk Level       : {record['risk_level']}")
+        print(f"Scam Probability : {record['scam_probability']}%")
+        print(f"Scam Type        : {record['scam_type']}")
+        print(f"Message          : {record['message_content']}")
+        print(f"Indicators       : {', '.join(record['indicators'])}")
+        print(f"Explanation      : {record['explanation']}")
+        print(f"Recommendation   : {record['recommendation']}")
+
+
+def print_message_summary(summary: dict) -> None:
+    """Print the summary returned by summary_with_percentages()."""
     print("\n==============================")
     print("      SCAM MESSAGE SUMMARY")
     print("==============================\n")
     print(f"Total messages: {summary['total_messages']}\n")
+
     print("Risk Level Breakdown")
     print("------------------------------")
-
     for risk_level, count in summary["risk_level_breakdown"].items():
-        print(f"{risk_level}: {count}")
+        percent = summary["risk_level_percentage"].get(risk_level, 0)
+        print(f"{risk_level}: {count} ({percent}%)")
 
     print()
     print("Scam Category Breakdown")
     print("------------------------------")
-
     for scam_type, count in summary["scam_category_breakdown"].items():
-        print(f"{scam_type}: {count}")
+        percent = summary["scam_category_percentage"].get(scam_type, 0)
+        print(f"{scam_type}: {count} ({percent}%)")
 
     print()
     print("Country of Origin Breakdown")
     print("------------------------------")
-
     for country_code, count in summary["origin_country_breakdown"].items():
-        print(f"{country_code}: {count}")
+        percent = summary["origin_country_percentage"].get(country_code, 0)
+        print(f"{country_code}: {count} ({percent}%)")
 
     print()
     print("Most Common type of Scam")
     print("------------------------------")
     print(summary["most_common_scam"])
 
-print_message_summary(summary)
+
+def run_all_tests() -> int:
+    """Run every test_ function and print PASS/FAIL. Returns the number of failures."""
+    all_tests = [value for name, value in list(globals().items())
+                 if name.startswith("test_") and callable(value)]
+    failed = 0
+    for test in all_tests:
+        try:
+            test()
+            print(f"PASS  {test.__name__}")
+        except AssertionError:
+            print(f"FAIL  {test.__name__}")
+            failed += 1
+    print(f"\n{len(all_tests) - failed}/{len(all_tests)} tests passed")
+    return failed
+
+
+def run_demo() -> None:
+    """Load the real scam_data.json and print its summary (read-only)."""
+    dm.DATA_FILE = REAL_DATA_FILE
+    scam_records = dm.load_records()
+    # print_all_records(scam_records)    # uncomment to see every record
+    print_message_summary(dm.summary_with_percentages(scam_records))
+
+
+if __name__ == "__main__":
+    run_all_tests()
+    run_demo()
