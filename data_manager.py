@@ -27,12 +27,6 @@ RECORD_SCHEMA: dict[str, type | tuple[type, ...]] = {
 
 VALID_RISK_LEVELS = ("HIGH", "MEDIUM", "LOW")
 
-# Old key names found in earlier records -> the agreed schema name
-OLD_KEY_NAMES = {
-    "time_stamp": "timestamp",
-    "scam_probability (%)": "scam_probability",
-}
-
 # Default value used when a field is missing from an old/broken record
 FIELD_DEFAULTS = {
     "message_id": 0,
