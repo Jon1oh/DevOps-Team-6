@@ -76,6 +76,11 @@ def get_country_name(country_code: str) -> str:
     return COUNTRY_CODES.get(country_code, "Unknown")
 
 
+def get_country_label(country_code: str) -> str:
+    """Return the code with its country name, e.g. "+65" -> "+65 (Singapore)"."""
+    return f"{country_code} ({get_country_name(country_code)})"
+
+
 def standardize_record(record: dict) -> dict:
     """Return a copy of `record` that follows the agreed schema.
 
@@ -346,4 +351,9 @@ def summary_with_percentages(records: list[dict]) -> dict:
     summary["origin_country_percentage"] = calculate_percentage(summary["origin_country_breakdown"])
     summary["most_common_scam_percentage"] = get_most_common_scam_type(records)
     summary["most_common_origin"] = get_most_common_origin(records)
+
+    # Country names for display, e.g. {"+65": "+65 (Singapore)"}
+    summary["origin_country_labels"] = {}
+    for country_code in summary["origin_country_breakdown"]:
+        summary["origin_country_labels"][country_code] = get_country_label(country_code)
     return summary

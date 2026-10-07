@@ -200,6 +200,19 @@ def test_save_assigns_message_ids_in_order() -> None:
     assert ids == [1, 2]                     # no duplicates
 
 
+# ---------- country name ----------
+
+def test_country_label() -> None:
+    assert dm.get_country_label("+65") == "+65 (Singapore)"
+    assert dm.get_country_label("+999") == "+999 (Unknown)"
+
+
+def test_summary_has_country_labels() -> None:
+    records = [{"risk_level": "HIGH", "scam_type": "Phishing", "country_code": "+44"}]
+    summary = dm.summary_with_percentages(records)
+    assert summary["origin_country_labels"] == {"+44": "+44 (United Kingdom)"}
+
+
 # ---------- count_risk_levels ----------
 
 def test_count_risk_levels_for_one_number() -> None:
@@ -225,7 +238,7 @@ def print_all_records(records: list[dict]) -> None:
         print("========================================")
         print(f"Time stamp       : {record['timestamp']}")
         print(f"Phone Number     : {record['phone_number']}")
-        print(f"Country Code     : {record['country_code']}")
+        print(f"Country          : {dm.get_country_label(record['country_code'])}")
         print(f"Risk Level       : {record['risk_level']}")
         print(f"Scam Probability : {record['scam_probability']}%")
         print(f"Scam Type        : {record['scam_type']}")
@@ -260,7 +273,8 @@ def print_message_summary(summary: dict) -> None:
     print("------------------------------")
     for country_code, count in summary["origin_country_breakdown"].items():
         percent = summary["origin_country_percentage"].get(country_code, 0)
-        print(f"{country_code}: {count} ({percent}%)")
+        label = summary["origin_country_labels"][country_code]
+        print(f"{label}: {count} ({percent}%)")
 
     print()
     print("Most Common type of Scam")
