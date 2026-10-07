@@ -5,8 +5,11 @@
 #   2. Demo             - prints the summary of the real scam_data.json so we can see it
 #
 # Run with either:
-#   python test_data_manager.py                 (runs the tests, then shows the demo)
-#   python -m pytest test_data_manager.py -v    (runs the tests only)
+#   python3 test_data_manager.py                 (runs the tests, then shows the demo)
+#   python3 -m pytest test_data_manager.py -v    (runs the tests only)
+#
+# Plain functions only (no classes - project is 100% procedural).
+# The tests use temporary files, so the real scam_data.json is never changed.
 
 import json
 import os
@@ -179,6 +182,19 @@ def test_invalid_record_is_not_saved() -> None:
     ok, _error = dm.save_record(bad)
     assert ok is False
     assert dm.load_records() == []
+
+
+# ---------- count_risk_levels ----------
+
+def test_count_risk_levels_for_one_number() -> None:
+    records = [
+        {"phone_number": "+6591234567", "risk_level": "HIGH"},
+        {"phone_number": "+6591234567", "risk_level": "LOW"},
+        {"phone_number": "+6500000000", "risk_level": "HIGH"},
+    ]
+    use_temp_file(json.dumps(records))
+    assert dm.count_risk_levels("+6591234567") == {"HIGH": 1, "MEDIUM": 0, "LOW": 1}
+    assert dm.count_risk_levels("+6599999999") == {"HIGH": 0, "MEDIUM": 0, "LOW": 0}
 
 
 # =====================================================================
