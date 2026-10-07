@@ -30,7 +30,7 @@ while True:
                         #if query ai fail give choice to 
                         
             else: # when the AI model returns a valid JSON object
-                is_valid_ai_output = logic_manager.check_ai_output_fields(ai_output)
+                is_valid_ai_output = logic_manager.check_ai_output(ai_output)
                 if is_valid_ai_output:
                     print(f"AI analysis completed. Here is the output:\n")
                     
