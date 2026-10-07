@@ -99,9 +99,11 @@ def check_ai_output(ai_output):
 # Our Backup AI will return scam_type with an underscore ("_") instead of spacing
 # Function will remove that underscore and capitalize the first letter of each word for display
 def format_scam_type(ai_output):
-    scam_type = ai_output["scam_type"].replace("_", " ").split() # Replaces underscore (_) with a space and splits it
-    scam_type = " ".join([word.capitalize() for word in scam_type]) # Changes the first letter of each word to Uppercase and joins them together
-    ai_output["scam_type"] = scam_type
+    if "_" in ai_output["scam_type"]: # for backup AI output
+        scam_type = ai_output["scam_type"].replace("_", " ").split() # Replaces underscore (_) with a space and splits it
+        ai_output["scam_type"] = scam_type.title() # capitalize the first letter of each word
+    else: # for AI API output
+        ai_output["scam_type"] = ai_output["scam_type"].title()
     return ai_output
 
 # Ensure data in all fields are in the correct format.
