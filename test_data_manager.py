@@ -119,13 +119,10 @@ def test_probability_out_of_range_fails() -> None:
     assert dm.validate_record(record)[0] is False
 
 
-def test_standardize_renames_old_keys() -> None:
-    old = {"time_stamp": "2026-10-02", "scam_probability (%)": 80, "risk_level": "High"}
-    fixed = dm.standardize_record(old)
-    assert fixed["timestamp"] == "2026-10-02"
-    assert fixed["scam_probability"] == 80
+def test_standardize_uppercases_risk_level() -> None:
+    fixed = dm.standardize_record({"risk_level": "High", "phone_number": "+6591234567"})
     assert fixed["risk_level"] == "HIGH"
-    assert "time_stamp" not in fixed
+    assert fixed["country_code"] == "+65"
 
 
 def test_country_code_from_phone() -> None:

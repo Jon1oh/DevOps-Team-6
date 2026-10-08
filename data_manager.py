@@ -78,14 +78,11 @@ def get_country_label(country_code: str) -> str:
 def standardize_record(record: dict) -> dict:
     """Return a copy of `record` that follows the agreed schema.
 
-    - renames old keys (e.g. "time_stamp" -> "timestamp")
     - fills in country_code from the phone number if it is missing
     - upper-cases risk_level ("High" -> "HIGH")
     - fills any still-missing field with a safe default
     """
-    fixed: dict = {}
-    for key, value in record.items():
-        fixed[OLD_KEY_NAMES.get(key, key)] = value
+    fixed = dict(record)
 
     if not fixed.get("country_code"):
         fixed["country_code"] = get_country_code(fixed.get("phone_number", ""))
