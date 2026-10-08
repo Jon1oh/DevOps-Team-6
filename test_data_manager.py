@@ -5,8 +5,8 @@
 #   2. Demo             - prints the summary of the real scam_data.json so we can see it
 #
 # Run with either:
-#   python3 test_data_manager.py                 (runs the tests, then shows the demo)
-#   python3 -m pytest test_data_manager.py -v    (runs the tests only)
+#   python test_data_manager.py                 (runs the tests, then shows the demo)
+#   python -m pytest test_data_manager.py -v    (runs the tests only)
 #
 # Plain functions only (no classes - project is 100% procedural).
 # The tests use temporary files, so the real scam_data.json is never changed.
@@ -128,8 +128,22 @@ def test_standardize_uppercases_risk_level() -> None:
 def test_country_code_from_phone() -> None:
     assert dm.get_country_code("+6591234567") == "+65"
     assert dm.get_country_code("+2348012345678") == "+234"
-    assert dm.get_country_code("91234567") == "Unknown"
+    assert dm.get_country_code("+819012345678") == "+81"      # Japan - not in the old fixed list
+    assert dm.get_country_code("91234567") == "Unknown"       # no + country code
+    assert dm.get_country_code("hello") == "Unknown"
+
+
+def test_country_name_from_code() -> None:
     assert dm.get_country_name("+65") == "Singapore"
+    assert dm.get_country_name("+81") == "Japan"
+    assert dm.get_country_name("+999") == "Unknown"
+    assert dm.get_country_name("Unknown") == "Unknown"
+
+
+def test_country_name_for_number() -> None:
+    assert dm.get_country_name_for_number("+14155550123") == "United States"
+    assert dm.get_country_name_for_number("+16135550123") == "Canada"   # same +1 code
+    assert dm.get_country_name_for_number("abc") == "Unknown"
 
 
 # ---------- corrupt JSON handling ----------

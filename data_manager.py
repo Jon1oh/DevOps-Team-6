@@ -3,6 +3,9 @@
 import json
 import os
 
+import phonenumbers
+from phonenumbers import geocoder
+
 DATA_FILE = "scam_data.json"
 
 
@@ -42,32 +45,58 @@ FIELD_DEFAULTS = {
     "recommendation": "",
 }
 
-# Known calling codes -> country name (longest codes are checked first)
-COUNTRY_CODES = {
-    "+1": "USA/Canada", "+44": "United Kingdom", "+60": "Malaysia",
-    "+61": "Australia", "+62": "Indonesia", "+63": "Philippines",
-    "+65": "Singapore", "+66": "Thailand", "+84": "Vietnam",
-    "+86": "China", "+91": "India", "+234": "Nigeria", "+852": "Hong Kong",
-}
+def parse_phone_number(phone_number: str) -> phonenumbers.PhoneNumber | None:
+    """Parse a phone number in international format (e.g. "+6591234567").
+
+    Returns None if it is not text or cannot be understood.
+    """
+    if not isinstance(phone_number, str):
+        return None
+    try:
+        return phonenumbers.parse(phone_number, None)
+    except phonenumbers.NumberParseException:
+        return None
 
 
 def get_country_code(phone_number: str) -> str:
-    """Return the calling code at the start of a phone number, e.g. "+6591234567" -> "+65".
+    """Return the calling code of a phone number, e.g. "+6591234567" -> "+65".
 
-    Returns "Unknown" if the number does not start with a known code.
+    Uses the phonenumbers library, so every country code is recognised.
+    Returns "Unknown" if the number cannot be understood.
     """
-    if not isinstance(phone_number, str):
+    parsed = parse_phone_number(phone_number)
+    if parsed is None:
         return "Unknown"
-    number = phone_number.replace(" ", "")
-    for code in sorted(COUNTRY_CODES, key=len, reverse=True):
-        if number.startswith(code):
-            return code
-    return "Unknown"
+    return f"+{parsed.country_code}"
 
 
 def get_country_name(country_code: str) -> str:
-    """Convert a calling code to a country name, e.g. "+65" -> "Singapore"."""
-    return COUNTRY_CODES.get(country_code, "Unknown")
+    """Convert a calling code to its main country name, e.g. "+65" -> "Singapore".
+
+    Some codes are shared by several countries (e.g. "+1" is the USA, Canada and
+    others); this returns the main one. Returns "Unknown" if the code is not real.
+    """
+    if not isinstance(country_code, str) or not country_code.lstrip("+").isdigit():
+        return "Unknown"
+    region = phonenumbers.region_code_for_country_code(int(country_code.lstrip("+")))
+    example = phonenumbers.example_number(region)
+    if example is None:
+        return "Unknown"
+    return geocoder.country_name_for_number(example, "en") or "Unknown"
+
+
+def get_country_name_for_number(phone_number: str) -> str:
+    """Return the country a specific phone number is from, e.g. "+16135550123" -> "Canada".
+
+    More precise than get_country_name() for shared codes like "+1".
+    """
+    parsed = parse_phone_number(phone_number)
+    if parsed is None:
+        return "Unknown"
+    name = geocoder.country_name_for_number(parsed, "en")
+    if name:
+        return name
+    return get_country_name(f"+{parsed.country_code}")
 
 
 def get_country_label(country_code: str) -> str:
