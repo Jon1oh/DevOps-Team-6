@@ -14,6 +14,7 @@ while True:
             verifiedInputdata =  io_manager.inputData_verify() # prompt user for message content and phone number
             message = verifiedInputdata[0]
             phone_number_with_country_code = verifiedInputdata[1]
+            final_ai_output = None
 
             # pass user message and phone number to API first
             ai_output = ai_manager.analyse_message(message, phone_number_with_country_code) # pass message content and phone number to ai_manager
@@ -26,25 +27,29 @@ while True:
                         print("Exiting Program")
                         break
                     case 1:
-                        print(ai_output)
+                        # print(ai_output)
+                        
+                        # Call fallback AI bot
                         phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
-                        fallback_ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
-                        print(fallback_ai_output)
+                        final_ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
+                        print(final_ai_output)
                         
             else: # when the AI model returns a valid JSON object
                 is_valid_ai_output = logic_manager.check_ai_output(ai_output)
                 if is_valid_ai_output:
-                    print(f"AI analysis completed. Here is the output:\n")
-                    
-                    # format and display formatted AI analysis output of message and write to DB
-                    formatted_ai_output = logic_manager.format_ai_output(ai_output)
-                    
-                    # check if number was flagged out in a High Risk Incident before
-                    flagged_number_records = data_manager.count_risk_levels(formatted_ai_output["phone_number"])
-                    formatted_ai_output = logic_manager.escalate_flagged_number(ai_output, flagged_number_records)
-                    
-                    if logic_manager.validate_scam_indicators(formatted_ai_output):
-                        io_manager.display_message_analysis(formatted_ai_output)
-                        # TODO call db_manager to store the ai output in DB
+                    print(f"AI analysis completed. Here is the output:\n")                    
+                    final_ai_output= logic_manager.format_ai_output(ai_output) # format AI output
+                                        
                 else:
                     print("One of the fields in the AI output is invalid.")
+
+            
+            # after getting the JSON object from the Gemini/Custom AI API
+            if final_ai_output:
+                flagged_number_records = data_manager.count_risk_levels(final_ai_output["phone_number"])
+                final_ai_output = logic_manager.escalate_flagged_number(final_ai_output, flagged_number_records)
+                
+                if logic_manager.validate_scam_indicators(final_ai_output):
+                    io_manager.display_message_analysis(final_ai_output) # display analysis results for the message
+                    # TODO: Write JSON object to DB
+                
