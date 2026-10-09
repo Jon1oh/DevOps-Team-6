@@ -39,15 +39,19 @@ def check_country_code_in_phone_number(ai_output):
     
     if phone_number.startswith(country_code):
         ai_output["phone_number"] = phone_number[len(country_code):] # Ensure phone_number does not contain country code
-        
-    if not country_code.strip(): # if country code is "", extract it from phone_number
-        try:
-            parsed_number = phonenumbers.parse(phone_number)
-            ai_output["country_code"] = f"+{parsed_number.country_code}"
-        except phonenumbers.NumberParseException:
-            return ai_output
-    
+            
     return ai_output
+
+
+def split_country_code_phone_number(phone_number):
+    try:
+        parsed_number = phonenumbers.parse(phone_number)
+        country_code = f"+{parsed_number.country_code}"
+        local_number = str(parsed_number.national_number)
+        return local_number, country_code
+
+    except phonenumbers.NumberParseException:
+        return phone_number, ""
 
 
 # check scam indicators based on risk level of the analyzed message
