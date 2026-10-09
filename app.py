@@ -1,4 +1,4 @@
-import io_manager, ai_manager, logic_manager, data_manager, fallback_ai
+import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallback_ai as fallback_ai
 
 # main loop of program
 while True:

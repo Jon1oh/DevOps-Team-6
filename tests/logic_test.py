@@ -1,5 +1,5 @@
 import pytest
-import logic_manager as lm
+import managers.logic_manager as lm
 
 # Setting up our environment - ai_output() will be ran for every function that needs it and will be reset once the function ends
 @pytest.fixture
