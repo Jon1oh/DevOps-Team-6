@@ -25,9 +25,10 @@ while True:
                         break
                     case 1:
                         print(ai_output)
-                        #call the backup ai with the queryoutput as
-                        #call the AI_MANAGER
-                        #if query ai fail give choice to 
+                        
+                        # call the backup ai with the queryoutput as
+                        # call the AI_MANAGER
+                        # if query ai fail give choice to 
                         
             else: # when the AI model returns a valid JSON object
                 is_valid_ai_output = logic_manager.check_ai_output(ai_output)
