@@ -28,10 +28,8 @@ while True:
                     case 1:
                         print(ai_output)
                         phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
-                        fallback_ai.analyse_message(message, phone_number, country_code)
-                        # call the backup ai with the queryoutput as
-                        # call the AI_MANAGER
-                        # if query ai fail give choice to 
+                        fallback_ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
+                        print(fallback_ai_output)
                         
             else: # when the AI model returns a valid JSON object
                 is_valid_ai_output = logic_manager.check_ai_output(ai_output)
