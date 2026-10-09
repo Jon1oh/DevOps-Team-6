@@ -312,7 +312,10 @@ def analyse_message(message, phone_number, country_code):
                 f"got {type(result[field]).__name__}"
             )
 
-    return result
+    if result:
+        return json.dump(result, indent=4, ensure_ascii=False)
+    else:
+        print("There was an error getting the result")
 
 
 # ============================================================
