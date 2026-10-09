@@ -248,11 +248,8 @@ def analyse_message(message, phone_number, country_code):
 
     # STEP 1: HAM / SPAM MODEL
     message_vector = spam_vectorizer.transform([message])
-
     prediction = spam_model.predict(message_vector)[0]
-
     probabilities = spam_model.predict_proba(message_vector)[0]
-
     class_probabilities = dict(
         zip(spam_model.classes_, probabilities)
     )
@@ -266,11 +263,7 @@ def analyse_message(message, phone_number, country_code):
     # STEP 3: SCAM TYPE
     if prediction == "spam":
         scam_vector = scam_vectorizer.transform([message])
-
-        scam_prediction = scam_type_model.predict(
-            scam_vector
-        )[0]
-
+        scam_prediction = scam_type_model.predict(scam_vector)[0]
         scam_type = str(scam_prediction)
     else:
         scam_type = "Not a Scam"
@@ -309,7 +302,6 @@ def analyse_message(message, phone_number, country_code):
 
     # STEP 8: VALIDATE REQUIRED FIELDS AND TYPES
     for field, expected_type in required_fields.items():
-
         if field not in result:
             raise ValueError(f"Missing required field: {field}")
 

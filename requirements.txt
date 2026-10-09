@@ -1,2 +1,4 @@
-google-genai # install using the command pip install -q -U google-genai
-python-dotenv
+google-genai==2.25.0 # install using the command pip install -q -U google-genai
+python-dotenv==1.2.3
+joblib==1.6.0
+scikit-learn
