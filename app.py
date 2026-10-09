@@ -1,4 +1,4 @@
-import io_manager, ai_manager, logic_manager, data_manager
+import io_manager, ai_manager, logic_manager, data_manager, fallback_ai
 
 # main loop of program
 while True:
@@ -12,9 +12,11 @@ while True:
             print("case 2")
         case 1:
             verifiedInputdata =  io_manager.inputData_verify() # prompt user for message content and phone number
-            print("query ai now")
-            ai_output = ai_manager.analyse_message(verifiedInputdata[0], verifiedInputdata[1]) # pass message content and phone number to ai_manager
-            # print(verifiedInputdata) # the message content and phone number in a list from io_manager
+            message = verifiedInputdata[0]
+            phone_number_with_country_code = verifiedInputdata[1]
+
+            # pass user message and phone number to API first
+            ai_output = ai_manager.analyse_message(message, phone_number_with_country_code) # pass message content and phone number to ai_manager
             
             # check the ai output from the model
             if ai_output == False: # call backup AI bot when the AI model API fails
@@ -25,7 +27,8 @@ while True:
                         break
                     case 1:
                         print(ai_output)
-                        
+                        phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
+                        fallback_ai.analyse_message(message, phone_number, country_code)
                         # call the backup ai with the queryoutput as
                         # call the AI_MANAGER
                         # if query ai fail give choice to 
