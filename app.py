@@ -29,8 +29,9 @@ while True:
                             print("Exiting Program")
                             break
                         case 1:
-                            print(mainAIoutput)
-                            #call the backup ai with the queryoutput as
-                            #call the AI_MANAGER
-                            #if query ai fail give choice to 
+                            print(mainAIoutput) 
+                            # store message, phone number and country code in separate variables to pass backup ai                                                  
+                            # call the backup ai with the queryoutput as
+                            # call the AI_MANAGER
+                            # if query ai fail give choice to 
                         

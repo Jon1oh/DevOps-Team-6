@@ -36,7 +36,6 @@ def is_meaningful_message(message):
 # function to get query ai inputs
 def inputData_verify():
     while True:
-        messageSource = []
         # variable holds the content of the message
         messageContents = input("Insert message content (or 'menu' to return to main menu):\n")
         # if statement to check if the string is empty or if the string is just a digit
