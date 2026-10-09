@@ -124,8 +124,6 @@ def build_prompt(message, source):
     }}
     - Do not include markdown, code blocks, or any text outside the JSON object.
     """
-    
-    # * message_id field will be added when writing to database.
     return prompt    
     
 
