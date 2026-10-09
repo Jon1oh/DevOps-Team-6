@@ -1,3 +1,5 @@
+import phonenumbers
+
 # Determine risk_level value based on scam_probability number
 def calculate_risk_level(probability):
     if probability >= 80:
@@ -29,14 +31,21 @@ def escalate_flagged_number(ai_output, records):
     return ai_output
 
 
-# check if phone_number field from AI output still contains a country code. If yes, remove it and only keep the number. Else, return the number. 
-# There is no spacing between the country code and number
+# check if phone_number field from AI output still contains a country code. If yes, remove it and only keep the number. Else, return the number. There is no spacing between the country code and number
+# check if the country_code field is an empty string or not. If yes, extract the country code from the phone number
 def check_country_code_in_phone_number(ai_output):
     phone_number = ai_output["phone_number"]
     country_code = ai_output["country_code"]
     
     if phone_number.startswith(country_code):
         ai_output["phone_number"] = phone_number[len(country_code):] # Ensure phone_number does not contain country code
+        
+    if not country_code.strip(): # if country code is "", extract it from phone_number
+        try:
+            parsed_number = phonenumbers.parse(phone_number)
+            ai_output["country_code"] = f"+{parsed_number.country_code}"
+        except phonenumbers.NumberParseException:
+            return ai_output
     
     return ai_output
 
