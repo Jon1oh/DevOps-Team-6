@@ -313,6 +313,7 @@ def run_demo() -> None:
     """Load the real scam_data.json and print its summary (read-only)."""
     dm.DATA_FILE = REAL_DATA_FILE
     scam_records = dm.load_records()
+    print(scam_records)
     # print_all_records(scam_records)    # uncomment to see every record
     print_message_summary(dm.summary_with_percentages(scam_records))
 
