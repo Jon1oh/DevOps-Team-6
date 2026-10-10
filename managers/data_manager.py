@@ -3,7 +3,7 @@
 import json, os, phonenumbers
 from phonenumbers import geocoder
 
-DATA_FILE = "scam_data.json"
+DATA_FILE = "./data/scam_data.json"
 
 # =====================================================================
 # Record schema (matches json_schema.md)

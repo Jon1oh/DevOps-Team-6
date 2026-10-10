@@ -3,7 +3,7 @@ import joblib
 import re
 import json
 
-MODEL_FILE = "scam_detection_model.pkl"
+MODEL_FILE = "./models/scam_detection_model.pkl"
 
 
 # ============================================================

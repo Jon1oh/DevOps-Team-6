@@ -10,6 +10,7 @@ while True:
         case 2:
             # call the message summary function
             print("case 2")
+            data_manager.load_records()
         case 1:
             verifiedInputdata =  io_manager.inputData_verify() # prompt user for message content and phone number
             message = verifiedInputdata[0]
@@ -52,4 +53,7 @@ while True:
                 if logic_manager.validate_scam_indicators(final_ai_output):
                     io_manager.display_message_analysis(final_ai_output) # display analysis results for the message
                     # TODO: Write JSON object to DB
+                    
+                    data_manager.save_record(final_ai_output)
+                    print("record saved")    
                 
