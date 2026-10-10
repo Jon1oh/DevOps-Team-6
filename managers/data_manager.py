@@ -1,6 +1,6 @@
 #Read and write json format data
 
-import json, os, phonenumbers, tempfile, io_manager as IOManagerFile
+import json, os, phonenumbers, tempfile, managers.io_manager as IOManagerFile
 from phonenumbers import geocoder
 
 DATA_FILE = "./data/scam_data.json"

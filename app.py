@@ -10,7 +10,9 @@ while True:
         case 2:
             # call the message summary function
             print("case 2")
-            data_manager.load_records()
+            records = data_manager.load_records()
+            summary = data_manager.summary_with_percentages(records)
+            io_manager.print_message_summary(summary)
         case 1:
             verifiedInputdata =  io_manager.inputData_verify() # prompt user for message content and phone number
             message = verifiedInputdata[0]
