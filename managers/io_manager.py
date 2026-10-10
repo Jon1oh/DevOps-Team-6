@@ -141,3 +141,38 @@ def display_message_analysis(ai_output):
     print(ai_output["recommendation"])
     
     print(f"{'='*38}")
+
+# Print message summary of all scams in scam_data.json (added by Fahim)
+
+def print_message_summary(summary: dict) -> None:
+    """Print the summary returned by summary_with_percentages()."""
+    print("\n==============================")
+    print("      SCAM MESSAGE SUMMARY")
+    print("==============================\n")
+    print(f"Total messages: {summary['total_messages']}\n")
+
+    print("Risk Level Breakdown")
+    print("------------------------------")
+    for risk_level, count in summary["risk_level_breakdown"].items():
+        percent = summary["risk_level_percentage"].get(risk_level, 0)
+        print(f"{risk_level}: {count} ({percent}%)")
+
+    print()
+    print("Scam Category Breakdown")
+    print("------------------------------")
+    for scam_type, count in summary["scam_category_breakdown"].items():
+        percent = summary["scam_category_percentage"].get(scam_type, 0)
+        print(f"{scam_type}: {count} ({percent}%)")
+
+    print()
+    print("Country of Origin Breakdown")
+    print("------------------------------")
+    for country_code, count in summary["origin_country_breakdown"].items():
+        percent = summary["origin_country_percentage"].get(country_code, 0)
+        label = summary["origin_country_labels"][country_code]
+        print(f"{label}: {count} ({percent}%)")
+
+    print()
+    print("Most Common type of Scam")
+    print("------------------------------")
+    print(summary["most_common_scam"])
