@@ -45,10 +45,10 @@ def inputData_verify():
                 continue # prompt user for message input again if the message is not meaningful
             # check if the user type quit in message content 
             if messageContents.lower() == 'menu':
-                return messageContents
+                return messageContents.lower()
             verifiedPhonenumber = get_Phonenumber()
             if verifiedPhonenumber == "menu":
-                return verifiedPhonenumber
+                return verifiedPhonenumber.lower()
             elif verifiedPhonenumber != "back":
                 while True:
                     print(f"\n{'='*38}")

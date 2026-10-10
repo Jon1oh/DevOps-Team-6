@@ -1,5 +1,9 @@
 FROM python:3.14.8-slim
 WORKDIR /app
-COPY app.py scam_data.json io_manager.py logic_manager.py ai_manager.py data_manager.py fallback_ai.py requirements.txt scam_detection_model.pkl .env ./
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+COPY data/ ./data
+COPY models/ ./models
+COPY managers/ ./managers
+COPY app.py .env ./
 CMD ["python","app.py"]
