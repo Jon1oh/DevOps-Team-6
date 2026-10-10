@@ -6,7 +6,7 @@ import os, json, logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
-ai_model = "3.5-flash"
+ai_model = "3.6-flash"
     
 
 # function to get response from AI model, based on the prompt argument parsed
