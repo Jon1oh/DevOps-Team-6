@@ -313,7 +313,8 @@ def analyse_message(message, phone_number, country_code):
             )
 
     if result:
-        return json.dump(result, indent=4, ensure_ascii=False)
+        json_string = json.dump(result, indent=4, ensure_ascii=False)
+        return json.loads(json_string) # return the AI output as a JSON object / pthon dict
     else:
         print("There was an error getting the result")
 
