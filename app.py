@@ -57,5 +57,5 @@ while True:
                     # TODO: Write JSON object to DB
                     
                     data_manager.save_record(final_ai_output)
-                    print("record saved")    
+                    print("New record saved")    
                 

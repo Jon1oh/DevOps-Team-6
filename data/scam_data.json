@@ -103,5 +103,20 @@
         ],
         "explanation": "The message impersonates a bank and asks the recipient to verify their account",
         "recommendation": "Do not click the link. Contact the bank through its official website."
+    },
+    {
+        "phone_number": "98220762",
+        "country_code": "+65",
+        "message_content": "hello, see you tomorrow for lunch!",
+        "scam_probability": 12,
+        "risk_level": "LOW",
+        "scam_type": "Not a Scam",
+        "indicators": [
+            "No obvious scam indicators detected"
+        ],
+        "explanation": "The message was classified as a normal message and does not contain enough characteristics to be identified as a scam.",
+        "recommendation": "The message does not appear highly suspicious based on the current model prediction. However, remain cautious and verify unexpected requests before taking action.",
+        "message_id": 7,
+        "timestamp": "Unknown"
     }
 ]

@@ -40,7 +40,7 @@ def extract_json_object(text):
 
 # log any API failiures in a log file
 def log_error(error):
-    with open("error.log", "a") as logfile:
+    with open("./data/error.log", "a") as logfile:
         logfile.write(
             f"{datetime.now()} - API Error: {error}\n"
         )
