@@ -293,6 +293,49 @@ def print_message_summary(summary: dict) -> None:
     print(summary["most_common_scam"])
 
 
+def test_empty_main_restores_backup():
+    # Create an empty main file and a backup containing one valid record.
+    dm.use_temp_file("[]")
+
+    backup_records = [
+        {
+            "message_id": 1,
+            "timestamp": "2026-10-12 10:00:00",
+            "phone_number": "+6591234567",
+            "country_code": "+65",
+            "message_content": "You won a prize. Click this link.",
+            "scam_probability": 90,
+            "risk_level": "HIGH",
+            "scam_type": "Prize Scam",
+            "indicators": ["Unexpected prize"],
+            "explanation": "The message claims an unexpected prize.",
+            "recommendation": "Verify through official channels."
+        }
+    ]
+
+    with open(dm.BACKUP_FILE, "w", encoding="utf-8") as file:
+        json.dump(backup_records, file, indent=4)
+
+    # Trigger the recovery process.
+    records, status = dm.load_records_with_status()
+
+    # Check that the record was recovered.
+    assert len(records) == 1, f"Expected 1 record, got {len(records)}"
+    assert records[0]["message_id"] == 1
+
+    # Check that the main file was restored.
+    with open(dm.DATA_FILE, "r", encoding="utf-8") as file:
+        restored_data = json.load(file)
+
+    assert len(restored_data) == 1
+    assert restored_data[0]["message_id"] == 1
+
+    print("PASS: Empty main file was restored from backup.")
+    print("Status:", status)
+    print("Main file used:", dm.DATA_FILE)
+    print("Backup file used:", dm.BACKUP_FILE)
+
+
 def run_all_tests() -> int:
     """Run every test_ function and print PASS/FAIL. Returns the number of failures."""
     all_tests = [value for name, value in list(globals().items())
