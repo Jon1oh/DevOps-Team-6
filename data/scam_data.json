@@ -105,6 +105,7 @@
         "recommendation": "Do not click the link. Contact the bank through its official website."
     },
     {
+        "message_id": 7,
         "phone_number": "98220762",
         "country_code": "+65",
         "message_content": "hello, see you tomorrow for lunch!",
@@ -116,7 +117,6 @@
         ],
         "explanation": "The message was classified as a normal message and does not contain enough characteristics to be identified as a scam.",
         "recommendation": "The message does not appear highly suspicious based on the current model prediction. However, remain cautious and verify unexpected requests before taking action.",
-        "message_id": 7,
         "timestamp": "Unknown"
     }
 ]
