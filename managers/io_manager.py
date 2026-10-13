@@ -91,21 +91,22 @@ def get_Phonenumber():
 
 # this function is ask the user if they want to query the backup ai
 def queryAI_Backup():
-    print(f"\n{'='*38}")
-    print("Our primary AI API failed to respond in a timely manner")        
-    print("What do you want to do?:")
-    print("1. Analyse message with backup AI model")
-    print("2. Return to main menu")
-    print("3. Quit program")
-    try:
-        userInput = int(input("Please choose an option(1, 2, 3): "))
-        #check if the input is between 1-3
-        if userInput > 0 and userInput < 4:
-            return userInput
-        else:
+    while True:
+        print(f"\n{'='*38}")
+        print("Our primary AI API failed to respond in a timely manner")        
+        print("What do you want to do?:")
+        print("1. Analyse message with backup AI model")
+        print("2. Return to main menu")
+        print("3. Quit program")
+        try:
+            userInput = int(input("Please choose an option(1, 2, 3): "))
+            #check if the input is between 1-3
+            if userInput > 0 and userInput < 4:
+                return userInput
+            else:
+                print("Incorrect input try again.")
+        except ValueError:
             print("Incorrect input try again.")
-    except ValueError:
-        print("Incorrect input try again.")
     
 # display the analysis results of the message to the user after analysing it 
 def display_message_analysis(ai_output):
