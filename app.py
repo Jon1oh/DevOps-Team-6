@@ -1,6 +1,9 @@
 import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallback_ai as fallback_ai
 from datetime import datetime
 
+# loads the records upon startup
+records = data_manager.load_records()
+
 # main loop of program
 while True:
     mainMenu_choice = io_manager.mainMenu_Input() # this variable holds the verified userinput
@@ -11,7 +14,6 @@ while True:
         case 2:
             # call the message summary function
             print("case 2")
-            records = data_manager.load_records()
             summary = data_manager.summary_with_percentages(records)
             io_manager.print_message_summary(summary)
         case 1:
