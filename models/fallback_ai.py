@@ -120,9 +120,6 @@ def detect_indicators(message):
     if any(word in message_lower for word in payment_words):
         indicators.append("Requests payment or money transfer")
 
-    if len(indicators) == 0:
-        indicators.append("No obvious scam indicators detected")
-
     return indicators
 
 
@@ -295,7 +292,7 @@ def analyse_message(message, phone_number, country_code):
         "scam_probability": int(scam_probability),
         "risk_level": str(risk_level),
         "scam_type": str(scam_type),
-        "indicators": indicators,
+        "indicators": list(indicators),
         "explanation": str(explanation),
         "recommendation": str(recommendation)
     }
