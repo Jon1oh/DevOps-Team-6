@@ -37,12 +37,10 @@ while True:
                             # Call fallback AI bot
                             phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
                             ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
-                            # print(ai_output)
                             if "timestamp" not in ai_output:
                                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
                                 ai_output = {"timestamp": timestamp, **ai_output}
                                 final_ai_output = logic_manager.format_ai_output(ai_output)
-                            print(final_ai_output)
                             
                 else: # when the AI model returns a valid JSON object
                     is_valid_ai_output = logic_manager.check_ai_output(ai_output)
@@ -65,4 +63,6 @@ while True:
                         
                         data_manager.save_record(final_ai_output)
                         print("New record saved")    
-                    
+                
+                    else:
+                        print("\nError Occurred, Please Try Again.")
