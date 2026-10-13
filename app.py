@@ -1,5 +1,5 @@
 import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallback_ai as fallback_ai
-import datetime
+from datetime import datetime
 
 # main loop of program
 while True:
@@ -37,7 +37,8 @@ while True:
                             # Call fallback AI bot
                             phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
                             ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
-                            if ai_output["timestamp"] == "":
+                            print(ai_output)
+                            if "timestamp" not in ai_output:
                                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
                                 final_ai_output = {"timestamp": timestamp, **ai_output}
                             print(final_ai_output)
