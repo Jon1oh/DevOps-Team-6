@@ -113,7 +113,8 @@ def check_ai_output(ai_output):
 def format_scam_type(ai_output):
     if "_" in ai_output["scam_type"]: # for backup AI output
         scam_type = ai_output["scam_type"].replace("_", " ").split() # Replaces underscore (_) with a space and splits it
-        ai_output["scam_type"] = scam_type.title() # capitalize the first letter of each word
+        result = " ".join(word.capitalize() for word in scam_type)
+        ai_output["scam_type"] = result
     else: # for AI API output
         ai_output["scam_type"] = ai_output["scam_type"].title()
     return ai_output

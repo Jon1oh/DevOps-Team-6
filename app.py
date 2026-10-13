@@ -13,7 +13,7 @@ while True:
             break
         case 2:
             # call the message summary function
-            print("case 2")
+            records = data_manager.load_records()
             summary = data_manager.summary_with_percentages(records)
             io_manager.print_message_summary(summary)
         case 1:
@@ -34,15 +34,14 @@ while True:
                             print("Exiting Program")
                             break
                         case 1:
-                            # print(ai_output)
-                            
                             # Call fallback AI bot
                             phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
                             ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
-                            print(ai_output)
+                            # print(ai_output)
                             if "timestamp" not in ai_output:
                                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-                                final_ai_output = {"timestamp": timestamp, **ai_output}
+                                ai_output = {"timestamp": timestamp, **ai_output}
+                                final_ai_output = logic_manager.format_ai_output(ai_output)
                             print(final_ai_output)
                             
                 else: # when the AI model returns a valid JSON object

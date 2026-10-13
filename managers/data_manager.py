@@ -361,28 +361,6 @@ def get_next_message_id(records: list[dict]) -> int:
     return highest + 1
 
 
-# def save_record(record: dict) -> tuple[bool, str]:
-#     """Standardize, number, validate, then append one record to DATA_FILE.
-
-#     The record is always given the next free message_id, so ids never repeat.
-#     Returns (True, "") on success or (False, "reason") on failure.
-#     """
-#     records = load_records()
-#     record = standardize_record(record)
-#     record["message_id"] = get_next_message_id(records)
-
-#     is_valid, error = validate_record(record)
-#     if not is_valid:
-#         return False, error
-
-#     records.append(record)
-#     try:
-#         with open(DATA_FILE, "w", encoding="utf-8") as file:
-#             json.dump(records, file, indent=4)
-#     except OSError:
-#         return False, "Could not write to the data file."
-#     return True, ""
-
 def save_record(record: dict) -> tuple[bool, str]:
     """Standardise, number, validate, and save one record.
 
@@ -392,6 +370,10 @@ def save_record(record: dict) -> tuple[bool, str]:
     records = load_records()
     record = standardize_record(record)
     record["message_id"] = get_next_message_id(records)
+    record = {
+        "message_id": record["message_id"],
+        **{k: v for k, v in record.items() if k != "message_id"}
+    }
 
     is_valid, error = validate_record(record)
     if not is_valid:
