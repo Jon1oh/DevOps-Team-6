@@ -6,7 +6,7 @@ import os, json, logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
-ai_model = "3.5-flash"
+ai_model = "3.6-flash"
     
 
 # function to get response from AI model, based on the prompt argument parsed
@@ -40,7 +40,7 @@ def extract_json_object(text):
 
 # log any API failiures in a log file
 def log_error(error):
-    with open("error.log", "a") as logfile:
+    with open("./data/error.log", "a") as logfile:
         logfile.write(
             f"{datetime.now()} - API Error: {error}\n"
         )
@@ -124,8 +124,6 @@ def build_prompt(message, source):
     }}
     - Do not include markdown, code blocks, or any text outside the JSON object.
     """
-    
-    # * message_id field will be added when writing to database.
     return prompt    
     
 

@@ -1,4 +1,8 @@
-import io_manager, ai_manager, logic_manager, data_manager
+import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallback_ai as fallback_ai
+from datetime import datetime
+
+# loads the records upon startup
+records = data_manager.load_records()
 
 # main loop of program
 while True:
@@ -9,40 +13,56 @@ while True:
             break
         case 2:
             # call the message summary function
-            print("case 2")
+            records = data_manager.load_records()
+            summary = data_manager.summary_with_percentages(records)
+            io_manager.print_message_summary(summary)
         case 1:
             verifiedInputdata =  io_manager.inputData_verify() # prompt user for message content and phone number
-            print("query ai now")
-            ai_output = ai_manager.analyse_message(verifiedInputdata[0], verifiedInputdata[1]) # pass message content and phone number to ai_manager
-            # print(verifiedInputdata) # the message content and phone number in a list from io_manager
-            
-            # check the ai output from the model
-            if ai_output == False: # call backup AI bot when the AI model API fails
-                backupAI = io_manager.queryAI_Backup()
-                match backupAI: # match case for backup ai to see if quit, go to mainmenu or query backup
-                    case 3:
-                        print("Exiting Program")
-                        break
-                    case 1:
-                        print(ai_output)
-                        #call the backup ai with the queryoutput as
-                        #call the AI_MANAGER
-                        #if query ai fail give choice to 
+            if verifiedInputdata != "menu":
+                message = verifiedInputdata[0]
+                phone_number_with_country_code = verifiedInputdata[1]
+                final_ai_output = None
+
+                # pass user message and phone number to API first
+                ai_output = ai_manager.analyse_message(message, phone_number_with_country_code) # pass message content and phone number to ai_manager
+                
+                # check the ai output from the model
+                if ai_output == False: # call backup AI bot when the AI model API fails
+                    backupAI = io_manager.queryAI_Backup()
+                    match backupAI: # match case for backup ai to see if quit, go to mainmenu or query backup
+                        case 3:
+                            print("Exiting Program")
+                            break
+                        case 1:
+                            # Call fallback AI bot
+                            phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
+                            ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
+                            # print(ai_output)
+                            if "timestamp" not in ai_output:
+                                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
+                                ai_output = {"timestamp": timestamp, **ai_output}
+                                final_ai_output = logic_manager.format_ai_output(ai_output)
+                            print(final_ai_output)
+                            
+                else: # when the AI model returns a valid JSON object
+                    is_valid_ai_output = logic_manager.check_ai_output(ai_output)
+                    if is_valid_ai_output:
+                        print(f"AI analysis completed. Here is the output:\n")                    
+                        final_ai_output= logic_manager.format_ai_output(ai_output) # format AI output
+                                            
+                    else:
+                        print("One of the fields in the AI output is invalid.")
+
+                
+                # after getting the JSON object from the Gemini/Custom AI API
+                if final_ai_output:
+                    flagged_number_records = data_manager.count_risk_levels(final_ai_output["phone_number"])
+                    final_ai_output = logic_manager.escalate_flagged_number(final_ai_output, flagged_number_records)
+                    
+                    if logic_manager.validate_scam_indicators(final_ai_output):
+                        io_manager.display_message_analysis(final_ai_output) # display analysis results for the message
+                        # TODO: Write JSON object to DB
                         
-            else: # when the AI model returns a valid JSON object
-                is_valid_ai_output = logic_manager.check_ai_output_fields(ai_output)
-                if is_valid_ai_output:
-                    print(f"AI analysis completed. Here is the output:\n")
+                        data_manager.save_record(final_ai_output)
+                        print("New record saved")    
                     
-                    # format and display formatted AI analysis output of message and write to DB
-                    formatted_ai_output = logic_manager.format_ai_output(ai_output)
-                    
-                    # check if number was flagged out in a High Risk Incident before
-                    flagged_number_records = data_manager.count_risk_levels(formatted_ai_output["phone_number"])
-                    formatted_ai_output = logic_manager.escalate_flagged_number(ai_output, flagged_number_records)
-                    
-                    if logic_manager.validate_scam_indicators(formatted_ai_output):
-                        io_manager.display_message_analysis(formatted_ai_output)
-                        # TODO call db_manager to store the ai output in DB
-                else:
-                    print("One of the fields in the AI output is invalid.")

@@ -45,10 +45,10 @@ def inputData_verify():
                 continue # prompt user for message input again if the message is not meaningful
             # check if the user type quit in message content 
             if messageContents.lower() == 'menu':
-                return messageContents
+                return messageContents.lower()
             verifiedPhonenumber = get_Phonenumber()
             if verifiedPhonenumber == "menu":
-                return verifiedPhonenumber
+                return verifiedPhonenumber.lower()
             elif verifiedPhonenumber != "back":
                 while True:
                     print(f"\n{'='*38}")
@@ -91,21 +91,22 @@ def get_Phonenumber():
 
 # this function is ask the user if they want to query the backup ai
 def queryAI_Backup():
-    print(f"\n{'='*38}")
-    print("Our primary AI API failed to respond in a timely manner")        
-    print("What do you want to do?:")
-    print("1. Analyse message with backup AI model")
-    print("2. Return to main menu")
-    print("3. Quit program")
-    try:
-        userInput = int(input("Please choose an option(1, 2, 3): "))
-        #check if the input is between 1-3
-        if userInput > 0 and userInput < 4:
-            return userInput
-        else:
+    while True:
+        print(f"\n{'='*38}")
+        print("Our primary AI API failed to respond in a timely manner")        
+        print("What do you want to do?:")
+        print("1. Analyse message with backup AI model")
+        print("2. Return to main menu")
+        print("3. Quit program")
+        try:
+            userInput = int(input("Please choose an option(1, 2, 3): "))
+            #check if the input is between 1-3
+            if userInput > 0 and userInput < 4:
+                return userInput
+            else:
+                print("Incorrect input try again.")
+        except ValueError:
             print("Incorrect input try again.")
-    except ValueError:
-        print("Incorrect input try again.")
     
 # display the analysis results of the message to the user after analysing it 
 def display_message_analysis(ai_output):
@@ -139,5 +140,35 @@ def display_message_analysis(ai_output):
     # Recommendation section
     print("\nRecommendation:")
     print(ai_output["recommendation"])
-    
     print(f"{'='*38}")
+
+# Print message summary of all scams in scam_data.json (added by Fahim)
+def print_message_summary(summary: dict) -> None:
+    """Print the summary returned by summary_with_percentages()."""
+    print("\n==============================")
+    print("      SCAM MESSAGE SUMMARY")
+    print("==============================\n")
+    print(f"Total messages: {summary['total_messages']}")
+
+    print("\nRisk Level Breakdown")
+    print("------------------------------")
+    for risk_level, count in summary["risk_level_breakdown"].items():
+        percent = summary["risk_level_percentage"].get(risk_level, 0)
+        print(f"{risk_level}: {count} ({percent}%)")
+
+    print("\nScam Category Breakdown")
+    print("------------------------------")
+    for scam_type, count in summary["scam_category_breakdown"].items():
+        percent = summary["scam_category_percentage"].get(scam_type, 0)
+        print(f"{scam_type}: {count} ({percent}%)")
+
+    print("\nCountry of Origin Breakdown")
+    print("------------------------------")
+    for country_code, count in summary["origin_country_breakdown"].items():
+        percent = summary["origin_country_percentage"].get(country_code, 0)
+        label = summary["origin_country_labels"][country_code]
+        print(f"{label}: {count} ({percent}%)")
+
+    print("\nMost Common type of Scam")
+    print("------------------------------")
+    print(summary["most_common_scam"])
