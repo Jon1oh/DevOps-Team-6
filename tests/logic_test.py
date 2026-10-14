@@ -152,7 +152,7 @@ def test_check_country_code_in_phone_number(ai_output, phone_number, country_cod
         ("LOW",    ["Spam Message"], "LOW", ["Spam Message"]),
         ("HIGH",   [], "LOW", []), # HIGH or MEDIUM need to have at least 1 indicator
         ("MEDIUM", [], "LOW", []),
-        ("LOW",    [], "LOW", "NIL"), # "NIL" is assigned to empty lists when LOW
+        ("LOW",    [], "LOW", ["NIL"]), # "NIL" is assigned to empty lists when LOW
     ],
 )
 
