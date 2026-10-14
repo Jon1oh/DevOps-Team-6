@@ -338,9 +338,66 @@ def load_records_with_status() -> tuple[list[dict], str]:
     return records, ""
 
 
-# =====================================================================
-# 7. Saving records
-# =====================================================================
+
+def load_records() -> list[dict]:
+    """Load all records from DATA_FILE. Never crashes; returns [] if the file is missing or corrupt."""
+    records, _status = load_records_with_status()
+    return records
+
+def load_backup_records() -> list[dict]:
+    """NEW: Load and validate records from backup_database.json.
+
+    Invalid JSON, an unexpected root structure, and invalid records
+    are rejected or skipped.
+    """
+    try:
+        with open(BACKUP_FILE, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+        return []  
+
+    # The backup must contain a list of records.
+    if not isinstance(data, list):
+        return []
+    
+    valid_records = []
+
+    for entry in data:
+        if not isinstance(entry, dict):
+            continue
+
+        record = standardize_record(entry)
+        is_valid, _error = validate_record(record)
+
+        # Only records that pass validation can be restored.
+        if is_valid:
+            valid_records.append(record)
+
+    return valid_records
+
+def restore_from_backup(reason: str) -> tuple[list[dict], str]:
+    """NEW: Recover valid records from the backup and restore DATA_FILE."""
+    backup_records = load_backup_records()
+
+    if not backup_records:
+        return [], f"{reason} No valid backup records were available."
+
+    try:
+        write_json_atomically(DATA_FILE, backup_records)
+    except (OSError, TypeError, ValueError):
+        # Return recovered records in memory even if restoring
+        # the main file fails. The caller can still use these records.
+        return (
+            backup_records,
+            f"{reason} Recovered records in memory, but could not "
+            "restore the main data file."
+        )
+
+    return (
+        backup_records,
+        f"{reason} Restored {len(backup_records)} record(s) from backup."
+    )
+
 
 def get_next_message_id(records: list[dict]) -> int:
     """Return the next free message_id: highest existing id + 1, or 1 if there are none."""
