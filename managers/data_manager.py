@@ -3,14 +3,16 @@
 import json, os, phonenumbers, tempfile, managers.io_manager as IOManagerFile
 from phonenumbers import geocoder
 
+# =====================================================================
+# 1. Configuration: file paths, schema and defaults
+# =====================================================================
+
 DATA_FILE = "./data/scam_data.json"
 BACKUP_FILE = "./data/backup_database.json"
+# Remember the real paths so run_all_tests() and run_demo() can switch back
 REAL_DATA_FILE = DATA_FILE 
 REAL_BACKUP_FILE = BACKUP_FILE 
 
-# =====================================================================
-# Record schema (matches json_schema.md)
-# =====================================================================
 
 # Every saved record must have these keys, with these types
 RECORD_SCHEMA: dict[str, type | tuple[type, ...]] = {
@@ -43,6 +45,14 @@ FIELD_DEFAULTS = {
     "explanation": "",
     "recommendation": "",
 }
+
+# Record fields that the statistics functions in section 8 count.
+SCAM_TYPE_FIELD = "scam_type"
+ORIGIN_FIELD = "country_code"
+
+# =====================================================================
+# 2. Phone number and country helpers
+# =====================================================================
 
 def parse_phone_number(phone_number: str) -> phonenumbers.PhoneNumber | None:
     """Parse a phone number in international format (e.g. "+6591234567").
@@ -102,6 +112,9 @@ def get_country_label(country_code: str) -> str:
     """Return the code with its country name, e.g. "+65" -> "+65 (Singapore)"."""
     return f"{country_code} ({get_country_name(country_code)})"
 
+# =====================================================================
+# 3. Record standardising and validation
+# =====================================================================
 
 def standardize_record(record: dict) -> dict:
     """Return a copy of `record` that follows the agreed schema.
@@ -149,7 +162,7 @@ def validate_record(record: dict) -> tuple[bool, str]:
 
 
 # =====================================================================
-# Loading and saving (with corrupt-file handling)
+# 4. Safe file writing
 # =====================================================================
 
 def write_json_atomically(file_path: str, records: list[dict]) -> None:
@@ -161,11 +174,11 @@ def write_json_atomically(file_path: str, records: list[dict]) -> None:
     directory = os.path.dirname(os.path.abspath(file_path))
     temp_path = ""
 
-     # NEW: Create the destination directory if it does not exist.
+     # Create the destination directory if it does not exist.
     os.makedirs(directory, exist_ok=True)
 
     try:
-        # NEW: Create the temporary file in the same directory.
+        # Create the temporary file in the same directory.
         file_descriptor, temp_path = tempfile.mkstemp(
             dir=directory,
             suffix=".tmp"
@@ -178,14 +191,18 @@ def write_json_atomically(file_path: str, records: list[dict]) -> None:
             file.flush()
             os.fsync(file.fileno())
 
-        # NEW: Replace the target only after the temporary write succeeds.
+        # Replace the target only after the temporary write succeeds.
         os.replace(temp_path, file_path)
         temp_path = ""
 
     finally:
-        # NEW: Clean up a temporary file left by a failed operation.
+        # Clean up a temporary file left by a failed operation.
         if temp_path and os.path.exists(temp_path):
             os.remove(temp_path)   
+
+# =====================================================================
+# 5. Backup and recovery
+# =====================================================================
 
 def backup_corrupt_file() -> str:
     """Rename a corrupt DATA_FILE so its contents are not overwritten.
@@ -199,36 +216,69 @@ def backup_corrupt_file() -> str:
         return ""
     return backup_name
 
+def load_backup_records() -> list[dict]:
+    """NEW: Load and validate records from backup_database.json.
 
-# def load_records_with_status() -> tuple[list[dict], str]:
-#     """Load records and also return a status message for io_manager to display.
+    Invalid JSON, an unexpected root structure, and invalid records
+    are rejected or skipped.
+    """
+    try:
+        with open(BACKUP_FILE, "r", encoding="utf-8") as file:
+            data = json.load(file)
+    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+        return []  
 
-#     Status is "" when everything loaded normally.
-#     """
-#     try:
-#         with open(DATA_FILE, "r", encoding="utf-8") as file:
-#             data = json.load(file)
-#     except FileNotFoundError:
-#         return [], "No saved records yet - starting fresh."
-#     except (json.JSONDecodeError, UnicodeDecodeError):
-#         backup = backup_corrupt_file()
-#         return [], f"Data file was corrupt. Backed up to {backup} and started fresh."
+    # The backup must contain a list of records.
+    if not isinstance(data, list):
+        return []
+    
+    valid_records = []
 
-#     if not isinstance(data, list):
-#         backup = backup_corrupt_file()
-#         return [], f"Data file had the wrong format. Backed up to {backup} and started fresh."
+    for entry in data:
+        if not isinstance(entry, dict):
+            continue
 
-#     records: list[dict] = []
-#     skipped = 0
-#     for entry in data:
-#         if isinstance(entry, dict):
-#             records.append(standardize_record(entry))
-#         else:
-#             skipped += 1
+        record = standardize_record(entry)
+        is_valid, _error = validate_record(record)
 
-#     if skipped > 0:
-#         return records, f"Skipped {skipped} corrupt record(s)."
-#     return records, ""
+        # Only records that pass validation can be restored.
+        if is_valid:
+            valid_records.append(record)
+
+    return valid_records
+
+def restore_from_backup(reason: str) -> tuple[list[dict], str]:
+    """NEW: Recover valid records from the backup and restore DATA_FILE."""
+    backup_records = load_backup_records()
+
+    if not backup_records:
+        return [], f"{reason} No valid backup records were available."
+
+    try:
+        write_json_atomically(DATA_FILE, backup_records)
+    except (OSError, TypeError, ValueError):
+        # Return recovered records in memory even if restoring
+        # the main file fails. The caller can still use these records.
+        return (
+            backup_records,
+            f"{reason} Recovered records in memory, but could not "
+            "restore the main data file."
+        )
+
+    return (
+        backup_records,
+        f"{reason} Restored {len(backup_records)} record(s) from backup."
+    )
+
+
+# =====================================================================
+# 6. Loading records
+# =====================================================================
+
+def load_records() -> list[dict]:
+    """Load all records from DATA_FILE. Never crashes; returns [] if the file is missing or corrupt."""
+    records, _status = load_records_with_status()
+    return records
 
 def load_records_with_status() -> tuple[list[dict], str]:
     """Load records and return a status message for io_manager."""
@@ -237,13 +287,13 @@ def load_records_with_status() -> tuple[list[dict], str]:
             data = json.load(file)
 
     except FileNotFoundError:
-        # NEW: If the main file is missing, try the backup.
+        # If the main file is missing, try the backup.
         return restore_from_backup("Main data file was missing.")
 
     except (json.JSONDecodeError, UnicodeDecodeError):
         backup = backup_corrupt_file()
 
-        # NEW: Try recovery after preserving the corrupt main file.
+        # Try recovery after preserving the corrupt main file.
         if backup:
             reason = f"Data file was corrupt. Preserved at {backup}."
         else:
@@ -252,7 +302,7 @@ def load_records_with_status() -> tuple[list[dict], str]:
         return restore_from_backup(reason)
 
     except OSError:
-        # NEW: If the main file cannot be read, attempt backup recovery.
+        # If the main file cannot be read, attempt backup recovery.
         return restore_from_backup(
             "Could not read the main data file."
         )
@@ -260,7 +310,7 @@ def load_records_with_status() -> tuple[list[dict], str]:
     if not isinstance(data, list):
         backup = backup_corrupt_file()
 
-        # NEW: Recover if the main JSON root is not a list.
+        # Recover if the main JSON root is not a list.
         if backup:
             reason = f"Data file had the wrong format. Preserved at {backup}."
         else:
@@ -268,7 +318,7 @@ def load_records_with_status() -> tuple[list[dict], str]:
 
         return restore_from_backup(reason)
 
-    # NEW: An empty list also triggers a recovery attempt.
+    # An empty list also triggers a recovery attempt.
     if not data:
         return restore_from_backup("Main data file was empty.")
 
@@ -288,66 +338,9 @@ def load_records_with_status() -> tuple[list[dict], str]:
     return records, ""
 
 
-
-def load_records() -> list[dict]:
-    """Load all records from DATA_FILE. Never crashes; returns [] if the file is missing or corrupt."""
-    records, _status = load_records_with_status()
-    return records
-
-def load_backup_records() -> list[dict]:
-    """NEW: Load and validate records from backup_database.json.
-
-    Invalid JSON, an unexpected root structure, and invalid records
-    are rejected or skipped.
-    """
-    try:
-        with open(BACKUP_FILE, "r", encoding="utf-8") as file:
-            data = json.load(file)
-    except (OSError, json.JSONDecodeError, UnicodeDecodeError):
-        return []  
-
-    # NEW: The backup must contain a list of records.
-    if not isinstance(data, list):
-        return []
-    
-    valid_records = []
-
-    for entry in data:
-        if not isinstance(entry, dict):
-            continue
-
-        record = standardize_record(entry)
-        is_valid, _error = validate_record(record)
-
-        # NEW: Only records that pass validation can be restored.
-        if is_valid:
-            valid_records.append(record)
-
-    return valid_records
-
-def restore_from_backup(reason: str) -> tuple[list[dict], str]:
-    """NEW: Recover valid records from the backup and restore DATA_FILE."""
-    backup_records = load_backup_records()
-
-    if not backup_records:
-        return [], f"{reason} No valid backup records were available."
-
-    try:
-        write_json_atomically(DATA_FILE, backup_records)
-    except (OSError, TypeError, ValueError):
-        # NEW: Return recovered records in memory even if restoring
-        # the main file fails. The caller can still use these records.
-        return (
-            backup_records,
-            f"{reason} Recovered records in memory, but could not "
-            "restore the main data file."
-        )
-
-    return (
-        backup_records,
-        f"{reason} Restored {len(backup_records)} record(s) from backup."
-    )
-
+# =====================================================================
+# 7. Saving records
+# =====================================================================
 
 def get_next_message_id(records: list[dict]) -> int:
     """Return the next free message_id: highest existing id + 1, or 1 if there are none."""
@@ -381,13 +374,13 @@ def save_record(record: dict) -> tuple[bool, str]:
 
     records.append(record)
 
-    # NEW: Write the main file atomically before updating the backup.
+    # Write the main file atomically before updating the backup.
     try:
         write_json_atomically(DATA_FILE, records)
     except (OSError, TypeError, ValueError):
         return False, "Could not write to the data file."
 
-    # NEW: Update the backup only after the main-file write succeeds.
+    # Update the backup only after the main-file write succeeds.
     try:
         write_json_atomically(BACKUP_FILE, records)
     except (OSError, TypeError, ValueError):
@@ -404,7 +397,7 @@ def save_record(record: dict) -> tuple[bool, str]:
 
 
 # =====================================================================
-# Teammate's query and summary functions (unchanged)
+# 8. Query and summary functions
 # =====================================================================
 
 def count_risk_levels(phone_number):
@@ -460,14 +453,6 @@ def message_summary(records):
         "origin_country_breakdown": origin_country_breakdown,
         "most_common_scam": most_common_scam
     }
-
-
-# =====================================================================
-# Kelvin's section: percentage and most-common functions
-# =====================================================================
-
-SCAM_TYPE_FIELD = "scam_type"
-ORIGIN_FIELD = "country_code"
 
 
 def count_field(records: list[dict], field: str) -> dict[str, int]:
@@ -537,11 +522,6 @@ def summary_with_percentages(records: list[dict]) -> dict:
     summary["most_common_scam_percentage"] =  get_most_common_scam_type(records)
     summary["most_common_origin"] = get_most_common_origin(records)
 
-    # summary["most_common_scam"] = (
-    #     summary["most_common_scam_percentage"][0]
-    #     if summary["most_common_scam_percentage"] is not None
-    #     else "Unknown"
-    # )
     most_common_scam = get_most_common_scam_type(records)
 
     summary["most_common_scam_percentage"] = most_common_scam
@@ -557,7 +537,7 @@ def summary_with_percentages(records: list[dict]) -> dict:
 
 
 # =====================================================================
-# test functions
+# 9. test and demo functions
 # =====================================================================
 
 def use_temp_file(contents: str | None) -> str:
@@ -566,7 +546,7 @@ def use_temp_file(contents: str | None) -> str:
     folder = tempfile.mkdtemp()
     path = os.path.join(folder, "scam_data.json")
 
-    # NEW: Tests must never accidentally overwrite the real backup.
+    # Tests must never accidentally overwrite the real backup.
     BACKUP_FILE = os.path.join(folder, "backup_database.json")
 
     if contents is not None:
@@ -741,7 +721,7 @@ def test_empty_main_restores_backup() -> None:
     use_temp_file("[]")
     backup_record = make_valid_record()
 
-    # NEW: Prepare a valid backup in this test's temporary directory.
+    # Prepare a valid backup in this test's temporary directory.
     write_json_atomically(BACKUP_FILE, [backup_record])
 
     records, status = load_records_with_status()
@@ -755,7 +735,7 @@ def test_corrupt_main_restores_backup() -> None:
     use_temp_file("{ invalid JSON")
     backup_record = make_valid_record()
 
-    # NEW: Prepare a valid backup in this test's temporary directory.
+    # Prepare a valid backup in this test's temporary directory.
     write_json_atomically(BACKUP_FILE, [backup_record])
 
     records, status = load_records_with_status()
@@ -771,7 +751,7 @@ def test_invalid_backup_records_are_rejected() -> None:
     invalid_record = make_valid_record()
     invalid_record["risk_level"] = "UNKNOWN"
 
-    # NEW: A record that fails validation must not be restored.
+    # A record that fails validation must not be restored.
     write_json_atomically(BACKUP_FILE, [invalid_record])
 
     assert load_backup_records() == []
@@ -790,7 +770,7 @@ def test_save_updates_main_and_backup() -> None:
     with open(BACKUP_FILE, "r", encoding="utf-8") as file:
         backup_records = json.load(file)        
 
-    # NEW: Both files should contain the saved record.
+    # Both files should contain the saved record.
     assert len(main_records) == 1
     assert main_records == backup_records
 
@@ -859,31 +839,10 @@ def run_all_tests() -> int:
                 failed += 1
     finally:
         DATA_FILE = REAL_DATA_FILE
-        BACKUP_FILE = REAL_BACKUP_FILE      # NEW: Restore the real backup path.
+        BACKUP_FILE = REAL_BACKUP_FILE      # Restore the real backup path.
 
     print(f"\n{len(all_tests) - failed}/{len(all_tests)} tests passed")
     return failed
-
-
-# def run_all_tests() -> int:
-#     global DATA_FILE, BACKUP_FILE
-
-#     """Run every test_ function and print PASS/FAIL. Returns the number of failures."""
-#     all_tests = [value for name, value in list(globals().items())
-#                  if name.startswith("test_") and callable(value)]
-#     failed = 0
-#     try:
-#         for test in all_tests:
-#             try:
-#                 test()
-#                 print(f"PASS  {test.__name__}")
-#             except AssertionError:
-#                 print(f"FAIL  {test.__name__}")
-#                 failed += 1
-#     finally:
-#         DATA_FILE = REAL_DATA_FILE
-#     print(f"\n{len(all_tests) - failed}/{len(all_tests)} tests passed")
-#     return failed
 
 
 def run_demo() -> None:
@@ -894,11 +853,10 @@ def run_demo() -> None:
     BACKUP_FILE = REAL_BACKUP_FILE
 
     scam_records = load_records()
-    # print(scam_records)
-    # print_all_records(scam_records)    # uncomment to see every record
+    # To display the figures, call for example:
     # IOManagerFile.print_message_summary(summary_with_percentages(scam_records))
 
-
+# Run the self-tests and then the demo when this file is run directly.
 if __name__ == "__main__":
     run_all_tests()
     run_demo()

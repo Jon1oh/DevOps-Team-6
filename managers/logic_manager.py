@@ -1,10 +1,10 @@
-import phonenumbers, random
+import phonenumbers
 
 # Determine risk_level value based on scam_probability number
-def calculate_risk_level(probability, indicators):
-    if probability >= 80 and indicators != []:
+def calculate_risk_level(probability):
+    if probability >= 80:
         return "HIGH"
-    elif probability >= 50 and indicators != []:
+    elif probability >= 50:
         return "MEDIUM"
     else:
         return "LOW"
@@ -12,18 +12,11 @@ def calculate_risk_level(probability, indicators):
 
 # Compare AI's risk level of message against our own logic of calculating risk level. In case AI gives inconsistent risk levels.
 def validate_risk_level_from_ai(ai_output):
-    expected = calculate_risk_level(ai_output["scam_probability"], ai_output["indicators"])
+    expected = calculate_risk_level(ai_output["scam_probability"])
     
     if ai_output["risk_level"] != expected:
         ai_output["risk_level"] = expected # Ensure risk_level is one of the expected values
         
-    return ai_output
-
-
-def validate_scam_probability(ai_output):
-    if ai_output["risk_level"] == "LOW" and ai_output["scam_probability"] > 49: # when the risk is LOW but the scam probability >= 50
-        ai_output["scam_probability"] = random.randint(0, 49) # assign scam_probability within allowed range
-    
     return ai_output
 
 
@@ -63,9 +56,9 @@ def split_country_code_phone_number(phone_number):
 # check scam indicators based on risk level of the analyzed message
 def validate_scam_indicators(ai_output):
     if ai_output["risk_level"] in ["HIGH", "MEDIUM"]:
-        if len(ai_output["indicators"]) == 0 and ai_output["scam_probability"] >= 50: # when the analyzed message is potentially a scam but there aren't any indicators
-            ai_output = validate_risk_level_from_ai(ai_output)
-    elif len(ai_output["indicators"]) == 0 and ai_output["risk_level"] == "LOW": # when the risk_level is LOW, the indicators list can be empty
+        if len(ai_output["indicators"]) == 0: # when the analyzed message is potentially a scam but there aren't any indicators
+            return False
+    elif len(ai_output["indicators"]) == 0 : # when the risk_level is LOW, the indicators list can be empty
         ai_output["indicators"] = "NIL" # assign a readable value to indicators if risk_level is low and list is empty
     
     return ai_output
