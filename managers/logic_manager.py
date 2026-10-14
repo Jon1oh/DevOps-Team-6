@@ -66,7 +66,7 @@ def validate_scam_indicators(ai_output):
         if len(ai_output["indicators"]) == 0 and ai_output["scam_probability"] >= 50: # when the analyzed message is potentially a scam but there aren't any indicators
             ai_output = validate_risk_level_from_ai(ai_output)
     elif len(ai_output["indicators"]) == 0 and ai_output["risk_level"] == "LOW": # when the risk_level is LOW, the indicators list can be empty
-        ai_output["indicators"] = "NIL" # assign a readable value to indicators if risk_level is low and list is empty
+        ai_output["indicators"] = ["NIL"] # assign a readable value to indicators if risk_level is low and list is empty
     
     return ai_output
     

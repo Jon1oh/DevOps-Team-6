@@ -2,7 +2,9 @@ import managers.io_manager as io_manager, managers.ai_manager as ai_manager, man
 from datetime import datetime
 
 # loads the records upon startup
+print("\nLoading database...")
 records = data_manager.load_records()
+print("Database loaded successfully.")
 
 # main loop of program
 while True:
