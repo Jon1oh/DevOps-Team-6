@@ -1,6 +1,8 @@
 import pytest
 import managers.logic_manager as lm
 
+# run pytest with "pytest logic_test.py" or "python -m pytest logic_test.py"
+
 # Setting up our environment - ai_output() will be ran for every function that needs it and will be reset once the function ends
 # For testing, we will just edit and use the fixture below as a placeholder and edit the fields needed via parametrize for every test
 # This improves readability within the file, preventing any leaked states
