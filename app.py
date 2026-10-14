@@ -34,7 +34,7 @@ while True:
                             print("Exiting Program")
                             break
                         case 1:
-                            # Call fallback AI bot
+                            print("Using our In-House-Trained Custom AI Bot. It can make mistakes. Please verify important info.")
                             phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
                             ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
                             if "timestamp" not in ai_output:
@@ -58,11 +58,10 @@ while True:
                     final_ai_output = logic_manager.escalate_flagged_number(final_ai_output, flagged_number_records)
                     
                     if logic_manager.validate_scam_indicators(final_ai_output):
+                        logic_manager.validate_scam_probability(final_ai_output)
                         io_manager.display_message_analysis(final_ai_output) # display analysis results for the message
-                        # TODO: Write JSON object to DB
-                        
                         data_manager.save_record(final_ai_output)
                         print("New record saved")    
                 
                     else:
-                        print("\nError Occurred, Please Try Again.")
+                        print("\nSorry, our Custom AI bot was unable to derive an accurate analysis of your message.")
