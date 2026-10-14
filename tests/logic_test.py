@@ -28,20 +28,21 @@ def ai_output():
     return ai_output
 
 # Test Cases for - test_calculate_risk_level function (e.g., Maps probability to 90, and expected to "HIGH")
-@pytest.mark.parametrize("probability, expected", [
-    (90, "HIGH"),
-    (50, "MEDIUM"), # Boundary Test
-    (80, "HIGH"), # Boundary Test
-    (20, "LOW"),
-    (0, "LOW"),
-    (49, "LOW"),
-    (79, "MEDIUM"),
-    (100, "HIGH")
+@pytest.mark.parametrize("probability, expected, indicators", [
+    (90, "HIGH", ["Overseas phone number", "Suspicious link"]),
+    (50, "MEDIUM", ["Requests personal information"]), # Boundary Test
+    (80, "HIGH", ["Suspicious link"]), # Boundary Test
+    (20, "LOW", []),
+    (0, "LOW", ["Requests personal information"]),
+    (49, "LOW", []),
+    (79, "LOW", []), # Medium Risk with no indicators
+    (100, "LOW", []), # High Risk with no indicators
+    (100, "HIGH", ["Requests personal information"])
 ])
 
 # Verifies that Risk Level Labels are correct
-def test_calculate_risk_level(probability, expected):
-    assert lm.calculate_risk_level(probability) == expected # asserts if the statement is true
+def test_calculate_risk_level(probability, indicators, expected):
+    assert lm.calculate_risk_level(probability, indicators) == expected # asserts if the statement is true
 
 # Test Cases for - test_validate_risk_level_from_ai function
 @pytest.mark.parametrize(
@@ -142,27 +143,29 @@ def test_check_country_code_in_phone_number(ai_output, phone_number, country_cod
 
 # Test Cases for - test_validate_scam_indicators function
 @pytest.mark.parametrize (
-    "risk_level, indicators, expected_result",
+    "risk_level, indicators, expected_risk_level, expected_indicators",
     [
-        ("HIGH",   ["Suspicious links", "Requests for money"], ["Suspicious links", "Requests for money"]), # Valid Case
-        ("MEDIUM", ["Urgency or pressure tactics"],            ["Urgency or pressure tactics"]),
-        ("LOW",    ["Suspicious links"],                       ["Suspicious links"]),
-        ("HIGH",   [],                                         False), # HIGH or MEDIUM need to have at least 1 indicator
-        ("MEDIUM", [],                                         False),
-        ("LOW",    [],                                         "NIL"), # "NIL" is assigned to empty lists when LOW
+        ("HIGH",   ["Suspicious links", "Requests for money"], "HIGH", ["Suspicious links", "Requests for money"]), # Valid Case
+        ("MEDIUM", ["Urgency or pressure tactics"],            "MEDIUM", ["Urgency or pressure tactics"]),
+        ("LOW",    ["Spam Message"], "LOW", ["Spam Message"]),
+        ("HIGH",   [], "LOW", []), # HIGH or MEDIUM need to have at least 1 indicator
+        ("MEDIUM", [], "LOW", []),
+        ("LOW",    [], "LOW", "NIL"), # "NIL" is assigned to empty lists when LOW
     ],
 )
 
 # Validates if Scam Indicators was presented properly
-def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_result):
+def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_risk_level, expected_indicators):
     ai_output["risk_level"] = risk_level
     ai_output["indicators"] = indicators
     ai_output = lm.validate_scam_indicators(ai_output)
     
-    if expected_result == False:
-        assert ai_output == False
-    else:
-        assert ai_output["indicators"] == expected_result
+    # if expected_result == False:
+    #     assert ai_output == False
+    # else:
+    #     assert ai_output["indicators"] == expected_result
+    assert ai_output["risk_level"] == expected_risk_level
+    assert ai_output["indicators"] == expected_indicators
 
 # Test Cases for test_check_ai_output function
 @pytest.mark.parametrize("field, value, expected", [
