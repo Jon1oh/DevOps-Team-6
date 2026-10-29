@@ -1,7 +1,4 @@
-
-import joblib
-import re
-import json
+import joblib, re, json
 
 MODEL_FILE = "scam_detection_model.pkl"
 
