@@ -1,7 +1,12 @@
 from dotenv import load_dotenv
 from google import genai
 from datetime import datetime
+from record import Record
 import os, json, logging
+
+# hide warning messages from the Gemini SDK which uses Python's logging module
+load_dotenv()
+logging.getLogger().setLevel(logging.ERROR)
 
 class AIManager:
     def __init__(self):
@@ -157,11 +162,28 @@ class AIManager:
                 ai_output = self.extract_json_object(response)
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
             ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object        
-            print(ai_output)
-            return ai_output
+            record = Record( # store the AI output in a record object using the Record class
+                timestamp= ai_output["timestamp"],
+                phone_number = ai_output["phone_number"],
+                country_code = ai_output["country_code"],
+                message = ai_output["message_content"],
+                scam_probability = ai_output["scam_probability"],
+                scam_type = ai_output["scam_type"],
+                risk_level = ai_output["risk_level"],
+                indicators = ai_output["indicators"],
+                explanation = ai_output["explanation"],
+                recommendation = ai_output["recommendation"]
+            )
+            print(record)
+            return record
         else:
             # print(f"AI output is {type(response)}")
             return False
             # go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
             # call fallback funtion (i.e. prompt user if they want to use our own bot        
     
+
+
+# test
+ai_manager = AIManager()
+result = ai_manager.analyse_message("You have won $10000. Click here to claim.", "+6591234567")
