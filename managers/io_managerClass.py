@@ -56,7 +56,7 @@ class verifyAIInput(menu):
                     print("The message must contain meaningful text and not just solely special characters.")
                     continue # prompt user for message input again if the message is not meaningful
                 else: 
-                    self.addPayload[messageContents]
+                    self.addPayload(messageContents)
             else:
                 print("The message cannot only contain digits.")
 
