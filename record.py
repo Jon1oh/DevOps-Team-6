@@ -1,5 +1,7 @@
 class Record:
-    def __init__(self, phone_number, country_code, message, scam_probability, risk_level, scam_type, indicators, explanation, recommendation):
+    def __init__(self, record_id, timestamp, phone_number, country_code, message, scam_probability, risk_level, scam_type, indicators, explanation, recommendation):
+        self.record_id = record_id
+        self.timestamp = timestamp
         self.phone_number = phone_number
         self.country_code = country_code
         self.message = message
@@ -10,6 +12,24 @@ class Record:
         self.explanation = explanation
         self.recommendation = recommendation
         
+    # message id
+    @property
+    def record_id(self):
+        return self._record_id
+
+    @record_id.setter
+    def record_id(self, value):
+        self.record_id = value
+        
+    # timestamp
+    @property
+    def timestamp(self):
+        return self._timestamp
+
+    @timestamp.setter
+    def timestamp(self, value):
+        self.timestamp = value
+    
     # Phone Number
     @property
     def phone_number(self):
