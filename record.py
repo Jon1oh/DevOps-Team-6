@@ -1,6 +1,6 @@
 class Record:
-    def __init__(self, record_id, timestamp, phone_number, country_code, message, scam_probability, risk_level, scam_type, indicators, explanation, recommendation):
-        self.record_id = record_id
+    def __init__(self, timestamp, phone_number, country_code, message, scam_probability, risk_level, scam_type, indicators, explanation, recommendation):
+        self.record_id = None # initially assigned as None. Will be handled separately by Data Manager later
         self.timestamp = timestamp
         self.phone_number = phone_number
         self.country_code = country_code
@@ -11,6 +11,21 @@ class Record:
         self.indicators = indicators
         self.explanation = explanation
         self.recommendation = recommendation
+    
+    def __str__(self): # __str__() is called when an object using this class is printed
+        return (
+            f"Record ID: {self.record_id}\n"
+            f"Timestamp: {self.timestamp}\n"
+            f"Phone Number: {self.phone_number}\n"
+            f"Country Code: {self.country_code}\n"
+            f"Message: {self.message}\n"
+            f"Scam Probability: {self.scam_probability}%\n"
+            f"Risk Level: {self.risk_level}\n"
+            f"Scam Type: {self.scam_type}\n"
+            f"Indicators: {self.indicators}\n"
+            f"Explanation: {self.explanation}\n"
+            f"Recommendation: {self.recommendation}"
+        )        
         
     # message id
     @property
@@ -19,7 +34,7 @@ class Record:
 
     @record_id.setter
     def record_id(self, value):
-        self.record_id = value
+        self._record_id = value
         
     # timestamp
     @property
@@ -28,7 +43,7 @@ class Record:
 
     @timestamp.setter
     def timestamp(self, value):
-        self.timestamp = value
+        self._timestamp = value
     
     # Phone Number
     @property
