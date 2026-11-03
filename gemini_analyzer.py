@@ -1,19 +1,18 @@
-
 import os, json
 from datetime import datetime
 from google import genai
 from interfaces.ai_analyzer import AIAnalyzer
 
 class GeminiAIAnalyzer(AIAnalyzer):
-    def __init__(self):
+    def __init__(self, model="gemini-3.6-flash"):        
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
-        self._ai_model = "3.6-flash"
+        self._model = model
     
     # Get response from Gemini API model
     def get_ai_output(self, prompt_to_ai):
         response = self._client.models.generate_content(
-            model=f"gemini-{self._ai_model}",
-            contents=prompt_to_ai
+            model = self._model,
+            contents = prompt_to_ai
         )
         return response.text
     
@@ -23,12 +22,12 @@ class GeminiAIAnalyzer(AIAnalyzer):
         try:
             self.get_ai_output("Reply with the phrase: API IS OK.")
             return True
-        except Exception as e:
-            return e
+        except Exception:
+            return False
 
     # Retry function to get Gemini API output
     def get_ai_output_retry(self, prompt_to_ai):
-        print(f"Retrying connection to Google Gemini {self.ai_model} API once...")
+        print(f"Retrying connection to Google Gemini {self._model} API once...")
         try:
             return self.get_ai_output(prompt_to_ai)
         except Exception as error:
@@ -130,7 +129,7 @@ class GeminiAIAnalyzer(AIAnalyzer):
         
         if api_status is True:
             # print("API status is OK.")
-            print(f"Message analysis in progress using Google Gemini {self._ai_model}. This may take a few seconds... \n")     
+            print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
             
             # Use a try/except block since the 1st API call with check_api_status() doesn't guarantee a successful 2nd API call with get_ai_output()
             try:
@@ -141,8 +140,7 @@ class GeminiAIAnalyzer(AIAnalyzer):
                 response = self.get_ai_output_retry(prompt) # retry API connection once
             
         else:
-            # print("API status is not OK.")
-            print(f"{api_status.message}\n") # api_status is a ServerError object when api is unavailable
+            print("Sorry, the API is unavailable.\n") # api_status is a ServerError object when api is unavailable
             self.log_error(api_status) # * LOG
             response = self.get_ai_output_retry(prompt)
 
