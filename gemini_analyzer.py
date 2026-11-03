@@ -32,7 +32,7 @@ class GeminiAIAnalyzer(AIAnalyzer):
             return self.get_ai_output(prompt_to_ai)
         except Exception as error:
             print("The API is still unavailable.")
-            self.log_error(error) # * LOG
+            self.log_error(error)
             return error
 
     # grab only the JSON object in the AI output if there are strings before and after it
@@ -122,35 +122,30 @@ class GeminiAIAnalyzer(AIAnalyzer):
         return prompt
     
     def analyze_message(self, message, phone_number):
-        prompt = self.build_prompt(message, phone_number)
-        # prompt = "Return the phrase: My prompt for the AI." # * For simple testing purposes
-        
+        prompt = self.build_prompt(message, phone_number)        
         api_status = self.check_api_status() # Check API status before sending prompt to AI model. This is the 1st API call.
         
         if api_status is True:
-            # print("API status is OK.")
             print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
             
-            # Use a try/except block since the 1st API call with check_api_status() doesn't guarantee a successful 2nd API call with get_ai_output()
             try:
                 response = self.get_ai_output(prompt) # make 2nd API call to model to get AI output
             except Exception as error: 
                 print(f"{error.message}\n")
-                self.log_error(error) # * LOG
+                self.log_error(error)
                 response = self.get_ai_output_retry(prompt) # retry API connection once
             
         else:
             print("Sorry, the API is unavailable.\n") # api_status is a ServerError object when api is unavailable
-            self.log_error(api_status) # * LOG
+            self.log_error(api_status) 
             response = self.get_ai_output_retry(prompt)
 
-        # Check the AI Model API output
-        # if response is a JSON string, convert it to JSON object. Else, call fallback function
+        # Check the AI Model API output. If response is a JSON string, convert it to JSON object. Else, call fallback function
         if isinstance(response, str):
             try:
                 ai_output = json.loads(response)
             except json.JSONDecodeError as error:
-                self.log_error(error) # * LOG
+                self.log_error(error)
                 ai_output = self.extract_json_object(response)
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
             ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object        
