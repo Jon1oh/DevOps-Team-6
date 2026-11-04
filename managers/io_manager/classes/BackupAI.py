@@ -1,6 +1,6 @@
-from managers.io_manager.classes.menu import menu
+from managers.io_manager.classes.menu import Menu
 
-class BackupAI(menu):
+class BackupAI(Menu):
     def __init__(self):
         super().__init__()
         print(f"\n{'='*38}")
@@ -9,7 +9,7 @@ class BackupAI(menu):
         self.addMenu("1. Analyse message with backup AI model")
         self.addMenu("2. Return to main menu")
         
-    def Menuinput(self):
+    def menuInput(self):
         try:
             userInput = int(input("Please Choose a number between 1 to " + str(super().menulength)+ ": "))
             #check if the input is between 1-x where x is length of the list

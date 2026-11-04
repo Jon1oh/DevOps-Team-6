@@ -11,7 +11,8 @@ class mainMenu(menu):
     def display(self):
         print(f"\n{'='*36}\nScam Message AI Detector Main Menu\n{'='*36}")
         return super().display()
-    def Menuinput(self):
+    
+    def menuInput(self):
         while True:
             try:
                 userinput = int(input("Please Choose a number between 1 to " + str(super().menulength)+ ": "))
@@ -21,38 +22,39 @@ class mainMenu(menu):
                     print("Please input a number between 1 and " + str(super().menulength))
             except ValueError:
                 print("Incorrect input please try again")
+                
     def display_message_analysis(self, ai_output):
-            print(f"\n{'='*38}SCAM MESSAGE ANALYSIS RESULT{'='*38}\n")
-    
-            # display message based on risk level of message
-            if ai_output["risk_level"] == "HIGH" or ai_output["risk_level"] == "MEDIUM":
-                print(f"{emoji.emojize(":warning: POTENTIAL SCAM DETECTED")}\n")
-            else:
-                print(f"{emoji.emojize(":check_mark_button: MESSAGE APPEARS SAFE")}\n")
-            
-            print(f"Risk Level: {ai_output['risk_level']}")
-            print(f"Scam Probability: {ai_output['scam_probability']}")
-            print(f"Scam Type: {ai_output['scam_type']}")
-            
-            print(f"Phone number: {ai_output['phone_number']}")
-            print(f"Country code: {ai_output['country_code']}")
-            
-            # Indicators section
-            if type(ai_output["indicators"]) is list:
-                print("\nIndicators:")        
-                for i in ai_output["indicators"]:
-                    print(f"- {i}")
-            else:
-                print(f"\nIndicators: {ai_output["indicators"]}")
-            
-            # Explanation section
-            print("\nExplanation:")
-            print(ai_output["explanation"])
-            
-            # Recommendation section
-            print("\nRecommendation:")
-            print(ai_output["recommendation"])
-    print(f"{'='*38}")
+        print(f"\n{'='*38}SCAM MESSAGE ANALYSIS RESULT{'='*38}\n")
+
+        # display message based on risk level of message
+        if ai_output["risk_level"] == "HIGH" or ai_output["risk_level"] == "MEDIUM":
+            print(f"{emoji.emojize(":warning: POTENTIAL SCAM DETECTED")}\n")
+        else:
+            print(f"{emoji.emojize(":check_mark_button: MESSAGE APPEARS SAFE")}\n")
+        
+        print(f"Risk Level: {ai_output['risk_level']}")
+        print(f"Scam Probability: {ai_output['scam_probability']}")
+        print(f"Scam Type: {ai_output['scam_type']}")
+        
+        print(f"Phone number: {ai_output['phone_number']}")
+        print(f"Country code: {ai_output['country_code']}")
+        
+        # Indicators section
+        if type(ai_output["indicators"]) is list:
+            print("\nIndicators:")        
+            for i in ai_output["indicators"]:
+                print(f"- {i}")
+        else:
+            print(f"\nIndicators: {ai_output["indicators"]}")
+        
+        # Explanation section
+        print("\nExplanation:")
+        print(ai_output["explanation"])
+        
+        # Recommendation section
+        print("\nRecommendation:")
+        print(ai_output["recommendation"])
+        print(f"{'='*38}")
     
     def print_message_summary(self,summary: dict) -> None:
         """Print the summary returned by summary_with_percentages()."""

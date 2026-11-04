@@ -1,18 +1,18 @@
-from managers.io_manager.classes.menu import menu
+from managers.io_manager.classes.menu import Menu
 import re,phonenumbers
 
-class verifyAIInput(menu):
+class VerifyAIInput(Menu):
     def __init__(self):
         super().__init__()
         self.addMenu("Yes")
         self.addMenu("No")
         #this list include the payload to be sent to the AI manager
-        self.__AIinputPayload = []
+        self.__aiInputPayload = []
     
     @property
-    def AIinputPayload(self):
-        return self.__AIinputPayload
-    #this method is to add item into the payload list
+    #this method is to add item into the payload list    
+    def aiInputPayload(self):
+        return self.__aiInputPayload
     
     #this method is to get the scam message content 
     def getScamMessage(self):
@@ -55,15 +55,15 @@ class verifyAIInput(menu):
                     print("Invalid phone number try again")
     
     #this method prints the payload to allow the user to see what information they have entered
-    def DisplayPayload(self):
-        print("Message Content: " + self.__AIinputPayload[0])
-        if len(self.__AIinputPayload) == 2:
-            print("Message Source: " + self.__AIinputPayload[1])
+    def displayPayload(self):
+        print("Message Content: " + self.__aiInputPayload[0])
+        if len(self.__aiInputPayload) == 2:
+            print("Message Source: " + self.__aiInputPayload[1])
 
     #this method check asks the user to check their input
-    def Menuinput(self):
+    def menuInput(self):
         print("Is this correct?")
-        self.DisplayPayload()
+        self.displayPayload()
         self.display()
         while True:
             try:
@@ -76,7 +76,7 @@ class verifyAIInput(menu):
                 print("Incorrect input please try again")
 
     #this method check if the scam message content
-    def MeaningfulMessage(self,messagecontent):
+    def meaningfulMessage(self,messagecontent):
         words = re.findall(r"[A-Za-z]+", messagecontent)
         total_letters = sum(len(word) for word in words)
         if total_letters >= 4:
@@ -92,12 +92,12 @@ class verifyAIInput(menu):
             if phonenumberInput == "menu":
                 return None
             elif phonenumberInput == "back":
-                self.__AIinputPayload.clear()
+                self.__aiInputPayload.clear()
                 
                 continue
             else:
-                if self.Menuinput() == 2:
-                    self.__AIinputPayload.clear()
+                if self.menuInput() == 2:
+                    self.__aiInputPayload.clear()
                     continue
                 else:
-                    return self.AIinputPayload
+                    return self.aiInputPayload
