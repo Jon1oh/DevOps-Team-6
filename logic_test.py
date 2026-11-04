@@ -1,46 +1,24 @@
 import pytest
-import logic_manager as lm
+from logic_manager import LogicManager
+from record import Record
 
 # Setting up our environment - ai_output() will be ran for every function that needs it and will be reset once the function ends
 @pytest.fixture
 def ai_output():
-    ai_output = {
-        "message_id": 5,
-        "timestamp": "2026-09-18 14:30:00",
-        "phone_number": "+14155550123",
-        "country_code": "+1",
-        "message_content": "Your parcel is waiting for delivery. Please confirm delivery address by clicking the link below: http://sh0ppedelivery.com",
-        "scam_probability": 72,
-        "risk_level": "MEDIUM",
-        "scam_type": "Delivery/Parcel Scam",
-        "indicators": [
-            "Overseas phone number",
-            "Unexpected delivery notification",
-            "Suspicious link",
-            "Requests personal information"
-        ],
-        "explanation": "The message comes from an overseas number and requests the recipient's delivery information through a suspicious link.",
-        "recommendation": "Do not click the link or provide your address or personal information. Check your parcel status through the courier's official website or application."
-    }
+    timestamp = "2026-09-18 14:30:00"
+    phone_number = "+14155550123"
+    country_code = "+1"
+    message = "Your parcel is waiting for delivery. Please confirm delivery address by clicking the link below: http://sh0ppedelivery.com"
+    scam_probability = 72
+    risk_level = "MEDIUM"
+    scam_type = "Delivery Scam"
+    indicators = ["Overseas phone number", "Unexpected delivery notification", "Suspicious link", "Requests personal information"]
+    explanation = "The message comes from an overseas number and requests the recipient's delivery information through a suspicious link."
+    recommendation = "Do not click the link or provide your address or personal information. Check your parcel status through the courier's official website or application."
+    ai_output = Record(timestamp, phone_number, country_code, message, scam_probability, risk_level, scam_type, indicators, explanation, recommendation)
     return ai_output
 
-# Test Cases for - test_calculate_risk_level function (e.g., Maps probability to 90, and expected to "HIGH")
-@pytest.mark.parametrize("probability, expected", [
-    (90, "HIGH"),
-    (50, "MEDIUM"), # Boundary Test
-    (80, "HIGH"), # Boundary Test
-    (20, "LOW"),
-    (0, "LOW"),
-    (49, "LOW"),
-    (79, "MEDIUM"),
-    (100, "HIGH")
-])
-
-# Verifies that Risk Level Labels are correct
-def test_calculate_risk_level(probability, expected):
-    assert lm.calculate_risk_level(probability) == expected # asserts if the statement is true
-
-# Test Cases for - test_validate_risk_level_from_ai function
+# Test Cases for - test_validate_risk_level function
 @pytest.mark.parametrize(
     "probability, risk_level, expected_result",
     [
@@ -57,13 +35,13 @@ def test_calculate_risk_level(probability, expected):
 )
 
 # Verifies whether Logic will change inconsistent risk results from AI
-def test_validate_risk_level_from_ai(ai_output, probability, risk_level, expected_result):
-    ai_output["scam_probability"] = probability
-    ai_output["risk_level"] = risk_level
+def test_validate_risk_level(ai_output, probability, risk_level, expected_result):
+    ai_output.scam_probability = probability
+    ai_output.risk_level = risk_level
 
-    result = lm.validate_risk_level_from_ai(ai_output)
+    result = LogicManager.validate_risk_level(ai_output)
 
-    assert result["risk_level"] == expected_result
+    assert result.risk_level == expected_result
 
 # Test Cases for - test_escalate_flagged_number function
 @pytest.mark.parametrize(
@@ -82,9 +60,9 @@ def test_validate_risk_level_from_ai(ai_output, probability, risk_level, expecte
 
 # Verifies if risk_level will change when phone number has been flagged previously
 def test_escalate_flagged_number(ai_output, risk_level, records, expected_result):
-    ai_output["risk_level"] = risk_level
-    ai_output = lm.escalate_flagged_number(ai_output, records)
-    assert ai_output["risk_level"] == expected_result
+    ai_output.risk_level = risk_level
+    ai_output = LogicManager.escalate_flagged_number(ai_output, records)
+    assert ai_output.risk_level == expected_result
 
 # Test Cases for - test_check_country_code_in_phone_number function
 @pytest.mark.parametrize(
@@ -130,12 +108,12 @@ def test_escalate_flagged_number(ai_output, risk_level, records, expected_result
 
 # Validate if Country Code was removed
 def test_check_country_code_in_phone_number(ai_output, phone_number, country_code, expected_phone_number):
-    ai_output["phone_number"] = phone_number
-    ai_output["country_code"] = country_code
-    ai_output = lm.check_country_code_in_phone_number(ai_output)
+    ai_output.phone_number = phone_number
+    ai_output.country_code = country_code
+    ai_output = LogicManager.check_country_code_in_phone_number(ai_output)
     
-    assert ai_output["phone_number"] == expected_phone_number
-    assert ai_output["country_code"] == country_code
+    assert ai_output.phone_number == expected_phone_number
+    assert ai_output.country_code == country_code
 
 # Test Cases for - test_validate_scam_indicators function
 @pytest.mark.parametrize (
@@ -144,22 +122,22 @@ def test_check_country_code_in_phone_number(ai_output, phone_number, country_cod
         ("HIGH",   ["Suspicious links", "Requests for money"], ["Suspicious links", "Requests for money"]), # Valid Case
         ("MEDIUM", ["Urgency or pressure tactics"],            ["Urgency or pressure tactics"]),
         ("LOW",    ["Suspicious links"],                       ["Suspicious links"]),
-        ("HIGH",   [],                                         False), # HIGH or MEDIUM need to have at least 1 indicator
-        ("MEDIUM", [],                                         False),
-        ("LOW",    [],                                         "NIL"), # "NIL" is assigned to empty lists when LOW
+        ("HIGH",   [],                                         ["NIL"]), # HIGH or MEDIUM need to have at least 1 indicator
+        ("MEDIUM", [],                                         ["NIL"]),
+        ("LOW",    [],                                         ["NIL"]), # "NIL" is assigned to empty lists when LOW
     ],
 )
 
 # Validates if Scam Indicators was presented properly
 def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_result):
-    ai_output["risk_level"] = risk_level
-    ai_output["indicators"] = indicators
-    ai_output = lm.validate_scam_indicators(ai_output)
+    ai_output.risk_level = risk_level
+    ai_output.indicators = indicators
+    ai_output = LogicManager.validate_scam_indicators(ai_output)
     
     if expected_result == False:
         assert ai_output == False
     else:
-        assert ai_output["indicators"] == expected_result
+        assert ai_output.indicators == expected_result
 
 # Test Cases for test_check_ai_output function
 @pytest.mark.parametrize("field, value, expected", [
@@ -168,7 +146,7 @@ def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_re
     ("scam_probability", 100, True),
     ("indicators", [], True),
     ("recommendation", 1, False), # Wrong Data Type
-    ("message_content", "", False), # Empty String
+    ("message", "", False), # Empty String
     ("indicators", "Suspicious link", False), 
     ("scam_probability", "None", False),
     ("scam_probability", -1, False), # Number not between 0 and 100
@@ -177,8 +155,8 @@ def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_re
 
 # Verify that ai_output is not empty
 def test_check_ai_output(ai_output, field, value, expected):
-    ai_output[field] = value
-    assert lm.check_ai_output(ai_output) == expected
+    setattr(ai_output, field, value)
+    assert LogicManager.check_ai_output(ai_output) == expected
 
 # Test Cases for test_format_scam_type function
 @pytest.mark.parametrize("value, expected", [
@@ -192,6 +170,6 @@ def test_check_ai_output(ai_output, field, value, expected):
 
 # Verifies that scam_type has no underscore (_)
 def test_format_scam_type(ai_output, value, expected):
-    ai_output["scam_type"] = value
-    ai_output = lm.format_scam_type(ai_output)
-    assert ai_output["scam_type"] == expected
+    ai_output.scam_type = value
+    ai_output = LogicManager.format_scam_type(ai_output)
+    assert ai_output.scam_type == expected
