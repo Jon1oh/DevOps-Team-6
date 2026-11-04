@@ -5,7 +5,7 @@
  
 import pytest
  
-from scam_record import ScamRecord
+from classes.scam_record import ScamRecord
  
  
 def make_valid_dict() -> dict:
