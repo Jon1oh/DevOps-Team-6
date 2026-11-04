@@ -5,19 +5,17 @@ import phonenumbers
 class VerifyAIInput(Menu):
     def __init__(self):
         super().__init__()
+        #this list include the payload to be sent to the AI manager
         self.add_menu("Yes")
         self.add_menu("No")
-        #this list include the payload to be sent to the AI manager
         self.__ai_input_payload = []
     
-    @property    
-    def ai_input_payload(self):
-        return self.__ai_input_payload     
     #this method prints the payload to allow the user to see what information they have entered
     def _display_payload(self):
-        print("Message Content: " + self.__ai_input_payload[0])
-        if len(self.__ai_input_payload) == 2:
-            print("Message Source: " + self.__ai_input_payload[1])
+        if self.__ai_input_payload:
+            print("Message Content: " + self.__ai_input_payload[0])
+            if len(self.__ai_input_payload) == 2:
+                print("Message Source: " + self.__ai_input_payload[1])
     
     #this method is to get the scam message content 
     def _get_scam_message(self):
@@ -60,10 +58,10 @@ class VerifyAIInput(Menu):
                     print("Invalid phone number try again")
     
     #this method check asks the user to check their input
-    def menu_input(self):
+    def _menu_input(self):
         print("Is this correct?")
         self._display_payload()
-        self.display()
+        self._display()
         while True:
             try:
                 user_input = int(input("Please Choose a number between 1 to " + str(super().menulength)+ ": "))
@@ -95,7 +93,7 @@ class VerifyAIInput(Menu):
                 
                 continue
             else:
-                if self.menu_input() == 2:
+                if self._menu_input() == 2:
                     self.__ai_input_payload.clear()
                     continue
                 else:
