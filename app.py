@@ -1,5 +1,5 @@
-from managers.io_manager.classes.Menu import Menu
-from managers.io_manager.io_manager import BackupAI, VerifyAIInput
+from managers.io_manager.classes.menu import Menu
+from managers.io_manager.io_manager import BackupAI, VerifyAiInput
 import managers.ai_manager as ai_manager
 import managers.data_manager as data_manager
 import managers.logic_manager as logic_manager
@@ -107,7 +107,7 @@ class App(Menu):
                     self._print_message_summary(summary)
                 #this case will prompt the user to enter the scam message
                 case 1:
-                    get_user_ai_input = VerifyAIInput()
+                    get_user_ai_input = VerifyAiInput()
                     scam_message_payload = get_user_ai_input.check_scam_message_phone_number()
                     final_ai_output = None
                     if scam_message_payload != None:

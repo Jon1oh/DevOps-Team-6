@@ -1,7 +1,7 @@
-from managers.io_manager.classes.menu import menu
+from managers.io_manager.classes.menu import Menu
 import emoji
 
-class mainMenu(menu):
+class mainMenu(Menu):
     def __init__(self):
         super().__init__()
         self.addMenu("Check Scam Message")

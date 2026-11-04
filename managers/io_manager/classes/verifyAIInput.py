@@ -1,8 +1,8 @@
-from managers.io_manager.classes.Menu import Menu
+from managers.io_manager.classes.menu import Menu
 import re
 import phonenumbers
 
-class VerifyAIInput(Menu):
+class VerifyAiInput(Menu):
     def __init__(self):
         super().__init__()
         #this list include the payload to be sent to the AI manager
