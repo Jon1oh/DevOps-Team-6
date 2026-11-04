@@ -26,13 +26,80 @@ class DataManager:
         return None
 
     def save_record(self, data: dict) -> tuple[bool, str]:
-        pass
+        """Turn a dictionary (e.g. the final AI output) into a ScamRecord and save it.
+ 
+        The record always gets the next free message_id; any id in `data`
+        is ignored, so ids never repeat. Returns (ok, message).
+        """
+        if not isinstance(data, dict):
+            return False, "Record is not a dictionary."
+ 
+        new_data = dict(data)                      # never change the caller's dict
+        new_data["message_id"] = self._storage.next_id()
+ 
+        record, error = ScamRecord.from_dict(new_data)
+        if record is None:
+            return False, error
+ 
+        return self._storage.save(record)
 
     def count_risk_levels(self, phone_number: str) -> dict[str, int]:
-        pass
+        """Count past HIGH/MEDIUM/LOW results for one phone number.
+ 
+        e.g. {"HIGH": 2, "MEDIUM": 0, "LOW": 1}
+        """
+        counts = {"HIGH": 0, "MEDIUM": 0, "LOW": 0}
+        for record in self._storage.load():
+            if record.phone_number == phone_number:
+                counts[record.risk_level] += 1
+        return counts
 
     def summary(self, records: list[ScamRecord] | None = None) -> dict:
+        """Return the summary dictionary for io_manager.print_message_summary().
+ 
+        Uses the saved records unless a list is passed in.
+        The calculator is created only when needed, so DataManager does not
+        own it (association, not composition).
+        """
+        if records is None:
+            records = self._storage.load()
+        return ScamStatisticsCalculator().summary(records)
         pass        
+
+
+# =====================================================================
+# TEMPORARY wrappers so app.py keeps working without being edited.
+# app.py calls these four module-level functions.
+# REMOVE this whole section before submission, once app.py creates and uses a DataManager object directly.
+# =====================================================================
+
+_default_manager = DataManager(JsonRecordStorage())
+ 
+ 
+def load_records() -> list[dict]:
+    """Phase 1 style: return records as plain dictionaries."""
+    return [record.to_dict() for record in _default_manager.load_records()]
+ 
+ 
+def save_record(record: dict) -> tuple[bool, str]:
+    return _default_manager.save_record(record)
+ 
+ 
+def count_risk_levels(phone_number: str) -> dict[str, int]:
+    return _default_manager.count_risk_levels(phone_number)
+ 
+ 
+def summary_with_percentages(records: list) -> dict:
+    """Phase 1 style: accepts the dictionaries that load_records() returned."""
+    scam_records = []
+    for entry in records:
+        if isinstance(entry, ScamRecord):
+            scam_records.append(entry)
+        else:
+            record, _error = ScamRecord.from_dict(entry)
+            if record is not None:
+                scam_records.append(record)
+    return _default_manager.summary(scam_records)
 
 
 
