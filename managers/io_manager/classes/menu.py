@@ -8,7 +8,7 @@ class Menu(ABC):
     def menulength(self):
         return len(self.__menu)  
      
-    def addMenu(self,text):
+    def add_menu(self,text):
         self.__menu.append(text)
         
     def display(self):
@@ -16,5 +16,5 @@ class Menu(ABC):
             print(str(self.__menu.index(each) + 1) + ". " + each)
             
     @abstractmethod
-    def menuInput(self):
+    def menu_input(self):
         pass
