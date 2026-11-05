@@ -1,9 +1,9 @@
 import os, json
 from datetime import datetime
 from google import genai
-from interfaces.ai_analyzer import AIAnalyzer
+from interfaces.ai_analyzer import AiAnalyzer
 
-class GeminiAiAnalyzer(AIAnalyzer):
+class GeminiAiAnalyzer(AiAnalyzer):
     def __init__(self, model="gemini-3.6-flash"):        
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model

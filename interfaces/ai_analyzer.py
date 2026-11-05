@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class AIAnalyzer(ABC):
+class AiAnalyzer(ABC):
     
     @abstractmethod
     def analyze_message(self):
