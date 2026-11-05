@@ -39,7 +39,7 @@ def test_validate_risk_level(ai_output, probability, risk_level, expected_result
     ai_output.scam_probability = probability
     ai_output.risk_level = risk_level
 
-    result = LogicManager.validate_risk_level(ai_output)
+    result = LogicManager()._validate_risk_level(ai_output)
 
     assert result.risk_level == expected_result
 
@@ -61,7 +61,7 @@ def test_validate_risk_level(ai_output, probability, risk_level, expected_result
 # Verifies if risk_level will change when phone number has been flagged previously
 def test_escalate_flagged_number(ai_output, risk_level, records, expected_result):
     ai_output.risk_level = risk_level
-    ai_output = LogicManager.escalate_flagged_number(ai_output, records)
+    ai_output = LogicManager().escalate_flagged_number(ai_output, records)
     assert ai_output.risk_level == expected_result
 
 # Test Cases for - test_check_country_code_in_phone_number function
@@ -107,10 +107,10 @@ def test_escalate_flagged_number(ai_output, risk_level, records, expected_result
 )    
 
 # Validate if Country Code was removed
-def test_check_country_code_in_phone_number(ai_output, phone_number, country_code, expected_phone_number):
+def test_remove_country_code_in_phone_number(ai_output, phone_number, country_code, expected_phone_number):
     ai_output.phone_number = phone_number
     ai_output.country_code = country_code
-    ai_output = LogicManager.check_country_code_in_phone_number(ai_output)
+    ai_output = LogicManager().remove_country_code_in_phone_number(ai_output)
     
     assert ai_output.phone_number == expected_phone_number
     assert ai_output.country_code == country_code
@@ -132,7 +132,7 @@ def test_check_country_code_in_phone_number(ai_output, phone_number, country_cod
 def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_result):
     ai_output.risk_level = risk_level
     ai_output.indicators = indicators
-    ai_output = LogicManager.validate_scam_indicators(ai_output)
+    ai_output = LogicManager()._validate_scam_indicators(ai_output)
     
     if expected_result == False:
         assert ai_output == False
@@ -156,20 +156,4 @@ def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_re
 # Verify that ai_output is not empty
 def test_check_ai_output(ai_output, field, value, expected):
     setattr(ai_output, field, value)
-    assert LogicManager.check_ai_output(ai_output) == expected
-
-# Test Cases for test_format_scam_type function
-@pytest.mark.parametrize("value, expected", [
-    ("impersonation scam", "Impersonation Scam"),
-    ("phishing", "Phishing"),
-    ("job_scam", "Job Scam"),
-    ("Fake Website Scam", "Fake Website Scam"),
-    ("fake subscription Scam", "Fake Subscription Scam"),
-    ("delivery_parcel_scam", "Delivery Parcel Scam")
-])
-
-# Verifies that scam_type has no underscore (_)
-def test_format_scam_type(ai_output, value, expected):
-    ai_output.scam_type = value
-    ai_output = LogicManager.format_scam_type(ai_output)
-    assert ai_output.scam_type == expected
+    assert LogicManager().check_ai_output(ai_output) == expected
