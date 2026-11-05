@@ -16,13 +16,14 @@ class GeminiAiAnalyzer(AiAnalyzer):
         )
         return response.text
     
-    # check if Gemini API is ready for use
+    # check if Gemini API is ready for use. Called once in AiManager.get_analyzer() to determine which AI Analyzer to use
     def check_api_status(self):
         print("Checking API Status. Please wait...\n")
         try:
             self.get_ai_output("Reply with the phrase: API IS OK.")
             return True
-        except Exception:
+        except Exception as error:
+            self.log_error(error) 
             return False
 
     # Retry function to get Gemini API output
@@ -33,7 +34,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
         except Exception as error:
             print("The API is still unavailable.")
             self.log_error(error)
-            return error
+            return False
 
     # grab only the JSON object in the AI output if there are strings before and after it
     def extract_json_object(self, text):
@@ -123,36 +124,25 @@ class GeminiAiAnalyzer(AiAnalyzer):
     
     def analyze_message(self, message, phone_number):
         prompt = self.build_prompt(message, phone_number)        
-        api_status = self.check_api_status() # Check API status before sending prompt to AI model. This is the 1st API call.
-        
-        if api_status is True:
-            print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
-            
-            try:
-                response = self.get_ai_output(prompt) # make 2nd API call to model to get AI output
-            except Exception as error: 
-                print(f"{error.message}\n")
-                self.log_error(error)
-                response = self.get_ai_output_retry(prompt) # retry API connection once
-            
-        else:
-            print("Sorry, the API is unavailable.\n") # api_status is a ServerError object when api is unavailable
-            self.log_error(api_status) 
-            response = self.get_ai_output_retry(prompt)
+        print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
 
+        try:
+            response = self.get_ai_output(prompt)
+        except Exception as error:
+            print("The API is unavailable. Retrying once...")
+            self.log_error(error)
+            response = self.get_ai_output_retry(prompt) # retry once if the 2nd API call fails
+            
+        if response is False:
+            return False # return to IO manager, prompt user if they want to use our custom AI bot or return to main menu
+        
         # Check the AI Model API output. If response is a JSON string, convert it to JSON object. Else, call fallback function
-        if isinstance(response, str):
-            try:
-                ai_output = json.loads(response)
-            except json.JSONDecodeError as error:
-                self.log_error(error)
-                ai_output = self.extract_json_object(response)
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-            ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object        
-            print(ai_output)
-            return ai_output
-        else:
-            # print(f"AI output is {type(response)}")
-            return False
-            # go back to IO manager, prompt user if they want to use our custom AI bot or return to main menu
-            # call fallback funtion (i.e. prompt user if they want to use our own bot
+        try:
+            ai_output = json.loads(response)
+        except json.JSONDecodeError as error:
+            self.log_error(error)
+            ai_output = self.extract_json_object(response)
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
+        ai_output = {"timestamp": timestamp, **ai_output} # insert timestamp at the front of the JSON object        
+        print(ai_output)
+        return ai_output
