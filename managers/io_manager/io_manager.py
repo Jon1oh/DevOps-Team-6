@@ -1,2 +1,2 @@
-from .classes.backupAI import BackupAI
-from .classes.verifyAiInput import VerifyAiInput
+from .classes.fallbackAiMenu import FallbackAiMenu
+from .classes.verifyAiInputMenu import VerifyAiInputMenu

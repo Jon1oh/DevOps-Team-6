@@ -1,5 +1,5 @@
 from managers.io_manager.classes.menu import Menu
-from managers.io_manager.io_manager import BackupAI, VerifyAiInput
+from managers.io_manager.io_manager import FallbackAiMenu, VerifyAiInputMenu
 import managers.ai_manager as ai_manager
 import managers.data_manager as data_manager
 import managers.logic_manager as logic_manager
@@ -31,33 +31,33 @@ class App(Menu):
         print(f"\n{'='*38}SCAM MESSAGE ANALYSIS RESULT{'='*38}\n")
 
         # _display message based on risk level of message
-        if ai_output["risk_level"] == "HIGH" or ai_output["risk_level"] == "MEDIUM":
+        if ai_output.risk_level == "HIGH" or ai_output.risk_level == "MEDIUM":
             print(f"{emoji.emojize(':warning: POTENTIAL SCAM DETECTED')}\n")
         else:
             print(f"{emoji.emojize(':check_mark_button: MESSAGE APPEARS SAFE')}\n")
         
-        print(f"Risk Level: {ai_output['risk_level']}")
-        print(f"Scam Probability: {ai_output['scam_probability']}")
-        print(f"Scam Type: {ai_output['scam_type']}")
+        print(f"Risk Level: {ai_output.risk_level}")
+        print(f"Scam Probability: {ai_output.scam_probability}")
+        print(f"Scam Type: {ai_output.scam_type}")
         
-        print(f"Phone number: {ai_output['phone_number']}")
-        print(f"Country code: {ai_output['country_code']}")
+        print(f"Phone number: {ai_output.phone_number}")
+        print(f"Country code: {ai_output.country_code}")
         
         # Indicators section
-        if type(ai_output["indicators"]) is list:
+        if type(ai_output.indicators) is list:
             print("\nIndicators:")        
-            for i in ai_output["indicators"]:
+            for i in ai_output.indicators:
                 print(f"- {i}")
         else:
-            print(f"\nIndicators: {ai_output['indicators']}")
+            print(f"\nIndicators: {ai_output.indicators}")
         
         # Explanation section
         print("\nExplanation:")
-        print(ai_output["explanation"])
+        print(ai_output.explanation)
         
         # Recommendation section
         print("\nRecommendation:")
-        print(ai_output["recommendation"])
+        print(ai_output.recommendation)
         print(f"{'='*38}")
     
     def _print_message_summary(self, summary: dict) -> None:
@@ -107,22 +107,21 @@ class App(Menu):
                     self._print_message_summary(summary)
                 #this case will prompt the user to enter the scam message
                 case 1:
-                    get_user_ai_input = VerifyAiInput()
-                    scam_message_payload = get_user_ai_input.check_scam_message_phone_number()
+                    record = VerifyAiInputMenu().check_scam_message_phone_number()
                     final_ai_output = None
-                    if scam_message_payload != None:
-                        message, phone_number_with_country_code = scam_message_payload[0],scam_message_payload[1]
+                    if record != None:
+                        message, phone_number_with_country_code = record.message, record.phone_number
                         ai_output = ai_manager.analyse_message(message, phone_number_with_country_code)
                         if ai_output == False: # call backup AI bot when the AI model API fails
-                            backup_ai = BackupAI()
-                            backup_ai_output = backup_ai.run_backup_workflow(message,phone_number_with_country_code)
-                            if backup_ai_output == "quit":
+                            fallback_ai = FallbackAiMenu()
+                            fallback_ai_output = fallback_ai.run_fallback_workflow(message, phone_number_with_country_code)
+                            if fallback_ai_output == "quit":
                                 print("Exiting Program")
                                 break
-                            elif backup_ai_output is None: 
+                            elif fallback_ai_output is None: 
                                 continue
                             else:
-                                final_ai_output = backup_ai_output
+                                final_ai_output = fallback_ai_output
                                 print("Our backup AI has successfully analyzed the message.")
                         else: # when the AI model returns a valid JSON object
                             is_valid_ai_output = logic_manager.check_ai_output(ai_output)
@@ -133,7 +132,7 @@ class App(Menu):
                                 print("One of the fields in the AI output is invalid.")
                         # after getting the JSON object from the Gemini/Custom AI API
                         if final_ai_output:
-                            flagged_number_records = data_manager.count_risk_levels(final_ai_output["phone_number"])
+                            flagged_number_records = data_manager.count_risk_levels(final_ai_output.phone_number)
                             final_ai_output = logic_manager.escalate_flagged_number(final_ai_output, flagged_number_records)   
                             if logic_manager.validate_scam_indicators(final_ai_output):
                                 logic_manager.validate_scam_probability(final_ai_output)

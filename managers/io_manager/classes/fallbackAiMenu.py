@@ -3,7 +3,7 @@ import managers.logic_manager as logic_manager
 import models.fallback_ai as fallback_ai
 from datetime import datetime
 
-class BackupAI(Menu):
+class FallbackAiMenu(Menu):
     def __init__(self):
         super().__init__()
         self.add_menu("Analyse message with backup AI model")
@@ -22,7 +22,7 @@ class BackupAI(Menu):
             except ValueError:
                 print("Incorrect input try again.")
 
-    def run_backup_workflow(self,message,phone_number_with_country_code):
+    def run_fallback_workflow(self,message,phone_number_with_country_code):
         print(f"\n{'='*38}")
         print("Our primary AI API failed to respond in a timely manner")        
         print("What do you want to do?:")

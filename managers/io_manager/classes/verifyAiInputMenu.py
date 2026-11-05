@@ -1,36 +1,36 @@
 from managers.io_manager.classes.menu import Menu
-import re
-import phonenumbers
+from record import Record
+import re, phonenumbers
 
-class VerifyAiInput(Menu):
+class VerifyAiInputMenu(Menu):
     def __init__(self):
         super().__init__()
         #this list include the payload to be sent to the AI manager
         self.add_menu("Yes")
         self.add_menu("No")
-        self.__ai_input_payload = []
+        self._record = Record() # create a Record object to store the scam message information
     
     #this method prints the payload to allow the user to see what information they have entered
     def _display_payload(self):
-        if self.__ai_input_payload:
-            print("Message Content: " + self.__ai_input_payload[0])
-            if len(self.__ai_input_payload) == 2:
-                print("Message Source: " + self.__ai_input_payload[1])
+        if self._record.message:
+            print("Message Content: " + self._record.message)
+            if self._record.phone_number:
+                print("Message Source: " + self._record.phone_number)
     
     #this method is to get the scam message content 
     def _get_scam_message(self):
         while True:
-            message_contents = input("Insert message content as one line (or 'menu' to return to main menu):\n") # the message content from the user                    
-            message_contents = re.sub(r'\s+', ' ', message_contents).strip()
-            if message_contents.lower() == 'menu':
-                return message_contents.lower()
+            message = input("Insert message content as one line (or 'menu' to return to main menu):\n") # the message content from the user                    
+            message = re.sub(r'\s+', ' ', message).strip()
+            if message.lower() == 'menu':
+                return message.lower()
             # if statement to check if the string is empty or if the string is just a digit
-            elif message_contents != "" and message_contents.isdigit() == False:
-                if not self._meaningful_message(message_contents):
+            elif message != "" and message.isdigit() == False:
+                if not self._meaningful_message(message):
                     print("The message must contain meaningful text and not just solely special characters.")
                     continue # prompt user for message input again if the message is not meaningful
                 else: 
-                    self.__ai_input_payload.append(message_contents)
+                    self._record.message = message
                     return
             else:
                 print("The message cannot only contain digits.")
@@ -50,7 +50,7 @@ class VerifyAiInput(Menu):
                     phone_number = phonenumbers.parse(unverified_phone_number, None)
                     if phonenumbers.is_possible_number(phone_number):
                         phone_number = "+"+str(phone_number.country_code) + str(phone_number.national_number)
-                        self.__ai_input_payload.append(phone_number)
+                        self._record.phone_number = phone_number
                         return
                     else:
                         print("Invalid phone number try again")
@@ -89,12 +89,11 @@ class VerifyAiInput(Menu):
             if phone_number_input == "menu":
                 return None
             elif phone_number_input == "back":
-                self.__ai_input_payload.clear()
-                
+                self._record = Record() # reset the record object to clear the previous message content
                 continue
             else:
                 if self._menu_input() == 2:
-                    self.__ai_input_payload.clear()
+                    self._record = Record() # reset the record object to clear the previous message content
                     continue
                 else:
-                    return self.__ai_input_payload
+                    return self._record
