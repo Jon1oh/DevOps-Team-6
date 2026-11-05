@@ -2,7 +2,6 @@
 import phonenumbers
 from record import Record
 
-
 class LogicManager():
     REQUIRED_FIELDS = {
             "record_id": type(None), # isinstance() only tests for None if we use type(None)
@@ -45,7 +44,7 @@ class LogicManager():
         return True
     
     # Validates AI's Risk Level
-    def validate_risk_level(self, ai_output: Record):
+    def _validate_risk_level(self, ai_output: Record):
         has_indicators = len(ai_output.indicators) > 0
         if ai_output.scam_probability >= 80 and has_indicators:
             expected_risk_level = self.HIGH
@@ -61,12 +60,12 @@ class LogicManager():
         return ai_output
             
     # check scam indicators based on risk level of the analyzed message
-    def validate_scam_indicators(self, ai_output: Record):
+    def _validate_scam_indicators(self, ai_output: Record):
         has_indicators = len(ai_output.indicators) > 0
         # If Risk Level is HIGH or MEDIUM but has no indicators, the Risk Level will be changed to LOW
         if ai_output.risk_level in [self.HIGH, self.MEDIUM]:
             if not has_indicators and ai_output.scam_probability >= 50: # when the analyzed message is potentially a scam but there aren't any indicators
-                ai_output = self.validate_risk_level(ai_output) # Ensure Risk Level is correct
+                ai_output = self._validate_risk_level(ai_output) # Ensure Risk Level is correct
         
         # We assign a readable value to indicators if risk_level is low and list is empty
         if not has_indicators and ai_output.risk_level == self.LOW: # when the risk_level is LOW, the indicators list can be empty
@@ -75,7 +74,7 @@ class LogicManager():
         return ai_output
     
     # Validates AI's Scam Probability Score
-    def validate_scam_probability(self, ai_output: Record):
+    def _validate_scam_probability(self, ai_output: Record):
         # If Scam Probability Score does not match a Risk Level of "LOW", we will tweak the score such that it fits the range of "LOW"
         if ai_output.risk_level == self.LOW and ai_output.scam_probability > 49:
             ai_output.scam_probability = 49 # Give it the highest Scam Proabability Score within the range of "LOW"
@@ -113,6 +112,13 @@ class LogicManager():
             message = f"{ai_output.phone_number} was found in {phone_records['HIGH']} High Risk Incidents."
             indicator_list.append(message)
             ai_output.indicators = indicator_list # Set Indicator List after appending message
+        return ai_output
+    
+    # single function to validate all risk-related fields in AI output
+    def validate_risk_assessment(self, ai_output: Record):
+        ai_output = self._validate_risk_level(ai_output)
+        ai_output = self._validate_scam_indicators(ai_output)
+        ai_output = self._validate_scam_probability(ai_output)
         return ai_output
             
     # Ensure data in all fields are in the correct format.
