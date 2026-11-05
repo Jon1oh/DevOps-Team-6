@@ -1,4 +1,4 @@
-from gemini_analyzer import GeminiAIAnalyzer
+from gemini_analyzer import GeminiAiAnalyzer
 from dotenv import load_dotenv
 import logging
 
@@ -6,10 +6,10 @@ import logging
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 
-class AIManager:
-    # Composition: The GeminiAIAnalyzer and FallbackAIAnalyzer classes are created and managed internally by AIManager. Their lifecylces are tied to it
+class AiManager:
+    # Composition: The GeminiAiAnalyzer and FallbackAiAnalyzer classes are created and managed internally by AIManager. Their lifecylces are tied to it
     def __init__(self):
-        self._gemini_analyzer = GeminiAIAnalyzer() # create an instance of GeminiAIAnalyzer
+        self._gemini_analyzer = GeminiAiAnalyzer() # create an instance of GeminiAIAnalyzer
         self._fallback_analyzer = None # * Haven't create yet
     
     # determine which AI Analyzer to use based on the API status
@@ -24,6 +24,6 @@ class AIManager:
             # return FallbackAnalyzer object
 
 # test code
-ai_manager = AIManager()
+ai_manager = AiManager()
 analyzer = ai_manager.get_analyzer()
 ai_output = analyzer.analyze_message("message", "number")

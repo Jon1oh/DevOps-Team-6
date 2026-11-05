@@ -3,7 +3,7 @@ from datetime import datetime
 from google import genai
 from interfaces.ai_analyzer import AIAnalyzer
 
-class GeminiAIAnalyzer(AIAnalyzer):
+class GeminiAiAnalyzer(AIAnalyzer):
     def __init__(self, model="gemini-3.6-flash"):        
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
@@ -27,7 +27,7 @@ class GeminiAIAnalyzer(AIAnalyzer):
 
     # Retry function to get Gemini API output
     def get_ai_output_retry(self, prompt_to_ai):
-        print(f"Retrying connection to Google Gemini {self._model} API once...")
+        print(f"Retrying connection to Google {self._model} API once...")
         try:
             return self.get_ai_output(prompt_to_ai)
         except Exception as error:
