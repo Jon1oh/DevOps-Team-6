@@ -1,4 +1,5 @@
 from models.gemini_analyzer import GeminiAiAnalyzer
+from models.fallbackAiAnalyzer import FallbackAiAnalyzer
 from dotenv import load_dotenv
 import logging
 
@@ -10,7 +11,7 @@ class AiManager:
     # Composition: The GeminiAiAnalyzer and FallbackAiAnalyzer classes are created and managed internally by AIManager. Their lifecylces are tied to it
     def __init__(self):
         self._gemini_analyzer = GeminiAiAnalyzer() # create an instance of GeminiAIAnalyzer
-        self._fallback_analyzer = None # * Haven't create yet
+        self._fallback_analyzer = FallbackAiAnalyzer() # create an instance of FallbackAiAnalyzer
     
     # determine which AI Analyzer to use based on the API status
     def get_analyzer(self):
@@ -20,8 +21,7 @@ class AiManager:
             print("Gemini is ready for use...")
             return self._gemini_analyzer
         else:
-            return "use FallbackAnalyzer function"
-            # return FallbackAnalyzer object
+            return self._fallback_analyzer
 
 # test code
 ai_manager = AiManager()
