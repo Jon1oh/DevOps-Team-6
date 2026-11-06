@@ -1,36 +1,30 @@
 import joblib, json, re
 from interfaces.ai_analyzer import AiAnalyzer
 
-class FallbackAI(AiAnalyzer):
+class FallbackAiAnalyzer(AiAnalyzer):
+    REQUIRED_FIELDS = {
+        "phone_number": str,
+        "country_code": str,
+        "message_content": str,
+        "scam_probability": int,
+        "risk_level": str,
+        "scam_type": str,
+        "indicators": list,
+        "explanation": str,
+        "recommendation": str
+    }
 
     # ============================================================
     # INITIALISE FALLBACK AI
     # ============================================================
 
     def __init__(self, model_file="./models/scam_detection_model.pkl"):
-
         print("Loading fallback AI model...")
-
         model_data = joblib.load(model_file)
-
-        self.spam_model = model_data["spam_model"]
-        self.spam_vectorizer = model_data["spam_vectorizer"]
-
-        self.scam_type_model = model_data["scam_type_model"]
-        self.scam_vectorizer = model_data["scam_vectorizer"]
-
-        self.required_fields = {
-            "phone_number": str,
-            "country_code": str,
-            "message_content": str,
-            "scam_probability": int,
-            "risk_level": str,
-            "scam_type": str,
-            "indicators": list,
-            "explanation": str,
-            "recommendation": str
-        }
-
+        self._spam_model = model_data["spam_model"]
+        self._spam_vectorizer = model_data["spam_vectorizer"]
+        self._scam_type_model = model_data["scam_type_model"]
+        self._scam_vectorizer = model_data["scam_vectorizer"]
         print("Fallback AI model loaded successfully.")
 
     # ============================================================
@@ -235,14 +229,14 @@ class FallbackAI(AiAnalyzer):
     def analyze_message(self, message, phone_number, country_code):
 
         # STEP 1: HAM / SPAM MODEL
-        message_vector = self.spam_vectorizer.transform([message])
+        message_vector = self._spam_vectorizer.transform([message])
 
-        prediction = self.spam_model.predict(message_vector)[0]
+        prediction = self._spam_model.predict(message_vector)[0]
 
-        probabilities = self.spam_model.predict_proba(message_vector)[0]
+        probabilities = self._spam_model.predict_proba(message_vector)[0]
 
         class_probabilities = dict(
-            zip(self.spam_model.classes_, probabilities)
+            zip(self._spam_model.classes_, probabilities)
         )
 
         spam_probability = class_probabilities.get("spam", 0)
@@ -255,9 +249,9 @@ class FallbackAI(AiAnalyzer):
         # STEP 3: SCAM TYPE
         if prediction == "spam":
 
-            scam_vector = self.scam_vectorizer.transform([message])
+            scam_vector = self._scam_vectorizer.transform([message])
 
-            scam_prediction = self.scam_type_model.predict(scam_vector)[0]
+            scam_prediction = self._scam_type_model.predict(scam_vector)[0]
 
             scam_type = str(scam_prediction)
 
@@ -299,7 +293,7 @@ class FallbackAI(AiAnalyzer):
         }
 
         # STEP 8: VALIDATE REQUIRED FIELDS
-        for field, expected_type in self.required_fields.items():
+        for field, expected_type in self.REQUIRED_FIELDS.items():
 
             if field not in result:
                 raise ValueError(
