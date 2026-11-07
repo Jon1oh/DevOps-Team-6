@@ -1,13 +1,13 @@
 """JsonRecordStorage: saves and loads Records in a JSON file (Phase 2b).
 
-In 2a this one class does all the file work, including the backup.
-In 2b the backup and the atomic writing move into their own classes.
+It creates two helper objects for itself (composition):
+- a SafeJsonFile that reads and atomically writes scam_data.json
+- a BackupDatabase that looks after backup_database.json
 """
 
 import json
-import os
-import tempfile
 
+from classes.backup_database import BackupDatabase
 from classes.record_converter import RecordConverter
 from classes.record_storage import RecordStorage
 from classes.safe_json_file import SafeJsonFile
@@ -23,10 +23,16 @@ class JsonRecordStorage(RecordStorage):
       e.g. "Skipped 2 invalid record(s)." ("" means everything was normal).
     """
 
-    def __init__(self, data_file: str = "./data/scam_data.json", backup_file: str = "./data/backup_database.json") -> None:
+    def __init__(
+        self,
+        data_file: str = "./data/scam_data.json",
+        backup_file: str = "./data/backup_database.json",
+    ) -> None:
         super().__init__()          # sets up status_message from RecordStorage
-        self._data_file = SafeJsonFile(data_file)
-        self._backup_file = SafeJsonFile(backup_file)
+        # Composition: this storage CREATES and OWNS both helpers.
+        # They are made here, used only here, and disappear with this object.
+        self._main_file = SafeJsonFile(data_file)
+        self._backup = BackupDatabase(backup_file)
 
     # ------------------------------------------------------------------
     # Public methods (what DataManager is allowed to call)
@@ -39,16 +45,15 @@ class JsonRecordStorage(RecordStorage):
         records are recovered from the backup instead.
         """
         # A 0-byte file is empty, not corrupt (fix from the Phase 1 review).
-        if os.path.exists(self._data_file) and os.path.getsize(self._data_file) == 0:
+        if self._main_file.is_empty():
             return self._recover_from_backup("Main data file was empty.")
 
         try:
-            with open(self._data_file, "r", encoding="utf-8") as file:
-                data = json.load(file)
+            data = self._main_file.read()
         except FileNotFoundError:
             return self._recover_from_backup("Main data file was missing.")
         except (json.JSONDecodeError, UnicodeDecodeError):
-            preserved = self._preserve_corrupt_file()
+            preserved = self._backup.preserve_corrupt(self._main_file.path)
             if preserved:
                 reason = f"Data file was corrupt. Preserved at {preserved}."
             else:
@@ -58,7 +63,7 @@ class JsonRecordStorage(RecordStorage):
             return self._recover_from_backup("Could not read the main data file.")
 
         if not isinstance(data, list):
-            preserved = self._preserve_corrupt_file()
+            preserved = self._backup.preserve_corrupt(self._main_file.path)
             if preserved:
                 reason = f"Data file had the wrong format. Preserved at {preserved}."
             else:
@@ -68,7 +73,7 @@ class JsonRecordStorage(RecordStorage):
         if not data:
             return self._recover_from_backup("Main data file was empty.")
 
-        records, skipped = self._convert_entries(data)
+        records, skipped = RecordConverter.from_list(data)
         if skipped > 0:
             self._status_message = f"Skipped {skipped} invalid record(s)."
         else:
@@ -87,17 +92,14 @@ class JsonRecordStorage(RecordStorage):
 
         records = self.load()
         records.append(record)
-        entries = [RecordConverter.to_dict(saved) for saved in records]
 
         try:
-            self._write_json_atomically(self._data_file, entries)
+            self._main_file.write([RecordConverter.to_dict(saved) for saved in records])
         except (OSError, TypeError, ValueError):
             return False, "Could not write to the data file."
 
         # The backup is only updated after the main file was saved.
-        try:
-            self._write_json_atomically(self._backup_file, entries)
-        except (OSError, TypeError, ValueError):
+        if not self._backup.update(records):
             return (
                 True,
                 "Record saved, but the backup database could not be updated. "
@@ -107,48 +109,20 @@ class JsonRecordStorage(RecordStorage):
         return True, ""
 
     # ------------------------------------------------------------------
-    # Private helpers (only used inside this class)
+    # Private helper (only used inside this class)
     # ------------------------------------------------------------------
-
-    @staticmethod
-    def _convert_entries(entries: list) -> tuple[list[Record], int]:
-        """Turn raw JSON entries into Records. Returns (records, skipped_count)."""
-        records = []
-        skipped = 0
-        for entry in entries:
-            record, _error = RecordConverter.from_dict(entry)
-            if record is None:
-                skipped += 1
-            else:
-                records.append(record)
-        return records, skipped
-
-    def _load_backup_records(self) -> list[Record]:
-        """Load only the valid records from the backup file ([] if unusable)."""
-        try:
-            with open(self._backup_file, "r", encoding="utf-8") as file:
-                data = json.load(file)
-        except (OSError, json.JSONDecodeError, UnicodeDecodeError):
-            return []
-
-        if not isinstance(data, list):
-            return []
-
-        records, _skipped = self._convert_entries(data)
-        return records
 
     def _recover_from_backup(self, reason: str) -> list[Record]:
         """Restore the main file from the backup and set the status message."""
-        backup_records = self._load_backup_records()
+        backup_records = self._backup.load_valid_records()
 
         if not backup_records:
             self._status_message = f"{reason} No valid backup records were available."
             return []
 
         try:
-            self._write_json_atomically(
-                self._data_file,
-                [RecordConverter.to_dict(record) for record in backup_records],
+            self._main_file.write(
+                [RecordConverter.to_dict(record) for record in backup_records]
             )
         except (OSError, TypeError, ValueError):
             # The records are still usable even though the file was not restored.
@@ -162,34 +136,3 @@ class JsonRecordStorage(RecordStorage):
             f"{reason} Restored {len(backup_records)} record(s) from backup."
         )
         return backup_records
-
-    def _preserve_corrupt_file(self) -> str:
-        """Rename a corrupt main file to .corrupt.json. Returns the new name, or ""."""
-        preserved_name = self._data_file.replace(".json", ".corrupt.json")
-        try:
-            os.replace(self._data_file, preserved_name)
-        except OSError:
-            return ""
-        return preserved_name
-
-    @staticmethod
-    def _write_json_atomically(file_path: str, entries: list[dict]) -> None:
-        """Write to a temporary file first, then swap it in with os.replace().
-
-        If the program crashes while writing, the original file is untouched.
-        """
-        directory = os.path.dirname(os.path.abspath(file_path))
-        os.makedirs(directory, exist_ok=True)
-        temp_path = ""
-
-        try:
-            file_descriptor, temp_path = tempfile.mkstemp(dir=directory, suffix=".tmp")
-            with os.fdopen(file_descriptor, "w", encoding="utf-8") as file:
-                json.dump(entries, file, indent=4)
-                file.flush()
-                os.fsync(file.fileno())
-            os.replace(temp_path, file_path)
-            temp_path = ""
-        finally:
-            if temp_path and os.path.exists(temp_path):
-                os.remove(temp_path)

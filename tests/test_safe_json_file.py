@@ -83,6 +83,5 @@ def test_json_storage_creates_its_own_safe_json_files(tmp_path) -> None:
         data_file=str(tmp_path / "scam_data.json"),
         backup_file=str(tmp_path / "backup_database.json"),
     )
-    # Each storage object builds its own SafeJsonFile objects inside __init__.
+    # Each storage object builds its own SafeJsonFile inside __init__.
     assert isinstance(storage._main_file, SafeJsonFile)
-    assert isinstance(storage._backup_file, SafeJsonFile)

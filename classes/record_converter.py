@@ -111,6 +111,23 @@ class RecordConverter:
         )
         return record, ""
 
+    @classmethod
+    def from_list(cls, entries: list) -> tuple[list[Record], int]:
+        """Turn a list of JSON entries into Records.
+
+        Returns (valid_records, skipped_count). Entries that are not valid
+        dictionaries are skipped and counted, never crash the program.
+        """
+        records = []
+        skipped = 0
+        for entry in entries:
+            record, _error = cls.from_dict(entry)
+            if record is None:
+                skipped += 1
+            else:
+                records.append(record)
+        return records, skipped
+
     # ------------------------------------------------------------------
     # Checking a Record that was built somewhere else
     # ------------------------------------------------------------------
