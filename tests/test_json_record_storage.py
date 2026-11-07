@@ -12,12 +12,13 @@ import os
 import pytest
 
 from classes.json_record_storage import JsonRecordStorage
-from classes.scam_record import ScamRecord
+from record import Record
+from classes.record_converter import RecordConverter
 
 
-def make_valid_dict(message_id: int = 1) -> dict:
+def make_valid_dict(record_id: int = 1) -> dict:
     return {
-        "message_id": message_id,
+        "record_id": record_id,
         "timestamp": "2026-10-02 11:40:00",
         "phone_number": "+6591234567",
         "country_code": "+65",
@@ -31,8 +32,8 @@ def make_valid_dict(message_id: int = 1) -> dict:
     }
 
 
-def make_record(message_id: int = 1) -> ScamRecord:
-    record, _error = ScamRecord.from_dict(make_valid_dict(message_id))
+def make_record(record_id: int = 1) -> Record:
+    record, _error = RecordConverter.from_dict(make_valid_dict(record_id))
     return record
 
 
@@ -63,7 +64,7 @@ def test_valid_file_loads_records(tmp_path) -> None:
     records = storage.load()
 
     assert len(records) == 1
-    assert isinstance(records[0], ScamRecord)
+    assert isinstance(records[0], Record)
     assert storage.status_message == ""
 
 
@@ -179,9 +180,9 @@ def test_save_updates_main_and_backup(tmp_path) -> None:
 
 def test_save_rejects_non_record(tmp_path) -> None:
     storage = make_storage(tmp_path)
-    ok, message = storage.save(make_valid_dict())   # a dict, not a ScamRecord
+    ok, message = storage.save(make_valid_dict())   # a dict, not a Record
     assert ok is False
-    assert message == "Only ScamRecord objects can be saved."
+    assert message == "Only Record objects can be saved."
 
 
 def test_backup_failure_is_a_warning_not_an_error(tmp_path) -> None:

@@ -2,17 +2,17 @@
  
     python -m pytest tests/test_scam_statistics_calculator.py
  
-No files are used: the calculator only works on ScamRecord objects in memory.
+No files are used: the calculator only works on Record objects in memory.
 """
- 
-from classes.scam_record import ScamRecord
+from classes.record_converter import RecordConverter
+from record import Record
 from classes.scam_statistics_calculator import ScamStatisticsCalculator
  
  
 def make_record(country_code: str = "+65", scam_type: str = "Phishing",
-                risk_level: str = "HIGH") -> ScamRecord:
-    record, _error = ScamRecord.from_dict({
-        "message_id": 1,
+                risk_level: str = "HIGH") -> Record:
+    record, _error = RecordConverter.from_dict({
+        "record_id": 1,
         "timestamp": "2026-10-02 11:40:00",
         "phone_number": "+6591234567",
         "country_code": country_code,
@@ -27,7 +27,7 @@ def make_record(country_code: str = "+65", scam_type: str = "Phishing",
     return record
  
  
-def sample_records() -> list[ScamRecord]:
+def sample_records() -> list[Record]:
     """Same sample data as the Phase 1 tests."""
     return [
         make_record("+65", "Phishing"),

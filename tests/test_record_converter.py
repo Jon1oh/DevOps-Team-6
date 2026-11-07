@@ -12,7 +12,7 @@ from record import Record
 def make_valid_dict() -> dict:
     """A complete, valid record in the same shape as scam_data.json."""
     return {
-        "message_id": 1,
+        "record_id": 1,
         "timestamp": "2026-10-02 11:40:00",
         "phone_number": "+6591234567",
         "country_code": "+65",
@@ -37,13 +37,22 @@ def test_valid_dict_becomes_record() -> None:
 
 def test_json_names_map_to_record_names() -> None:
     record, _error = RecordConverter.from_dict(make_valid_dict())
-    assert record.record_id == 1                         # JSON "message_id"
+    assert record.record_id == 1
     assert record.message.startswith("Your account")     # JSON "message_content"
 
 
 def test_round_trip_keeps_every_field() -> None:
     record, _error = RecordConverter.from_dict(make_valid_dict())
     assert RecordConverter.to_dict(record) == make_valid_dict()
+
+
+def test_old_message_id_key_still_loads() -> None:
+    data = make_valid_dict()
+    data["message_id"] = data.pop("record_id")      # a file saved before the rename
+    record, error = RecordConverter.from_dict(data)
+    assert error == ""
+    assert record.record_id == 1
+    assert "message_id" not in RecordConverter.to_dict(record)   # saved with new name
 
 
 def test_non_dict_is_rejected() -> None:
@@ -99,8 +108,8 @@ def test_missing_optional_fields_get_defaults() -> None:
         ("scam_probability", -1),
         ("scam_probability", "90"),
         ("scam_probability", True),      # bool must be rejected
-        ("message_id", True),
-        ("message_id", -5),
+        ("record_id", True),
+        ("record_id", -5),
         ("message_content", "   "),
         ("indicators", "not a list"),
         ("scam_type", 42),

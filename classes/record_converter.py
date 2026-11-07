@@ -1,8 +1,10 @@
-"""RecordConverter: turns Record objects into JSON dictionaries.
+"""RecordConverter: turns Record objects into JSON dictionaries and back (Phase 2b).
 
-- record.py holds the data
-- record_converter.py class holds the rules for storing that data e.g. the JSON key names (message_id, message_content, ...), 
-standardising (defaults, upper-case risk level, country code from phone), validation (correct types, HIGH/MEDIUM/LOW, 0-100, message not empty).
+The teammate's Record class (record.py) holds the data. This class holds the
+rules for STORING that data:
+- the JSON key names (record_id, message_content, ...),
+- standardising (defaults, upper-case risk level, country code from phone),
+- validation (correct types, HIGH/MEDIUM/LOW, 0-100, message not empty).
 """
 
 import phonenumbers
@@ -22,7 +24,7 @@ class RecordConverter:
 
     # JSON key -> the type it must have (bool is rejected separately).
     SCHEMA: dict[str, type | tuple[type, ...]] = {
-        "message_id": int,
+        "record_id": int,
         "timestamp": str,
         "phone_number": str,
         "country_code": str,
@@ -37,7 +39,7 @@ class RecordConverter:
 
     # Value used when a key is missing from a saved dictionary.
     FIELD_DEFAULTS = {
-        "message_id": 0,
+        "record_id": 0,
         "timestamp": "Unknown",
         "phone_number": "Unknown",
         "country_code": "Unknown",
@@ -51,18 +53,18 @@ class RecordConverter:
     }
 
     # ------------------------------------------------------------------
-    # conver record to dictionary
+    # Record -> dictionary
     # ------------------------------------------------------------------
 
     @classmethod
     def to_dict(cls, record: Record) -> dict:
         """Return a Record as a dictionary with the JSON key names.
 
-        Record calls the id `record_id` and the text `message`; the JSON file
-        calls them `message_id` and `message_content`. All other names match.
+        Record calls the message text `message`; the JSON file calls it
+        `message_content`. All other names match.
         """
         return {
-            "message_id": record.record_id,
+            "record_id": record.record_id,
             "timestamp": record.timestamp,
             "phone_number": record.phone_number,
             "country_code": record.country_code,
@@ -76,7 +78,7 @@ class RecordConverter:
         }
 
     # ------------------------------------------------------------------
-    # convert dictionary to Record
+    # dictionary -> Record
     # ------------------------------------------------------------------
 
     @classmethod
@@ -95,7 +97,7 @@ class RecordConverter:
             return None, error
 
         record = Record(
-            record_id=fixed["message_id"],
+            record_id=fixed["record_id"],
             timestamp=fixed["timestamp"],
             phone_number=fixed["phone_number"],
             country_code=fixed["country_code"],
@@ -121,18 +123,25 @@ class RecordConverter:
         return cls.validate(cls.to_dict(record))
 
     # ------------------------------------------------------------------
-    # standardize_record and validate_record
+    # The rules (same as Phase 1 standardize_record / validate_record)
     # ------------------------------------------------------------------
 
     @classmethod
     def standardize(cls, data: dict) -> dict:
         """Return a cleaned-up COPY of `data`.
 
+        - renames the old key "message_id" to "record_id" (files saved
+          before the rename still load)
         - fills in country_code from the phone number if it is missing
         - upper-cases risk_level ("High" -> "HIGH")
         - fills any still-missing key with a safe default
         """
         fixed = dict(data)
+
+        # Old files use "message_id". Use it only if there is no "record_id".
+        if "message_id" in fixed:
+            old_id = fixed.pop("message_id")
+            fixed.setdefault("record_id", old_id)
 
         if not fixed.get("country_code"):
             fixed["country_code"] = cls.country_code_from_phone(
@@ -158,8 +167,8 @@ class RecordConverter:
             if isinstance(value, bool) or not isinstance(value, expected_type):
                 return False, f"Wrong type for field: {key}"
 
-        if data["message_id"] < 0:
-            return False, "message_id cannot be negative."
+        if data["record_id"] < 0:
+            return False, "record_id cannot be negative."
         if data["risk_level"] not in cls.VALID_RISK_LEVELS:
             return False, "risk_level must be HIGH, MEDIUM or LOW."
         if not 0 <= data["scam_probability"] <= 100:

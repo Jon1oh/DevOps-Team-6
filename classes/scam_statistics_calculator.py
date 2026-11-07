@@ -3,12 +3,12 @@
 import phonenumbers
 from phonenumbers import geocoder
 
-from classes.scam_record import ScamRecord
+from record import Record
 
 class ScamStatisticsCalculator:
     """Calculates percentages and most-common results.
  
-    It never opens a file. It is given a list of ScamRecord objects, works on
+    It never opens a file. It is given a list of Record objects, works on
     them, and gives back numbers. It does not keep the records afterwards
     (association: it uses ScamRecords without owning them).
     """
@@ -21,7 +21,7 @@ class ScamStatisticsCalculator:
     # Main method: the summary used by io_manager.print_message_summary()
     # ------------------------------------------------------------------
 
-    def summary(self, records: list[ScamRecord]) -> dict:
+    def summary(self, records: list[Record]) -> dict:
         """Return the summary dictionary with the same keys as Phase 1."""
         risk_counts = self.count_by(records, "risk_level")
         scam_counts = self.count_by(records, "scam_type")
@@ -52,16 +52,16 @@ class ScamStatisticsCalculator:
     # ------------------------------------------------------------------
  
     @staticmethod
-    def count_by(records: list[ScamRecord], field: str) -> dict[str, int]:
+    def count_by(records: list[Record], field: str) -> dict[str, int]:
         """Count how many records have each value of `field`.
  
         e.g. count_by(records, "risk_level") -> {"HIGH": 3, "LOW": 1}
         Empty values are counted as "Unknown". Anything that is not a
-        ScamRecord is ignored.
+        Record is ignored.
         """
         counts: dict[str, int] = {}
         for record in records:
-            if not isinstance(record, ScamRecord):
+            if not isinstance(record, Record):
                 continue
             value = getattr(record, field)
             if not isinstance(value, str) or value.strip() == "":
@@ -85,7 +85,7 @@ class ScamStatisticsCalculator:
             result[name] = round(count / total * 100, self._decimal_places)
         return result
  
-    def most_common(self, records: list[ScamRecord], field: str) -> tuple[str, float] | None:
+    def most_common(self, records: list[Record], field: str) -> tuple[str, float] | None:
         """Return (value, percentage) for the most common value of `field`.
  
         e.g. ("Phishing", 50.0). Ties are broken alphabetically, so the result
