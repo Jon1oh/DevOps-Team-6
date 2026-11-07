@@ -10,6 +10,7 @@ import tempfile
 
 from classes.record_converter import RecordConverter
 from classes.record_storage import RecordStorage
+from classes.safe_json_file import SafeJsonFile
 from record import Record
 
 
@@ -22,14 +23,10 @@ class JsonRecordStorage(RecordStorage):
       e.g. "Skipped 2 invalid record(s)." ("" means everything was normal).
     """
 
-    def __init__(
-        self,
-        data_file: str = "./data/scam_data.json",
-        backup_file: str = "./data/backup_database.json",
-    ) -> None:
+    def __init__(self, data_file: str = "./data/scam_data.json", backup_file: str = "./data/backup_database.json") -> None:
         super().__init__()          # sets up status_message from RecordStorage
-        self._data_file = data_file
-        self._backup_file = backup_file
+        self._data_file = SafeJsonFile(data_file)
+        self._backup_file = SafeJsonFile(backup_file)
 
     # ------------------------------------------------------------------
     # Public methods (what DataManager is allowed to call)
