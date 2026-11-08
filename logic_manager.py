@@ -126,10 +126,7 @@ class LogicManager():
         return ai_output
             
     # Ensure data in all fields are in the correct format.
-    def format_ai_output(self, ai_output: Record):        
-        # Ensure risk_level is one of the expected values
-        self.validate_risk_level(ai_output)
-        
+    def format_ai_output(self, ai_output: Record):                
         # Ensure phone_number does not contain country code
         self.remove_country_code_in_phone_number(ai_output)
         
