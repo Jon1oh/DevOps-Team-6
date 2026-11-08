@@ -1,4 +1,4 @@
-from managers.io_manager.classes.menu import Menu
+from managers.io_manager.classes.Menu import Menu
 from managers.io_manager.io_manager import FallbackAiMenu, VerifyAiInputMenu
 import managers.ai_manager as ai_manager
 import managers.data_manager as data_manager
@@ -99,7 +99,6 @@ class App(Menu):
                 case 3:
                     print("Exiting Program")
                     break
-                #this case will print the summary of all scam message checked with our program
                 case 2:
                     # call the message summary function
                     records = data_manager.load_records()

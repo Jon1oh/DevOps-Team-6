@@ -1,4 +1,4 @@
-from managers.io_manager.classes.menu import Menu
+from managers.io_manager.classes.Menu import Menu
 import managers.logic_manager as logic_manager
 import models.fallback_ai as fallback_ai
 from datetime import datetime
@@ -27,7 +27,8 @@ class FallbackAiMenu(Menu):
         print("Our primary AI API failed to respond in a timely manner")        
         print("What do you want to do?:")
         self._display()
-        match self._menu_input(): # match case for backup ai to see if go to mainmenu or query backup
+        # match case for backup ai to see if go to mainmenu, query backup or quit
+        match self._menu_input(): 
             case 3:
                 return "quit"
             case 2:

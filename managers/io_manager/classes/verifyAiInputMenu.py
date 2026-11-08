@@ -1,16 +1,15 @@
-from managers.io_manager.classes.menu import Menu
+from managers.io_manager.classes.Menu import Menu
 from record import Record
 import re, phonenumbers
 
 class VerifyAiInputMenu(Menu):
     def __init__(self):
         super().__init__()
-        #this list include the payload to be sent to the AI manager
         self.add_menu("Yes")
         self.add_menu("No")
         self._record = Record() # create a Record object to store the scam message information
     
-    #this method prints the payload to allow the user to see what information they have entered
+    #this method prints the scam message information
     def _display_payload(self):
         if self._record.message:
             print("Message Content: " + self._record.message)
@@ -57,7 +56,7 @@ class VerifyAiInputMenu(Menu):
                 except phonenumbers.phonenumberutil.NumberParseException:
                     print("Invalid phone number try again")
     
-    #this method check asks the user to check their input
+    #this method asks the user to check their input
     def _menu_input(self):
         print("Is this correct?")
         self._display_payload()
@@ -72,7 +71,7 @@ class VerifyAiInputMenu(Menu):
             except ValueError:
                 print("Incorrect input please try again")
 
-    #this method check if the scam message content
+    #this method check if the scam message content meets a minimum word count
     def _meaningful_message(self,message_content):
         words = re.findall(r"[A-Za-z]+", message_content)
         total_letters = sum(len(word) for word in words)
@@ -81,6 +80,7 @@ class VerifyAiInputMenu(Menu):
         else:
             return False
 
+    #this is the mainloop of this object app.py will call to get both the scam message and the phone number
     def check_scam_message_phone_number(self):
         while True:
             if self._get_scam_message() == "menu":
