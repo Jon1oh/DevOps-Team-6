@@ -5,6 +5,7 @@ from managers.ai_manager import AiManager
 from managers.data_manager import DataManager
 from managers.logic_manager import LogicManager
 from storage.json_record_storage import JsonRecordStorage
+from storage.record_converter import RecordConverter
 
 class App:
     def __init__(self):
@@ -61,9 +62,13 @@ class App:
                     flagged_number_records = self.data_manager.count_risk_levels(ai_output.phone_number)
                     ai_output = self.logic_manager.escalate_flagged_number(ai_output, flagged_number_records)   
                     self.io_manager.display_message_analysis(ai_output) # _display analysis results for the message
-                    self.data_manager.save_record(ai_output)
-                    print("New record saved")    
+                    saved, message = self.data_manager.save_record(RecordConverter.to_dict(ai_output))
 
+                    if saved:
+                        print("New record saved")
+                    else:
+                        print(f"Could not save record: {message}")
+                        
                 case _:
                     print("No such case have been created")
 
