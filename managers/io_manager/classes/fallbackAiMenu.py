@@ -1,4 +1,4 @@
-from managers.io_manager.classes.Menu import Menu
+from managers.io_manager.classes.menu import Menu
 import managers.logic_manager as logic_manager
 import models.fallback_ai as fallback_ai
 from datetime import datetime

@@ -1,4 +1,4 @@
-from managers.io_manager.classes.Menu import Menu
+from managers.io_manager.classes.menu import Menu
 import emoji
 
 class io_manager(Menu):
