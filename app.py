@@ -1,4 +1,4 @@
-import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallback_ai as fallback_ai
+import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallbackAi_analyzer as fallbackAi_analyzer
 from datetime import datetime
 
 # loads the records upon startup
@@ -38,7 +38,7 @@ while True:
                         case 1:
                             print("Using our In-House-Trained Custom AI Bot. It can make mistakes. Please verify important info.")
                             phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
-                            ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
+                            ai_output = fallbackAi_analyzer.analyse_message(message, phone_number, country_code) 
                             if "timestamp" not in ai_output:
                                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
                                 ai_output = {"timestamp": timestamp, **ai_output}

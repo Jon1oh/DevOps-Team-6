@@ -144,16 +144,17 @@ class GeminiAiAnalyzer(AiAnalyzer):
             self.log_error(error)
             ai_output = self.extract_json_object(response)
         
-        record = Record() # create a new Record object to store the AI output
-        record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-        record.phone_number = ai_output["phone_number"]
-        record.country_code = ai_output["country_code"]
-        record.message = ai_output["message_content"]
-        record.scam_probability = ai_output["scam_probability"]
-        record.risk_level = ai_output["risk_level"]
-        record.scam_type = ai_output["scam_type"]
-        record.indicators = ai_output["indicators"]
-        record.explanation = ai_output["explanation"]
-        record.recommendation = ai_output["recommendation"]        
+        record = Record( # create a new Record object to store the AI output
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S"), # format timestamp as YYYY-MM-DD HH:MM:SS
+            phone_number = ai_output["phone_number"],
+            country_code = ai_output["country_code"],
+            message = ai_output["message_content"],
+            scam_probability = ai_output["scam_probability"],
+            risk_level = ai_output["risk_level"],
+            scam_type = ai_output["scam_type"],
+            indicators = ai_output["indicators"],
+            explanation = ai_output["explanation"],
+            recommendation = ai_output["recommendation"]        
+        ) 
         print(record)
         return record

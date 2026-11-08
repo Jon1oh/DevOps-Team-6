@@ -1,16 +1,11 @@
 
-import joblib
-import re
+import joblib, re
 from pathlib import Path
-
 from interfaces.ai_analyzer import AiAnalyzer
-from models.record import Record
-
+from record import Record
 
 class FallbackAiAnalyzer(AiAnalyzer):
-
     def __init__(self):
-
         # Load the trained machine learning model
         model_file = (
             Path(__file__).resolve().parent
@@ -18,20 +13,15 @@ class FallbackAiAnalyzer(AiAnalyzer):
         )
 
         print("Loading Fallback AI model...")
-
         model_data = joblib.load(model_file)
-
         self._spam_model = model_data["spam_model"]
         self._spam_vectorizer = model_data["spam_vectorizer"]
-
         self._scam_type_model = model_data["scam_type_model"]
         self._scam_vectorizer = model_data["scam_vectorizer"]
-
         print("Fallback AI model loaded successfully.")
 
     # Detect suspicious indicators in a message
     def detect_indicators(self, message):
-
         indicators = []
         message_lower = message.lower()
 
@@ -108,20 +98,15 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
     # Determine risk level
     def get_risk_level(self, scam_probability):
-
         if scam_probability >= 80:
             return "HIGH"
-
         elif scam_probability >= 50:
             return "MEDIUM"
-
         return "LOW"
 
     # Generate explanation based on scam type
     def generate_explanation(self, scam_type, indicators):
-
         if scam_type == "Prize Scam":
-
             if (
                 "Unexpected prize claim" in indicators
                 and "Large financial reward" in indicators
@@ -181,7 +166,6 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
     # Generate recommendation based on risk level
     def generate_recommendation(self, risk_level):
-
         recommendations = {
 
             "HIGH": (
@@ -209,7 +193,6 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
     # Main message analysis function
     def analyze_message(self, message, phone_number, country_code):
-
         if not isinstance(message, str):
             raise TypeError("Message must be a string.")
 
@@ -280,7 +263,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
         recommendation = self.generate_recommendation(risk_level)
 
         # Create Record object containing analysis results
-        result = Record(
+        record = Record(
             phone_number=str(phone_number),
             country_code=str(country_code),
             message=str(message),
@@ -292,4 +275,4 @@ class FallbackAiAnalyzer(AiAnalyzer):
             recommendation=recommendation
         )
 
-        return result
+        return record
