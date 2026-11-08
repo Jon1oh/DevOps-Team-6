@@ -1,5 +1,5 @@
-from models.gemini_analyzer import GeminiAiAnalyzer
-from models.fallback_ai_analyzer import FallbackAiAnalyzer
+from analyzers.gemini_analyzer import GeminiAiAnalyzer
+from analyzers.fallback_ai_analyzer import FallbackAiAnalyzer
 
 class AiManager:
     # Composition: The GeminiAiAnalyzer and FallbackAiAnalyzer classes are created and managed internally by AIManager. Their lifecylces are tied to it

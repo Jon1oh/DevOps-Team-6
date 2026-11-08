@@ -1,7 +1,7 @@
 import joblib, re
 from pathlib import Path
 from interfaces.ai_analyzer import AiAnalyzer
-from record import Record
+from models.record import Record
 
 class FallbackAiAnalyzer(AiAnalyzer):
     def __init__(self):

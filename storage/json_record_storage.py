@@ -7,11 +7,11 @@ It creates two helper objects for itself (composition):
 
 import json
 
-from models.backup_database import BackupDatabase
-from models.record_converter import RecordConverter
-from models.record_storage import RecordStorage
-from models.safe_json_file import SafeJsonFile
-from record import Record
+from storage.backup_database import BackupDatabase
+from storage.record_converter import RecordConverter
+from storage.record_storage import RecordStorage
+from storage.safe_json_file import SafeJsonFile
+from models.record import Record
 
 
 class JsonRecordStorage(RecordStorage):

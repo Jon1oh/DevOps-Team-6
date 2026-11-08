@@ -1,6 +1,6 @@
 from interfaces.menu import Menu
 import managers.logic_manager as logic_manager
-import models.fallback_ai_analyzer as fallback_ai_analyzer
+import analyzers.fallback_ai_analyzer as fallback_ai_analyzer
 from datetime import datetime
 
 class FallbackAiMenu(Menu):

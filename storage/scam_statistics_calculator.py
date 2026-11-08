@@ -3,7 +3,7 @@
 import phonenumbers
 from phonenumbers import geocoder
 
-from record import Record
+from models.record import Record
 
 class ScamStatisticsCalculator:
     """Calculates percentages and most-common results.

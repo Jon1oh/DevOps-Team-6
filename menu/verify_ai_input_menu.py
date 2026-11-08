@@ -1,5 +1,5 @@
 from interfaces.menu import Menu
-from record import Record
+from models.record import Record
 import re, phonenumbers
 
 class VerifyAiInputMenu(Menu):

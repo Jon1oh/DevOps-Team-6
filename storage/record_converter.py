@@ -9,7 +9,7 @@ rules for STORING that data:
 
 import phonenumbers
 
-from record import Record
+from models.record import Record
 
 
 class RecordConverter:

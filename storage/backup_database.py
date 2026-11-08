@@ -1,9 +1,9 @@
 import json
 import os
 
-from models.record_converter import RecordConverter
-from models.safe_json_file import SafeJsonFile
-from record import Record
+from storage.record_converter import RecordConverter
+from storage.safe_json_file import SafeJsonFile
+from models.record import Record
 
 class BackupDatabase:
     """keeps the backup copy of the main database"""

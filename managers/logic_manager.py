@@ -1,6 +1,6 @@
 # LogicManager will ensure whatever reaches the user is valid, consistent, and trustworthy.
 import phonenumbers
-from record import Record
+from models.record import Record
 
 class LogicManager():
     REQUIRED_FIELDS = {

@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from record import Record
+from models.record import Record
 
 
 class RecordStorage(ABC):

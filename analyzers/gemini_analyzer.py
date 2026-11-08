@@ -1,5 +1,5 @@
 import os, json
-from record import Record
+from models.record import Record
 from datetime import datetime
 from google import genai
 from interfaces.ai_analyzer import AiAnalyzer

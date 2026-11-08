@@ -1,8 +1,8 @@
 import logging
 from dotenv import load_dotenv
 from managers.io_manager import io_manager
-from models.fallback_ai_menu import FallbackAiMenu
-from models.verify_ai_input_menu import VerifyAiInputMenu
+from menu.fallback_ai_menu import FallbackAiMenu
+from menu.verify_ai_input_menu import VerifyAiInputMenu
 import managers.ai_manager as ai_manager
 import managers.data_manager as data_manager
 import managers.logic_manager as logic_manager
