@@ -2,19 +2,19 @@
 
     python -m pytest tests/test_record_storage.py
 
-The tests marked "both storages" run TWICE: once with JsonRecordStorage and
-once with TemporaryRecordStorage. Passing both times is the evidence for
-polymorphism and LSP (either child can replace the other).
+The tests that take a `storage` argument run TWICE: once with
+JsonRecordStorage and once with TemporaryRecordStorage. Passing both times is
+the evidence for polymorphism and LSP (either child can replace the other).
 """
 
 import pytest
 
 from classes.json_record_storage import JsonRecordStorage
-from classes.record_storage import RecordStorage
 from classes.record_converter import RecordConverter
-from record import Record
+from classes.record_storage import RecordStorage
 from classes.temp_record_storage import TemporaryRecordStorage
 from managers.data_manager import DataManager
+from record import Record
 
 
 def make_record(record_id: int = 1) -> Record:
@@ -54,7 +54,7 @@ def test_abstract_class_cannot_be_created() -> None:
 
 def test_child_missing_a_method_cannot_be_created() -> None:
     class BrokenStorage(RecordStorage):
-        def load(self):          # save() is missing on purpose
+        def load(self):          # save_all() is missing on purpose
             return []
 
     with pytest.raises(TypeError):
@@ -70,32 +70,42 @@ def test_both_children_are_record_storages() -> None:
 
 def test_starts_empty(storage) -> None:
     assert storage.load() == []
-    assert storage.next_id() == 1
 
 
-def test_save_then_load(storage) -> None:
-    assert storage.save(make_record()) == (True, "")
+def test_save_all_then_load(storage) -> None:
+    assert storage.save_all([make_record(1), make_record(2)]) == (True, "")
+
     records = storage.load()
-    assert len(records) == 1
-    assert isinstance(records[0], Record)
+
+    assert [record.record_id for record in records] == [1, 2]
+    assert all(isinstance(record, Record) for record in records)
 
 
-def test_next_id_is_highest_plus_one(storage) -> None:
-    storage.save(make_record(3))
-    storage.save(make_record(7))
-    assert storage.next_id() == 8
+def test_save_all_replaces_everything(storage) -> None:
+    storage.save_all([make_record(1), make_record(2)])
+    storage.save_all([make_record(2)])            # record 1 removed
+
+    assert [record.record_id for record in storage.load()] == [2]
+
+
+def test_save_empty_list(storage) -> None:
+    storage.save_all([make_record(1)])
+    assert storage.save_all([]) == (True, "")
 
 
 def test_rejects_non_record(storage) -> None:
-    assert storage.save({"not": "a record"}) == (
+    assert storage.save_all([{"not": "a record"}]) == (
         False, "Only Record objects can be saved.")
 
 
-def test_rejects_unfinished_record(storage) -> None:
+def test_rejects_unfinished_record_and_saves_nothing(storage) -> None:
+    storage.save_all([make_record(1)])
+
     # Record() with its default values has no message and no valid risk level.
-    ok, _error = storage.save(Record())
+    ok, _error = storage.save_all([make_record(1), Record()])
+
     assert ok is False
-    assert storage.load() == []
+    assert [record.record_id for record in storage.load()] == [1]   # unchanged
 
 
 def test_status_message_is_read_only(storage) -> None:
@@ -109,14 +119,18 @@ def test_data_manager_works_with_any_storage(storage) -> None:
 
     assert manager.save_record(data) == (True, "")
     assert manager.save_record(data) == (True, "")
-    assert [record.record_id for record in manager.load_records()] == [1, 2]
+    assert [record.record_id for record in manager.records] == [1, 2]
     assert manager.summary()["total_messages"] == 2
 
 
 # ---------- temporary storage only ----------
 
-def test_temporary_storage_list_cannot_be_changed_from_outside() -> None:
+def test_temporary_storage_keeps_its_own_copy() -> None:
     storage = TemporaryRecordStorage()
-    storage.save(make_record())
-    storage.load().clear()               # changes a copy only
-    assert len(storage.load()) == 1
+    records = [make_record(1)]
+    storage.save_all(records)
+
+    records.append(make_record(2))       # changing the caller's list...
+    storage.load().clear()               # ...or the returned list...
+
+    assert len(storage.load()) == 1      # ...does not change what was saved

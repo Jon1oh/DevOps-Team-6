@@ -8,15 +8,18 @@ from record import Record
 class RecordStorage(ABC):
     """Describes what every storage must be able to do, without saying how.
 
-    - load() and save() are ABSTRACT: each child class must write its own.
-    - next_id() and status_message are CONCRETE: shared by every child,
-      written once here (inheritance means the children get them for free).
+    - load() and save_all() are ABSTRACT: each child class must write its own.
+    - status_message is CONCRETE: shared by every child, written once here
+      (inheritance means the children get it for free).
+
+    A storage only reads and writes the WHOLE list of records. Keeping the
+    list in memory and changing it is DataManager's job.
 
     RecordStorage itself cannot be created: RecordStorage() raises TypeError.
     """
 
     def __init__(self) -> None:
-        self._status_message = ""
+        self._status_message: str = ""
 
     @property
     def status_message(self) -> str:
@@ -28,17 +31,10 @@ class RecordStorage(ABC):
         """Return every saved record. Must never crash."""
 
     @abstractmethod
-    def save(self, record: Record) -> tuple[bool, str]:
-        """Add one record. Return (True, "") on success or (False, "reason")."""
+    def save_all(self, records: list[Record]) -> tuple[bool, str]:
+        """Replace everything stored with `records`.
 
-    def next_id(self) -> int:
-        """Return the next free record_id: highest saved id + 1, or 1 if none.
-
-        It calls self.load(), so it works for ANY child class: Python runs the
-        child's own load() (polymorphism).
+        Return (True, "") on success, (True, "warning") if the records were
+        saved with a problem worth reporting, or (False, "reason") if nothing
+        was saved.
         """
-        highest = 0
-        for record in self.load():
-            if record.record_id > highest:
-                highest = record.record_id
-        return highest + 1

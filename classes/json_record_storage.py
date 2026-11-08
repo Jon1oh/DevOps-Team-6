@@ -18,7 +18,7 @@ class JsonRecordStorage(RecordStorage):
     """Stores Record objects in scam_data.json, with a backup file.
 
     - load() returns the saved records and never crashes.
-    - save() adds one record, writing the main file first and then the backup.
+    - save_all() writes the whole list: the main file first, then the backup.
     - status_message tells io_manager what happened during the last load,
       e.g. "Skipped 2 invalid record(s)." ("" means everything was normal).
     """
@@ -80,18 +80,16 @@ class JsonRecordStorage(RecordStorage):
             self._status_message = ""
         return records
 
-    def save(self, record: Record) -> tuple[bool, str]:
-        """Add one record. Writes the main file, then the backup.
+    def save_all(self, records: list[Record]) -> tuple[bool, str]:
+        """Replace the saved records with `records`. Writes the main file, then the backup.
 
         Returns (True, "") on success, (True, "warning") if only the backup
-        failed, or (False, "reason") if the record could not be saved.
+        failed, or (False, "reason") if nothing could be saved.
         """
-        is_valid, error = RecordConverter.check_record(record)
-        if not is_valid:
-            return False, error
-
-        records = self.load()
-        records.append(record)
+        for record in records:
+            is_valid, error = RecordConverter.check_record(record)
+            if not is_valid:
+                return False, error
 
         try:
             self._main_file.write([RecordConverter.to_dict(saved) for saved in records])
@@ -102,7 +100,7 @@ class JsonRecordStorage(RecordStorage):
         if not self._backup.update(records):
             return (
                 True,
-                "Record saved, but the backup database could not be updated. "
+                "Records saved, but the backup database could not be updated. "
                 "The previous backup was preserved where possible.",
             )
 

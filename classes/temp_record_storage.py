@@ -21,9 +21,13 @@ class TemporaryRecordStorage(RecordStorage):
         # Return a copy of the list, so callers cannot change our list directly.
         return list(self._records)
 
-    def save(self, record: Record) -> tuple[bool, str]:
-        is_valid, error = RecordConverter.check_record(record)
-        if not is_valid:
-            return False, error
-        self._records.append(record)
+    def save_all(self, records: list[Record]) -> tuple[bool, str]:
+        for record in records:
+            is_valid, error = RecordConverter.check_record(record)
+            if not is_valid:
+                return False, error
+
+        # Keep our own copy, so later changes to the caller's list
+        # do not change what is "saved".
+        self._records = list(records)
         return True, ""

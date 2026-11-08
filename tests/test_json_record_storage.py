@@ -12,8 +12,8 @@ import os
 import pytest
 
 from classes.json_record_storage import JsonRecordStorage
-from record import Record
 from classes.record_converter import RecordConverter
+from record import Record
 
 
 def make_valid_dict(record_id: int = 1) -> dict:
@@ -161,16 +161,16 @@ def test_corrupt_backup_does_not_crash(tmp_path) -> None:
 
 # ---------- saving ----------
 
-def test_save_then_load(tmp_path) -> None:
+def test_save_all_then_load(tmp_path) -> None:
     storage = make_storage(tmp_path)
 
-    assert storage.save(make_record()) == (True, "")
-    assert len(storage.load()) == 1
+    assert storage.save_all([make_record(1), make_record(2)]) == (True, "")
+    assert len(storage.load()) == 2
 
 
-def test_save_updates_main_and_backup(tmp_path) -> None:
+def test_save_all_updates_main_and_backup(tmp_path) -> None:
     storage = make_storage(tmp_path)
-    storage.save(make_record())
+    storage.save_all([make_record()])
 
     main_entries = read_json(tmp_path / "scam_data.json")
     backup_entries = read_json(tmp_path / "backup_database.json")
@@ -178,11 +178,12 @@ def test_save_updates_main_and_backup(tmp_path) -> None:
     assert main_entries == backup_entries
 
 
-def test_save_rejects_non_record(tmp_path) -> None:
+def test_save_all_rejects_non_record(tmp_path) -> None:
     storage = make_storage(tmp_path)
-    ok, message = storage.save(make_valid_dict())   # a dict, not a Record
+    ok, message = storage.save_all([make_valid_dict()])   # a dict, not a Record
     assert ok is False
     assert message == "Only Record objects can be saved."
+    assert not os.path.exists(tmp_path / "scam_data.json")   # nothing written
 
 
 def test_backup_failure_is_a_warning_not_an_error(tmp_path) -> None:
@@ -190,7 +191,7 @@ def test_backup_failure_is_a_warning_not_an_error(tmp_path) -> None:
     os.makedirs(tmp_path / "backup_database.json")
     storage = make_storage(tmp_path)
 
-    ok, message = storage.save(make_record())
+    ok, message = storage.save_all([make_record()])
 
     assert ok is True
     assert "backup database could not be updated" in message
@@ -202,22 +203,10 @@ def test_main_file_failure_is_reported(tmp_path) -> None:
     os.makedirs(tmp_path / "scam_data.json")
     storage = make_storage(tmp_path)
 
-    ok, message = storage.save(make_record())
+    ok, message = storage.save_all([make_record()])
 
     assert ok is False
     assert message == "Could not write to the data file."
-
-
-# ---------- message ids ----------
-
-def test_next_id_starts_at_one(tmp_path) -> None:
-    assert make_storage(tmp_path).next_id() == 1
-
-
-def test_next_id_is_highest_plus_one(tmp_path) -> None:
-    entries = [make_valid_dict(3), make_valid_dict(7)]
-    write_text(tmp_path / "scam_data.json", json.dumps(entries))
-    assert make_storage(tmp_path).next_id() == 8
 
 
 def test_status_message_is_read_only(tmp_path) -> None:

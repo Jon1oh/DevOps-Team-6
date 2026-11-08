@@ -137,5 +137,24 @@
         ],
         "explanation": "The message claims to originate from Australia Post (AusPost) but is sent from a UK phone number (+44). It employs a common phishing tactic by requesting a small delivery fee payment and uses a shortened URL (bit.ly) instead of an official official AusPost domain to capture sensitive personal and banking details.",
         "recommendation": "Do not click the link, pay any money, or enter personal information. Block the sender's phone number and delete the message. If expecting a delivery, check the tracking status directly on the official Australia Post website."
+    },
+    {
+        "record_id": 9,
+        "timestamp": "2026-11-08 20:44:33",
+        "phone_number": "8005550199",
+        "country_code": "+1",
+        "message_content": "USPS Alert: Your package #US9482103K could not be delivered due to an incorrect shipping address. Update your details within 24 hours to avoid a return-to-sender fee: https://usps-update-track-service.com",
+        "scam_probability": 95,
+        "risk_level": "HIGH",
+        "scam_type": "Parcel Delivery Scam",
+        "indicators": [
+            "Urgency or pressure tactics",
+            "Threats or consequences",
+            "Requests for personal information",
+            "Suspicious links",
+            "Impersonation of banks, government agencies, delivery companies, employers, or known organizations"
+        ],
+        "explanation": "The message impersonates the US Postal Service and creates artificial urgency by claiming a 24-hour limit to avoid a return fee. The provided URL (usps-update-track-service.com) is an unofficial, suspicious domain designed to phish personal and financial information.",
+        "recommendation": "Do not click on the link or provide any personal details. Block the sender and verify package statuses directly on the official USPS website (usps.com)."
     }
 ]
