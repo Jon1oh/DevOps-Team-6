@@ -9,18 +9,16 @@ from models.record import Record
 
 class FallbackAiAnalyzer(AiAnalyzer):
 
-    def __init__(self, model_file=None):
+    def __init__(self):
 
-        # Locate the trained model file
-        if model_file is None:
-            model_file = (
-                Path(__file__).resolve().parent
-                / "scam_detection_model.pkl"
-            )
+        # Load the trained machine learning model
+        model_file = (
+            Path(__file__).resolve().parent
+            / "scam_detection_model.pkl"
+        )
 
-        print("Loading fallback AI model...")
+        print("Loading Fallback AI model...")
 
-        # Load trained models
         model_data = joblib.load(model_file)
 
         self._spam_model = model_data["spam_model"]
@@ -37,7 +35,6 @@ class FallbackAiAnalyzer(AiAnalyzer):
         indicators = []
         message_lower = message.lower()
 
-        # Prize-related words
         prize_words = [
             "won", "winner", "prize", "reward",
             "congratulations", "cash prize",
@@ -47,15 +44,12 @@ class FallbackAiAnalyzer(AiAnalyzer):
         if any(word in message_lower for word in prize_words):
             indicators.append("Unexpected prize claim")
 
-        # Suspicious links
         if re.search(r"https?://", message_lower):
             indicators.append("Suspicious link")
 
-        # Large financial rewards
         if re.search(r"\$\s?\d{1,3}(?:,\d{3})+", message):
             indicators.append("Large financial reward")
 
-        # Suspicious spelling patterns
         suspicious_patterns = [
             r"congratulat0ns",
             r"cl@im",
@@ -71,7 +65,6 @@ class FallbackAiAnalyzer(AiAnalyzer):
         ):
             indicators.append("Spelling mistakes")
 
-        # Urgent language
         urgency_words = [
             "urgent", "immediately", "act now",
             "last chance", "within 24 hours"
@@ -80,7 +73,6 @@ class FallbackAiAnalyzer(AiAnalyzer):
         if any(word in message_lower for word in urgency_words):
             indicators.append("Urgent or threatening language")
 
-        # Account verification
         verification_words = [
             "verify your account",
             "verify your identity",
@@ -91,7 +83,6 @@ class FallbackAiAnalyzer(AiAnalyzer):
         if any(word in message_lower for word in verification_words):
             indicators.append("Requests account verification")
 
-        # Personal information requests
         personal_information_words = [
             "password", "otp", "one-time password",
             "credit card", "card number",
@@ -104,7 +95,6 @@ class FallbackAiAnalyzer(AiAnalyzer):
         ):
             indicators.append("Requests sensitive personal information")
 
-        # Payment requests
         payment_words = [
             "transfer money", "send money",
             "bank transfer", "payment",
@@ -116,7 +106,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         return indicators
 
-    # Determine risk level based on scam probability
+    # Determine risk level
     def get_risk_level(self, scam_probability):
 
         if scam_probability >= 80:
@@ -125,8 +115,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
         elif scam_probability >= 50:
             return "MEDIUM"
 
-        else:
-            return "LOW"
+        return "LOW"
 
     # Generate explanation based on scam type
     def generate_explanation(self, scam_type, indicators):
@@ -140,14 +129,13 @@ class FallbackAiAnalyzer(AiAnalyzer):
                 return (
                     "The message claims that the recipient has won "
                     "a large prize without any prior participation. "
-                    "It also contains a suspicious link and may use "
-                    "spelling mistakes or unusual characters to make "
-                    "the message appear convincing."
+                    "It also contains suspicious characteristics "
+                    "commonly associated with prize scams."
                 )
 
             return (
-                "The message claims that the recipient has won a "
-                "prize or reward and contains characteristics "
+                "The message claims that the recipient has won "
+                "a prize or reward and contains characteristics "
                 "commonly associated with prize scams."
             )
 
@@ -186,7 +174,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         return explanations.get(
             scam_type,
-            "The message contains characteristics that are commonly "
+            "The message contains characteristics commonly "
             "associated with scam messages. The detected indicators "
             "suggest that the recipient should exercise caution."
         )
@@ -231,7 +219,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
         # Predict whether the message is spam
         prediction = self._spam_model.predict(message_vector)[0]
 
-        # Get prediction probabilities
+        # Obtain prediction probabilities
         probabilities = self._spam_model.predict_proba(message_vector)[0]
 
         class_probabilities = dict(
@@ -252,7 +240,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         is_spam = str(prediction).lower() == "spam"
 
-        # Predict scam type if message is classified as spam
+        # Predict scam type if classified as spam
         if is_spam:
 
             scam_vector = self._scam_vectorizer.transform([message])
@@ -274,12 +262,14 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         # Generate explanation
         if is_spam:
+
             explanation = self.generate_explanation(
                 scam_type,
                 indicators
             )
 
         else:
+
             explanation = (
                 "The message was classified as a normal message "
                 "and does not contain enough characteristics to "
@@ -289,7 +279,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
         # Generate recommendation
         recommendation = self.generate_recommendation(risk_level)
 
-        # Store analysis results in Record object
+        # Create Record object containing analysis results
         result = Record(
             phone_number=str(phone_number),
             country_code=str(country_code),
