@@ -92,7 +92,7 @@ class VerifyAiInputMenu(Menu):
                 self._record = Record() # reset the record object to clear the previous message content
                 continue
             else:
-                if self._menu_input() == 2:
+                if self.menu_input() == 2:
                     self._record = Record() # reset the record object to clear the previous message content
                     continue
                 else:
