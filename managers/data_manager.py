@@ -1,6 +1,4 @@
 """DataManager: holds the list of scam records and is what the app talks to (Phase 2b)."""
-
-from storage.json_record_storage import JsonRecordStorage
 from storage.record_converter import RecordConverter
 from storage.record_storage import RecordStorage
 from storage.scam_statistics_calculator import ScamStatisticsCalculator
@@ -122,48 +120,3 @@ class DataManager:
         if not ok:
             self._records.insert(position, record)  # put it back where it was
         return ok, message
-
-
-# =====================================================================
-# TEMPORARY wrappers so app.py keeps working without being edited.
-# app.py calls these four module-level functions, exactly as in Phase 1.
-# REMOVE this whole section before submission, once app.py creates and
-# uses a DataManager object directly.
-# =====================================================================
-
-_default_manager = DataManager(JsonRecordStorage())
-
-
-def load_records() -> list[dict]:
-    """Phase 1 style: return records as plain dictionaries.
-
-    Each dictionary also gets the old key "message_id", in case io_manager
-    or app.py still reads it. Delete that line once nothing uses message_id.
-    """
-    entries = []
-    for record in _default_manager.records:
-        entry = RecordConverter.to_dict(record)
-        entry["message_id"] = entry["record_id"]    # TEMPORARY old name
-        entries.append(entry)
-    return entries
-
-
-def save_record(record: dict) -> tuple[bool, str]:
-    return _default_manager.save_record(record)
-
-
-def count_risk_levels(phone_number: str) -> dict[str, int]:
-    return _default_manager.count_risk_levels(phone_number)
-
-
-def summary_with_percentages(records: list) -> dict:
-    """Phase 1 style: accepts the dictionaries that load_records() returned."""
-    converted = []
-    for entry in records:
-        if isinstance(entry, Record):
-            converted.append(entry)
-        else:
-            record, _error = RecordConverter.from_dict(entry)
-            if record is not None:
-                converted.append(record)
-    return _default_manager.summary(converted)

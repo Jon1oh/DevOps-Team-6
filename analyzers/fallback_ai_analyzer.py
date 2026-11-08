@@ -1,15 +1,12 @@
-import joblib, re
-from pathlib import Path
+import joblib, re, os
 from interfaces.ai_analyzer import AiAnalyzer
 from models.record import Record
 
 class FallbackAiAnalyzer(AiAnalyzer):
     def __init__(self):
         # Load the trained machine learning model
-        model_file = (
-            Path(__file__).resolve().parent
-            / "scam_detection_model.pkl"
-        )
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
+        model_file = os.path.join(project_root, "data", "scam_detection_model.pkl")
 
         print("Loading Fallback AI model...")
         model_data = joblib.load(model_file)

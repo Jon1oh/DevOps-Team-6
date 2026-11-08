@@ -1,12 +1,12 @@
 from interfaces.menu import Menu
 import emoji
 
-class io_manager(Menu):
+class IoManager(Menu):
     def __init__(self):
         super().__init__()
         self.add_menu("Check Scam Message")
         self.add_menu("View summary of scam messages")
-        self.add_menu("quit")
+        self.add_menu("Quit")
 
     def display(self):
         print(f"\n{'='*36}\nScam Message AI Detector Main Menu\n{'='*36}")

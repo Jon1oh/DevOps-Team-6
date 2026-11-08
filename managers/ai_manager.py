@@ -18,7 +18,7 @@ class AiManager:
             return self._fallback_analyzer
 
 # test code
-ai_manager = AiManager()
-analyzer = ai_manager.get_analyzer()
+# ai_manager = AiManager()
+# analyzer = ai_manager.get_analyzer()
 # * before calling analyze_message(), separate the phone number and country code and pass them into analyze_message() as separate arguments.
-ai_output = analyzer.analyze_message("message", "number", "+65") # which analyzer.analyze_message() to be used is based on the API status.
+# ai_output = analyzer.analyze_message("message", "number", "+65") # which analyzer.analyze_message() to be used is based on the API status.

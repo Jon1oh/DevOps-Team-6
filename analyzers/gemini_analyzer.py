@@ -1,11 +1,15 @@
-import os, json
+import os, json, logging
 from models.record import Record
 from datetime import datetime
 from google import genai
 from interfaces.ai_analyzer import AiAnalyzer
+from dotenv import load_dotenv
+
+load_dotenv()
+logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module    
 
 class GeminiAiAnalyzer(AiAnalyzer):
-    def __init__(self, model="gemini-3.6-flash"):        
+    def __init__(self, model="gemini-3.6-flash"): 
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
     
@@ -123,7 +127,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
         """
         return prompt
     
-    def analyze_message(self, message, phone_number):
+    def analyze_message(self, message, phone_number, country_code=None):
         prompt = self.build_prompt(message, phone_number)        
         print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
 
