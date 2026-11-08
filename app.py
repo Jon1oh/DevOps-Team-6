@@ -1,6 +1,8 @@
-from managers.io_manager.io_manager import io_manager
-from managers.io_manager.classes.fallbackAiMenu import FallbackAiMenu
-from managers.io_manager.classes.verifyAiInputMenu import VerifyAiInputMenu
+import logging
+from dotenv import load_dotenv
+from managers.io_manager import io_manager
+from models.fallback_ai_menu import FallbackAiMenu
+from models.verify_ai_input_menu import VerifyAiInputMenu
 import managers.ai_manager as ai_manager
 import managers.data_manager as data_manager
 import managers.logic_manager as logic_manager
@@ -9,10 +11,12 @@ import managers.logic_manager as logic_manager
 
 class App:
     def __init__(self):
-
         self.__Mainmenu = io_manager()
     
     def main_loop(self):
+        load_dotenv()
+        logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module   
+             
         while True:
             self.__Mainmenu.display()
             # a match case to match the output of menu to correct action

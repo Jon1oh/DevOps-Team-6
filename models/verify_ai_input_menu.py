@@ -1,4 +1,4 @@
-from managers.io_manager.classes.menu import Menu
+from interfaces.menu import Menu
 from record import Record
 import re, phonenumbers
 

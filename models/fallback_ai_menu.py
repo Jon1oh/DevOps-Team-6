@@ -1,6 +1,6 @@
-from managers.io_manager.classes.menu import Menu
+from interfaces.menu import Menu
 import managers.logic_manager as logic_manager
-import models.fallback_ai as fallback_ai
+import models.fallback_ai_analyzer as fallback_ai_analyzer
 from datetime import datetime
 
 class FallbackAiMenu(Menu):
@@ -36,7 +36,7 @@ class FallbackAiMenu(Menu):
             case 1:
                 print("Using our In-House-Trained Custom AI Bot. It can make mistakes. Please verify important info.")
                 phone_number, country_code = logic_manager.split_country_code_phone_number(phone_number_with_country_code)
-                ai_output = fallback_ai.analyse_message(message, phone_number, country_code) 
+                ai_output = fallback_ai_analyzer.analyse_message(message, phone_number, country_code) 
                 if "timestamp" not in ai_output:
                     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
                     ai_output = {"timestamp": timestamp, **ai_output}
