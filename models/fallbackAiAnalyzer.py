@@ -4,28 +4,14 @@ import re
 from pathlib import Path
 
 from interfaces.ai_analyzer import AiAnalyzer
+from models.record import Record
 
 
 class FallbackAiAnalyzer(AiAnalyzer):
 
-    REQUIRED_FIELDS = {
-        "phone_number": str,
-        "country_code": str,
-        "message_content": str,
-        "scam_probability": int,
-        "risk_level": str,
-        "scam_type": str,
-        "indicators": list,
-        "explanation": str,
-        "recommendation": str
-    }
-
-    # ============================================================
-    # INITIALISE FALLBACK AI
-    # ============================================================
-
     def __init__(self, model_file=None):
 
+        # Locate the trained model file
         if model_file is None:
             model_file = (
                 Path(__file__).resolve().parent
@@ -34,6 +20,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         print("Loading fallback AI model...")
 
+        # Load trained models
         model_data = joblib.load(model_file)
 
         self._spam_model = model_data["spam_model"]
@@ -44,16 +31,13 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         print("Fallback AI model loaded successfully.")
 
-    # ============================================================
-    # DETECT SCAM INDICATORS
-    # ============================================================
-
+    # Detect suspicious indicators in a message
     def detect_indicators(self, message):
 
         indicators = []
         message_lower = message.lower()
 
-        # Unexpected prize
+        # Prize-related words
         prize_words = [
             "won", "winner", "prize", "reward",
             "congratulations", "cash prize",
@@ -63,15 +47,15 @@ class FallbackAiAnalyzer(AiAnalyzer):
         if any(word in message_lower for word in prize_words):
             indicators.append("Unexpected prize claim")
 
-        # Suspicious link
+        # Suspicious links
         if re.search(r"https?://", message_lower):
             indicators.append("Suspicious link")
 
-        # Large financial reward
+        # Large financial rewards
         if re.search(r"\$\s?\d{1,3}(?:,\d{3})+", message):
             indicators.append("Large financial reward")
 
-        # Suspicious spelling
+        # Suspicious spelling patterns
         suspicious_patterns = [
             r"congratulat0ns",
             r"cl@im",
@@ -107,20 +91,24 @@ class FallbackAiAnalyzer(AiAnalyzer):
         if any(word in message_lower for word in verification_words):
             indicators.append("Requests account verification")
 
-        # Personal information
+        # Personal information requests
         personal_information_words = [
             "password", "otp", "one-time password",
-            "credit card", "card number", "nric",
-            "personal information"
+            "credit card", "card number",
+            "nric", "personal information"
         ]
 
-        if any(word in message_lower for word in personal_information_words):
+        if any(
+            word in message_lower
+            for word in personal_information_words
+        ):
             indicators.append("Requests sensitive personal information")
 
-        # Payment / money transfer
+        # Payment requests
         payment_words = [
             "transfer money", "send money",
-            "bank transfer", "payment", "pay now", "deposit"
+            "bank transfer", "payment",
+            "pay now", "deposit"
         ]
 
         if any(word in message_lower for word in payment_words):
@@ -128,10 +116,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         return indicators
 
-    # ============================================================
-    # DETERMINE RISK LEVEL
-    # ============================================================
-
+    # Determine risk level based on scam probability
     def get_risk_level(self, scam_probability):
 
         if scam_probability >= 80:
@@ -140,12 +125,10 @@ class FallbackAiAnalyzer(AiAnalyzer):
         elif scam_probability >= 50:
             return "MEDIUM"
 
-        return "LOW"
+        else:
+            return "LOW"
 
-    # ============================================================
-    # GENERATE EXPLANATION
-    # ============================================================
-
+    # Generate explanation based on scam type
     def generate_explanation(self, scam_type, indicators):
 
         if scam_type == "Prize Scam":
@@ -163,17 +146,17 @@ class FallbackAiAnalyzer(AiAnalyzer):
                 )
 
             return (
-                "The message claims that the recipient has won "
-                "a prize or reward and contains characteristics "
+                "The message claims that the recipient has won a "
+                "prize or reward and contains characteristics "
                 "commonly associated with prize scams."
             )
 
         explanations = {
+
             "Banking Scam": (
-                "The message contains banking-related language "
-                "and may attempt to make the recipient verify an "
-                "account, provide sensitive information, or take "
-                "immediate action."
+                "The message contains banking-related language and "
+                "may attempt to make the recipient verify an account, "
+                "provide sensitive information, or take immediate action."
             ),
 
             "Phishing Scam": (
@@ -208,18 +191,16 @@ class FallbackAiAnalyzer(AiAnalyzer):
             "suggest that the recipient should exercise caution."
         )
 
-    # ============================================================
-    # GENERATE RECOMMENDATION
-    # ============================================================
-
+    # Generate recommendation based on risk level
     def generate_recommendation(self, risk_level):
 
         recommendations = {
+
             "HIGH": (
                 "Do not click the link or provide personal information. "
                 "Do not transfer money. Verify the message through the "
-                "organisation's official website and report the message "
-                "as suspicious."
+                "organisation's official website and report the "
+                "message as suspicious."
             ),
 
             "MEDIUM": (
@@ -231,33 +212,33 @@ class FallbackAiAnalyzer(AiAnalyzer):
             "LOW": (
                 "The message does not appear highly suspicious based "
                 "on the current model prediction. However, remain "
-                "cautious and verify unexpected requests before taking action."
+                "cautious and verify unexpected requests before "
+                "taking action."
             )
         }
 
         return recommendations[risk_level]
 
-    # ============================================================
-    # ANALYSE MESSAGE
-    # ============================================================
-
+    # Main message analysis function
     def analyze_message(self, message, phone_number, country_code):
 
         if not isinstance(message, str):
             raise TypeError("Message must be a string.")
 
-        # STEP 1: SPAM DETECTION
-
+        # Convert message into numerical features
         message_vector = self._spam_vectorizer.transform([message])
 
+        # Predict whether the message is spam
         prediction = self._spam_model.predict(message_vector)[0]
 
+        # Get prediction probabilities
         probabilities = self._spam_model.predict_proba(message_vector)[0]
 
         class_probabilities = dict(
             zip(self._spam_model.classes_, probabilities)
         )
 
+        # Extract spam probability
         spam_probability = next(
             (
                 probability
@@ -271,29 +252,27 @@ class FallbackAiAnalyzer(AiAnalyzer):
 
         is_spam = str(prediction).lower() == "spam"
 
-        # STEP 2: SCAM TYPE DETECTION
-
+        # Predict scam type if message is classified as spam
         if is_spam:
 
             scam_vector = self._scam_vectorizer.transform([message])
 
-            scam_prediction = self._scam_type_model.predict(scam_vector)[0]
+            scam_prediction = self._scam_type_model.predict(
+                scam_vector
+            )[0]
 
             scam_type = str(scam_prediction)
 
         else:
             scam_type = "Not a Scam"
 
-        # STEP 3: RISK LEVEL
-
+        # Determine risk level
         risk_level = self.get_risk_level(scam_probability)
 
-        # STEP 4: DETECT INDICATORS
-
+        # Detect suspicious indicators
         indicators = self.detect_indicators(message)
 
-        # STEP 5: GENERATE EXPLANATION
-
+        # Generate explanation
         if is_spam:
             explanation = self.generate_explanation(
                 scam_type,
@@ -307,36 +286,20 @@ class FallbackAiAnalyzer(AiAnalyzer):
                 "be identified as a scam."
             )
 
-        # STEP 6: GENERATE RECOMMENDATION
-
+        # Generate recommendation
         recommendation = self.generate_recommendation(risk_level)
 
-        # STEP 7: BUILD RESULT
-
-        result = {
-            "phone_number": str(phone_number),
-            "country_code": str(country_code),
-            "message_content": str(message),
-            "scam_probability": int(scam_probability),
-            "risk_level": risk_level,
-            "scam_type": scam_type,
-            "indicators": indicators,
-            "explanation": explanation,
-            "recommendation": recommendation
-        }
-
-        # STEP 8: VALIDATE RESULT
-
-        for field, expected_type in self.REQUIRED_FIELDS.items():
-
-            if field not in result:
-                raise ValueError(f"Missing required field: {field}")
-
-            if not isinstance(result[field], expected_type):
-                raise TypeError(
-                    f"Invalid type for {field}. "
-                    f"Expected {expected_type.__name__}, "
-                    f"got {type(result[field]).__name__}"
-                )
+        # Store analysis results in Record object
+        result = Record(
+            phone_number=str(phone_number),
+            country_code=str(country_code),
+            message=str(message),
+            scam_probability=int(scam_probability),
+            risk_level=risk_level,
+            scam_type=scam_type,
+            indicators=indicators,
+            explanation=explanation,
+            recommendation=recommendation
+        )
 
         return result
