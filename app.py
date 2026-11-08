@@ -34,11 +34,10 @@ class App:
                     record = self.verify_ai_input_menu.check_scam_message_phone_number() # create a Record class if the message and phone number are valid
                     if record is None:
                         continue
-                    record.phone_number, record.country_code = self.logic_manager.split_country_code_phone_number(record.phone_number) # split phone number and country code                    
-                    print(f"country code is {record.country_code}")
-                    
+                    record.phone_number, record.country_code = self.logic_manager.split_country_code_phone_number(record.phone_number) # split phone number and country code                                        
                     analyzer = self.ai_manager.get_analyzer() # either get Gemini or Fallback AI. Depending on Gemini API status
                     ai_output = analyzer.analyze_message(record) # get the populated Record object
+                    
                                         
                     if ai_output is False: # call backup AI bot when the AI model API fails
                         fallback_ai_output = self.fallback_ai_menu.run_fallback_workflow(record)
@@ -50,7 +49,7 @@ class App:
                         else:
                             ai_output = fallback_ai_output
                             print("Our backup AI has successfully analyzed the message.")
-                            
+                    
                     is_valid_ai_output = self.logic_manager.check_ai_output(ai_output)
                     if not is_valid_ai_output:
                         print("One of the fields in the AI output is invalid.")

@@ -147,10 +147,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
         except json.JSONDecodeError as error:
             self.log_error(error)
             ai_output = self.extract_json_object(response)
-        
-        print(ai_output)
-        print("\n")
-        
+                
         record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
         record.phone_number = ai_output["phone_number"]
         record.country_code = ai_output["country_code"]
@@ -160,7 +157,5 @@ class GeminiAiAnalyzer(AiAnalyzer):
         record.scam_type = ai_output["scam_type"]
         record.indicators = ai_output["indicators"]
         record.explanation = ai_output["explanation"]
-        record.recommendation = ai_output["recommendation"]        
-
-        print(record)
+        record.recommendation = ai_output["recommendation"]     
         return record

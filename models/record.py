@@ -79,10 +79,6 @@ class Record:
 
     @scam_probability.setter
     def scam_probability(self, value):
-        # if not 0 <= value <= 100:
-        #     raise ValueError(
-        #         "Scam probability must be between 0 and 100."
-        #     )
         self._scam_probability = value
 
     # Risk Level
@@ -92,10 +88,6 @@ class Record:
 
     @risk_level.setter
     def risk_level(self, value):
-        # if value not in ["LOW", "MEDIUM", "HIGH"]:
-        #     raise ValueError(
-        #         "Risk level must be LOW, MEDIUM or HIGH."
-        #     )
         self._risk_level = value
 
     # Scam Type

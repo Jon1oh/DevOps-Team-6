@@ -15,4 +15,5 @@ class AiManager:
             print("Gemini is ready for use...")
             return self._gemini_analyzer
         else:
+            print("Reverting to fallback AI")
             return self._fallback_analyzer
