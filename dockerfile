@@ -2,8 +2,6 @@ FROM python:3.14.8-slim
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY data/ ./data
-COPY models/ ./models
-COPY managers/ ./managers
-COPY app.py pytest.ini .env ./
+# copy the entire project automatically. Saves time from updating the Dockerfile every time a new folder is created.
+COPY . .
 CMD ["python","app.py"]
