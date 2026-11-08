@@ -1,0 +1,77 @@
+
+import unittest
+import json
+
+from models.fallbackAiAnalyzer import FallbackAiAnalyzer
+
+
+class TestFallbackAiAnalyzer(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        # Load the fallback AI model once for all tests
+        cls.analyzer = FallbackAiAnalyzer()
+
+    def test_analyze_message(self):
+
+        message = (
+            "Congratulations! You won a $10,000 prize. "
+            "Click https://suspicious-link.com to claim now!"
+        )
+
+        result = self.analyzer.analyze_message(
+            message,
+            "91234567",
+            "+65"
+        )
+
+        # Check required fields
+        expected_fields = [
+            "phone_number",
+            "country_code",
+            "message_content",
+            "scam_probability",
+            "risk_level",
+            "scam_type",
+            "indicators",
+            "explanation",
+            "recommendation"
+        ]
+
+        for field in expected_fields:
+            self.assertIn(field, result)
+
+        # Check data types
+        self.assertIsInstance(result["scam_probability"], int)
+        self.assertIsInstance(result["indicators"], list)
+        self.assertIsInstance(result["explanation"], str)
+        self.assertIsInstance(result["recommendation"], str)
+
+        # Check probability range
+        self.assertGreaterEqual(result["scam_probability"], 0)
+        self.assertLessEqual(result["scam_probability"], 100)
+
+        # Display results
+        print("\nFallback AI Analysis Result:")
+        print(json.dumps(result, indent=4, ensure_ascii=False))
+
+    def test_risk_level(self):
+
+        self.assertEqual(
+            self.analyzer.get_risk_level(85),
+            "HIGH"
+        )
+
+        self.assertEqual(
+            self.analyzer.get_risk_level(60),
+            "MEDIUM"
+        )
+
+        self.assertEqual(
+            self.analyzer.get_risk_level(20),
+            "LOW"
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
