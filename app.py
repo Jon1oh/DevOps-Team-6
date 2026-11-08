@@ -12,7 +12,8 @@ class App:
         self.ai_manager = AiManager()
         self.data_manager = DataManager(JsonRecordStorage())
         self.logic_manager = LogicManager()
-        self.fallback_ai_menu = FallbackAiMenu()
+        self.fallback_ai_menu = FallbackAiMenu(self.logic_manager)
+        self.verify_ai_input_menu = VerifyAiInputMenu()
     
     def main_loop(self):             
         while True:
@@ -29,13 +30,14 @@ class App:
                     self.io_manager.print_message_summary(summary)
                 #this case will prompt the user to enter the scam message
                 case 1:
-                    record = VerifyAiInputMenu().check_scam_message_phone_number()
+                    record = self.verify_ai_input_menu.check_scam_message_phone_number() # create a Record class if the message and phone number are valid
                     final_ai_output = None
-                    if record != None:
+                    if record is not None:
                         message, phone_number_with_country_code = record.message, record.phone_number
                         message_analyzer = self.ai_manager.get_analyzer() # either get Gemini or Fallback AI. Depending on Gemini API status
                         phone_number, country_code = self.logic_manager.split_country_code_phone_number(phone_number_with_country_code) # split phone number and country code
-                        ai_output = message_analyzer.analyze_message(message, phone_number, country_code) # get the Record object
+                        ai_output = message_analyzer.analyze_message(message, phone_number, country_code) # get the populated Record object
+                        
                         if ai_output == False: # call backup AI bot when the AI model API fails
                             fallback_ai_output = self.fallback_ai_menu.run_fallback_workflow(message, phone_number_with_country_code)
                             if fallback_ai_output == "quit":
