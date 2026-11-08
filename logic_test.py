@@ -150,7 +150,8 @@ def test_validate_scam_indicators(ai_output, risk_level, indicators, expected_re
     ("indicators", "Suspicious link", False), 
     ("scam_probability", "None", False),
     ("scam_probability", -1, False), # Number not between 0 and 100
-    ("scam_probability", 101, False)
+    ("scam_probability", 101, False),
+    ("risk_level", "None", False)
 ])
 
 # Verify that ai_output is not empty
