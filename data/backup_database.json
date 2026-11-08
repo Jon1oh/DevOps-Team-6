@@ -1,6 +1,6 @@
 [
     {
-        "message_id": 1,
+        "record_id": 1,
         "timestamp": "2026-09-07 15:30:00",
         "phone_number": "+6591234567",
         "country_code": "+65",
@@ -18,7 +18,7 @@
         "recommendation": "Do not click the link or provide personal information. Verify the promotion through the organisation's official website and report the message as suspicious."
     },
     {
-        "message_id": 2,
+        "record_id": 2,
         "timestamp": "2026-09-09 10:15:00",
         "phone_number": "+6587654321",
         "country_code": "+65",
@@ -36,7 +36,7 @@
         "recommendation": "Do not click the link or enter banking credentials. Open your bank's official application or website directly to check your account."
     },
     {
-        "message_id": 3,
+        "record_id": 3,
         "timestamp": "2026-09-12 18:45:00",
         "phone_number": "+6588123456",
         "country_code": "+65",
@@ -53,7 +53,7 @@
         "recommendation": "Do not provide personal information or pay any fees. Research the company independently using official sources before continuing."
     },
     {
-        "message_id": 4,
+        "record_id": 4,
         "timestamp": "2026-09-15 09:20:00",
         "phone_number": "+447700900123",
         "country_code": "+44",
@@ -71,7 +71,7 @@
         "recommendation": "Do not transfer money or provide financial information. Verify the investment company independently through official sources and report the suspicious message."
     },
     {
-        "message_id": 5,
+        "record_id": 5,
         "timestamp": "2026-09-18 14:30:00",
         "phone_number": "+14155550123",
         "country_code": "+1",
@@ -89,7 +89,7 @@
         "recommendation": "Do not click the link or provide your address or personal information. Check your parcel status through the courier's official website or application."
     },
     {
-        "message_id": 6,
+        "record_id": 6,
         "timestamp": "2026-10-02 11:40:00",
         "phone_number": "+6591234567",
         "country_code": "+65",
@@ -105,7 +105,8 @@
         "recommendation": "Do not click the link. Contact the bank through its official website."
     },
     {
-        "message_id": 7,
+        "record_id": 7,
+        "timestamp": "Unknown",
         "phone_number": "98220762",
         "country_code": "+65",
         "message_content": "hello, see you tomorrow for lunch!",
@@ -116,7 +117,44 @@
             "No obvious scam indicators detected"
         ],
         "explanation": "The message was classified as a normal message and does not contain enough characteristics to be identified as a scam.",
-        "recommendation": "The message does not appear highly suspicious based on the current model prediction. However, remain cautious and verify unexpected requests before taking action.",
-        "timestamp": "Unknown"
+        "recommendation": "The message does not appear highly suspicious based on the current model prediction. However, remain cautious and verify unexpected requests before taking action."
+    },
+    {
+        "record_id": 8,
+        "timestamp": "2026-11-07 17:05:32",
+        "phone_number": "7700900077",
+        "country_code": "+44",
+        "message_content": "AusPost: Your package could not be delivered due to an unpaid fee of $2.45. Update details now: http://bit.ly/auspost-redelivery-fee",
+        "scam_probability": 98,
+        "risk_level": "HIGH",
+        "scam_type": "Parcel Delivery Scam",
+        "indicators": [
+            "Urgency or pressure tactics",
+            "Requests for money",
+            "Requests for personal information",
+            "Suspicious links",
+            "Impersonation of banks, government agencies, delivery companies, employers, or known organizations"
+        ],
+        "explanation": "The message claims to originate from Australia Post (AusPost) but is sent from a UK phone number (+44). It employs a common phishing tactic by requesting a small delivery fee payment and uses a shortened URL (bit.ly) instead of an official official AusPost domain to capture sensitive personal and banking details.",
+        "recommendation": "Do not click the link, pay any money, or enter personal information. Block the sender's phone number and delete the message. If expecting a delivery, check the tracking status directly on the official Australia Post website."
+    },
+    {
+        "record_id": 9,
+        "timestamp": "2026-11-08 20:44:33",
+        "phone_number": "8005550199",
+        "country_code": "+1",
+        "message_content": "USPS Alert: Your package #US9482103K could not be delivered due to an incorrect shipping address. Update your details within 24 hours to avoid a return-to-sender fee: https://usps-update-track-service.com",
+        "scam_probability": 95,
+        "risk_level": "HIGH",
+        "scam_type": "Parcel Delivery Scam",
+        "indicators": [
+            "Urgency or pressure tactics",
+            "Threats or consequences",
+            "Requests for personal information",
+            "Suspicious links",
+            "Impersonation of banks, government agencies, delivery companies, employers, or known organizations"
+        ],
+        "explanation": "The message impersonates the US Postal Service and creates artificial urgency by claiming a 24-hour limit to avoid a return fee. The provided URL (usps-update-track-service.com) is an unofficial, suspicious domain designed to phish personal and financial information.",
+        "recommendation": "Do not click on the link or provide any personal details. Block the sender and verify package statuses directly on the official USPS website (usps.com)."
     }
 ]
