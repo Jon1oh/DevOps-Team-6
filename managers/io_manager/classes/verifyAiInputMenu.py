@@ -57,10 +57,10 @@ class VerifyAiInputMenu(Menu):
                     print("Invalid phone number try again")
     
     #this method asks the user to check their input
-    def _menu_input(self):
+    def menu_input(self):
         print("Is this correct?")
         self._display_payload()
-        self._display()
+        self.display()
         while True:
             try:
                 user_input = int(input("Please Choose a number between 1 to " + str(super().menulength)+ ": "))

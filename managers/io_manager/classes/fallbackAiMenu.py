@@ -10,7 +10,7 @@ class FallbackAiMenu(Menu):
         self.add_menu("Return to main menu")
         self.add_menu("Quit")
         
-    def _menu_input(self):
+    def menu_input(self):
         while True:
             try:
                 user_input = int(input("Please Choose a number between 1 to " + str(super().menulength)+ ": "))
@@ -26,9 +26,9 @@ class FallbackAiMenu(Menu):
         print(f"\n{'='*38}")
         print("Our primary AI API failed to respond in a timely manner")        
         print("What do you want to do?:")
-        self._display()
+        self.display()
         # match case for backup ai to see if go to mainmenu, query backup or quit
-        match self._menu_input(): 
+        match self.menu_input(): 
             case 3:
                 return "quit"
             case 2:
