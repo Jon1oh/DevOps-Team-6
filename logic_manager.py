@@ -39,7 +39,11 @@ class LogicManager():
         
         # Scam Probability is within 0-100 Range
         if not 0 <= ai_output.scam_probability <= 100:
-                return False
+            return False
+            
+        # Risk Level is either HIGH, MEDIUM, or LOW
+        if ai_output.risk_level not in (self.HIGH, self.MEDIUM, self.LOW):
+            return False 
             
         return True
     
