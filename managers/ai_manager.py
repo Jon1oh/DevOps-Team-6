@@ -1,5 +1,5 @@
 from models.gemini_analyzer import GeminiAiAnalyzer
-from models.fallbackAiAnalyzer import FallbackAiAnalyzer
+from models.fallbackAi_analyzer import FallbackAiAnalyzer
 from dotenv import load_dotenv
 import logging
 
