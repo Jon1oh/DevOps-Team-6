@@ -122,6 +122,9 @@ class GeminiAiAnalyzer(AiAnalyzer):
         - Do not include markdown, code blocks, or any text outside the JSON object.
         """
         return prompt
+
+    def get_analyzer_name(self):
+        return "Gemini"
     
     def analyze_message(self, message, phone_number):
         prompt = self.build_prompt(message, phone_number)        

@@ -19,6 +19,9 @@ class FallbackAiAnalyzer(AiAnalyzer):
         self._scam_type_model = model_data["scam_type_model"]
         self._scam_vectorizer = model_data["scam_vectorizer"]
         print("Fallback AI model loaded successfully.")
+    
+    def get_analyzer_name(self):
+        return "Fallback Ai"
 
     # Detect suspicious indicators in a message
     def detect_indicators(self, message):
