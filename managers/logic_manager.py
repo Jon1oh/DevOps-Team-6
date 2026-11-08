@@ -5,7 +5,7 @@ from models.record import Record
 class LogicManager():
     REQUIRED_FIELDS = {
             "record_id": type(None), # isinstance() only tests for None if we use type(None)
-            "timestamp": str,
+            "timestamp": type(None),
             "phone_number": str,
             "country_code": str,
             "message": str,
@@ -22,7 +22,8 @@ class LogicManager():
     
     # Takes in Record class
     # Ensure the AI output contains all required fields and fields are not empty. If any field or value is missing or invalid, return False. Otherwise, return True.
-    def check_ai_output(self, ai_output: Record):        
+    def check_ai_output(self, ai_output: Record):    
+        print(ai_output)    
         for field in self.REQUIRED_FIELDS:
             check_data_type = self.REQUIRED_FIELDS[field]
             value = getattr(ai_output, field) # gets the value for field in ai_output

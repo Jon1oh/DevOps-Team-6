@@ -8,7 +8,7 @@ class Record:
         self.scam_probability = scam_probability
         self.risk_level = risk_level
         self.scam_type = scam_type
-        self.indicators = indicators if not None else []
+        self.indicators = indicators if indicators is not None else []
         self.explanation = explanation
         self.recommendation = recommendation
     

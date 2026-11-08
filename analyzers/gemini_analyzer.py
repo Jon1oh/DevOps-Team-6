@@ -23,7 +23,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
     
     # check if Gemini API is ready for use. Called once in AiManager.get_analyzer() to determine which AI Analyzer to use
     def check_api_status(self):
-        print("Checking API Status. Please wait...\n")
+        print("Checking AI API Status. Please wait...\n")
         try:
             self.get_ai_output("Reply with the phrase: API IS OK.")
             return True
@@ -127,8 +127,8 @@ class GeminiAiAnalyzer(AiAnalyzer):
         """
         return prompt
     
-    def analyze_message(self, message, phone_number, country_code=None):
-        prompt = self.build_prompt(message, phone_number)        
+    def analyze_message(self, record: Record):
+        prompt = self.build_prompt(record.message, record.phone_number)        
         print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
 
         try:
@@ -148,17 +148,19 @@ class GeminiAiAnalyzer(AiAnalyzer):
             self.log_error(error)
             ai_output = self.extract_json_object(response)
         
-        record = Record( # create a new Record object to store the AI output
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S"), # format timestamp as YYYY-MM-DD HH:MM:SS
-            phone_number = ai_output["phone_number"],
-            country_code = ai_output["country_code"],
-            message = ai_output["message_content"],
-            scam_probability = ai_output["scam_probability"],
-            risk_level = ai_output["risk_level"],
-            scam_type = ai_output["scam_type"],
-            indicators = ai_output["indicators"],
-            explanation = ai_output["explanation"],
-            recommendation = ai_output["recommendation"]        
-        ) 
+        print(ai_output)
+        print("\n")
+        
+        record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
+        record.phone_number = ai_output["phone_number"]
+        record.country_code = ai_output["country_code"]
+        record.message = ai_output["message_content"]
+        record.scam_probability = ai_output["scam_probability"]
+        record.risk_level = ai_output["risk_level"]
+        record.scam_type = ai_output["scam_type"]
+        record.indicators = ai_output["indicators"]
+        record.explanation = ai_output["explanation"]
+        record.recommendation = ai_output["recommendation"]        
+
         print(record)
         return record

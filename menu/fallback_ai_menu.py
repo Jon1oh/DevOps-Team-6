@@ -1,5 +1,6 @@
 from interfaces.menu import Menu
 from analyzers.fallback_ai_analyzer import FallbackAiAnalyzer
+from models.record import Record
 from datetime import datetime
 
 class FallbackAiMenu(Menu):
@@ -23,7 +24,7 @@ class FallbackAiMenu(Menu):
             except ValueError:
                 print("Incorrect input try again.")
 
-    def run_fallback_workflow(self, message, phone_number_with_country_code):
+    def run_fallback_workflow(self, record: Record):
         print(f"\n{'='*38}")
         print("Our primary AI API failed to respond in a timely manner")        
         print("What do you want to do?:")
@@ -36,11 +37,9 @@ class FallbackAiMenu(Menu):
                 return None
             case 1:
                 print("Using our In-House-Trained Custom AI Bot. It can make mistakes. Please verify important info.")
-                phone_number, country_code = self.logic_manager.split_country_code_phone_number(phone_number_with_country_code)
-                ai_output = self.fallback_ai_analyzer.analyze_message(message, phone_number, country_code) 
-                if "timestamp" not in ai_output:
-                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-                    ai_output = {"timestamp": timestamp, **ai_output}
+                ai_output = self.fallback_ai_analyzer.analyze_message(record) 
+                if ai_output.timestamp == "":
+                    ai_output.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
                     return self.logic_manager.format_ai_output(ai_output)
                 else:
                     return ai_output
