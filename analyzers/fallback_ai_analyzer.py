@@ -1,6 +1,7 @@
 import joblib, re, os
 from interfaces.ai_analyzer import AiAnalyzer
 from models.record import Record
+from datetime import datetime
 
 class FallbackAiAnalyzer(AiAnalyzer):
     def __init__(self):
@@ -262,6 +263,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
         recommendation = self.generate_recommendation(risk_level)
 
         # Populate Record object containing analysis results
+        record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
         record.phone_number = str(record.phone_number)
         record.country_code=str(record.country_code)
         record.message=str(record.message)

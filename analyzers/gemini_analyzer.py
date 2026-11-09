@@ -113,9 +113,6 @@ class GeminiAiAnalyzer(AiAnalyzer):
         Output restrictions:
         - Return only a JSON object in this format:
         {{
-            "phone_number": "",
-            "country_code": "",
-            "message_content": "",
             "scam_probability": 0, 
             "risk_level": "",
             "scam_type": "",
@@ -131,8 +128,8 @@ class GeminiAiAnalyzer(AiAnalyzer):
         return "Gemini"
     
     def analyze_message(self, record: Record):
-        prompt = self.build_prompt(record.message, record.phone_number)        
-        print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
+        prompt = self.build_prompt(record.message, record.country_code + record.phone_number)        
+        print(f"Message analysis in progress using Google Gemini {self._model}. This may take a while... \n")     
 
         try:
             response = self.get_ai_output(prompt)
@@ -152,9 +149,6 @@ class GeminiAiAnalyzer(AiAnalyzer):
             ai_output = self.extract_json_object(response)
                 
         record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
-        record.phone_number = ai_output["phone_number"]
-        record.country_code = ai_output["country_code"]
-        record.message = ai_output["message_content"]
         record.scam_probability = ai_output["scam_probability"]
         record.risk_level = ai_output["risk_level"]
         record.scam_type = ai_output["scam_type"]

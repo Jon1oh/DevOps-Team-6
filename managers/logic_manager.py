@@ -5,7 +5,7 @@ from models.record import Record
 class LogicManager():
     REQUIRED_FIELDS = {
             "record_id": type(None), # isinstance() only tests for None if we use type(None)
-            "timestamp": type(None),
+            "timestamp": str,
             "phone_number": str,
             "country_code": str,
             "message": str,
