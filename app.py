@@ -36,8 +36,11 @@ class App:
                         continue
                     record.phone_number, record.country_code = self.logic_manager.split_country_code_phone_number(record.phone_number) # split phone number and country code                                        
                     analyzer = self.ai_manager.get_analyzer() # either get Gemini or Fallback AI. Depending on Gemini API status
-                    ai_output = analyzer.analyze_message(record) # get the populated Record object
                     
+                    if analyzer is None: # when Gemini API is unavailable
+                        ai_output = False
+                    else:                        
+                        ai_output = analyzer.analyze_message(record) # get the populated Record object                    
                                         
                     if ai_output is False: # call backup AI bot when the AI model API fails
                         fallback_ai_output = self.fallback_ai_menu.run_fallback_workflow(record)

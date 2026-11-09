@@ -1,5 +1,5 @@
-from models.gemini_analyzer import GeminiAiAnalyzer
-from models.fallback_ai_analyzer import FallbackAiAnalyzer
+from analyzers.gemini_analyzer import GeminiAiAnalyzer
+from analyzers.fallback_ai_analyzer import FallbackAiAnalyzer
 from dotenv import load_dotenv
 import logging
 
@@ -24,9 +24,3 @@ class AiManager:
     # let other classes borrow/use the fallback analyzer class that AiManager owns, instead of creating a new one
     def get_fallback_analyzer(self):
         return self._fallback_analyzer
-    
-# test code
-ai_manager = AiManager()
-analyzer = ai_manager.get_analyzer()
-# * before calling analyze_message(), separate the phone number and country code and pass them into analyze_message() as separate arguments.
-ai_output = analyzer.analyze_message("message", "number", "+65") # which analyzer.analyze_message() to be used is based on the API status.
