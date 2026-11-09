@@ -22,7 +22,11 @@ class AiManager:
             return self._gemini_analyzer
         else:
             return self._fallback_analyzer
-
+    
+    # let other classes borrow/use the fallback analyzer class that AiManager owns, instead of creating a new one
+    def get_fallback_analyzer(self):
+        return self._fallback_analyzer
+    
 # test code
 ai_manager = AiManager()
 analyzer = ai_manager.get_analyzer()
