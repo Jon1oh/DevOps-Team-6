@@ -1,13 +1,13 @@
 from interfaces.menu import Menu
 from analyzers.fallback_ai_analyzer import FallbackAiAnalyzer
+from managers.logic_manager import LogicManager
 from models.record import Record
-from datetime import datetime
 
 class FallbackAiMenu(Menu):
-    def __init__(self, logic_manager):
+    def __init__(self, logic_manager: LogicManager, fallback_ai_analyzer: FallbackAiAnalyzer):
         super().__init__()
         self.logic_manager = logic_manager
-        self.fallback_ai_analyzer = FallbackAiAnalyzer() # TODO: Is there any other way to use this class but not create a new one? work with this file, app.py, and ai_manager.py
+        self.fallback_ai_analyzer = fallback_ai_analyzer
         self.add_menu("Analyse message with backup AI model")
         self.add_menu("Return to main menu")
         self.add_menu("Quit")
