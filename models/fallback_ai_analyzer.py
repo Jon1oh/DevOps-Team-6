@@ -1,16 +1,13 @@
-
-import joblib, re
-from pathlib import Path
+import joblib, re, os
 from interfaces.ai_analyzer import AiAnalyzer
-from record import Record
+from models.record import Record
+from datetime import datetime
 
 class FallbackAiAnalyzer(AiAnalyzer):
     def __init__(self):
         # Load the trained machine learning model
-        model_file = (
-            Path(__file__).resolve().parent
-            / "scam_detection_model.pkl"
-        )
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
+        model_file = os.path.join(project_root, "data", "scam_detection_model.pkl")
 
         print("Loading Fallback AI model...")
         model_data = joblib.load(model_file)
@@ -195,12 +192,12 @@ class FallbackAiAnalyzer(AiAnalyzer):
         return recommendations[risk_level]
 
     # Main message analysis function
-    def analyze_message(self, message, phone_number, country_code):
-        if not isinstance(message, str):
+    def analyze_message(self, record: Record):
+        if not isinstance(record.message, str):
             raise TypeError("Message must be a string.")
 
         # Convert message into numerical features
-        message_vector = self._spam_vectorizer.transform([message])
+        message_vector = self._spam_vectorizer.transform([record.message])
 
         # Predict whether the message is spam
         prediction = self._spam_model.predict(message_vector)[0]
@@ -229,7 +226,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
         # Predict scam type if classified as spam
         if is_spam:
 
-            scam_vector = self._scam_vectorizer.transform([message])
+            scam_vector = self._scam_vectorizer.transform([record.message])
 
             scam_prediction = self._scam_type_model.predict(
                 scam_vector
@@ -244,7 +241,7 @@ class FallbackAiAnalyzer(AiAnalyzer):
         risk_level = self.get_risk_level(scam_probability)
 
         # Detect suspicious indicators
-        indicators = self.detect_indicators(message)
+        indicators = self.detect_indicators(record.message)
 
         # Generate explanation
         if is_spam:
@@ -265,17 +262,16 @@ class FallbackAiAnalyzer(AiAnalyzer):
         # Generate recommendation
         recommendation = self.generate_recommendation(risk_level)
 
-        # Create Record object containing analysis results
-        record = Record(
-            phone_number=str(phone_number),
-            country_code=str(country_code),
-            message=str(message),
-            scam_probability=int(scam_probability),
-            risk_level=risk_level,
-            scam_type=scam_type,
-            indicators=indicators,
-            explanation=explanation,
-            recommendation=recommendation
-        )
-
+        # Populate Record object containing analysis results
+        record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
+        record.phone_number = str(record.phone_number)
+        record.country_code=str(record.country_code)
+        record.message=str(record.message)
+        record.scam_probability=int(scam_probability)
+        record.risk_level=risk_level
+        record.scam_type=scam_type
+        record.indicators=indicators
+        record.explanation=explanation
+        record.recommendation=recommendation
+        
         return record
