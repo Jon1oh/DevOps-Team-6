@@ -1,5 +1,5 @@
 from managers.io_manager.io_manager import io_manager
-from managers.io_manager.classes.fallbackAiMenu import FallbackAiMenu
+from managers.io_manager.classes.fallback_ai_menu import FallbackAiMenu
 from managers.io_manager.classes.verifyAiInputMenu import VerifyAiInputMenu
 import managers.ai_manager as ai_manager
 import managers.data_manager as data_manager
