@@ -13,15 +13,13 @@ class AiManager:
         self._gemini_analyzer = GeminiAiAnalyzer() # create an instance of GeminiAIAnalyzer
         self._fallback_analyzer = FallbackAiAnalyzer() # create an instance of FallbackAiAnalyzer
     
-    # determine which AI Analyzer to use based on the API status
+    # return Gemini Analyzer class as the main analyzer, if available. Else, return None
     def get_analyzer(self):
-        api_status = self._gemini_analyzer.check_api_status()
-        
-        if api_status is True:
+        if self._gemini_analyzer.check_api_status():
             print("Gemini is ready for use...")
             return self._gemini_analyzer
         else:
-            return self._fallback_analyzer
+            return None
     
     # let other classes borrow/use the fallback analyzer class that AiManager owns, instead of creating a new one
     def get_fallback_analyzer(self):
