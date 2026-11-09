@@ -1,4 +1,4 @@
-import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallbackAi_analyzer as fallbackAi_analyzer
+import managers.io_manager as io_manager, managers.ai_manager as ai_manager, managers.logic_manager as logic_manager, managers.data_manager as data_manager, models.fallback_ai_analyzer as fallbackAi_analyzer
 from datetime import datetime
 
 # loads the records upon startup

@@ -126,8 +126,8 @@ class GeminiAiAnalyzer(AiAnalyzer):
     def get_analyzer_name(self):
         return "Gemini"
     
-    def analyze_message(self, message, phone_number):
-        prompt = self.build_prompt(message, phone_number)        
+    def analyze_message(self, record: Record):
+        prompt = self.build_prompt(record.message, record.phone_number)        
         print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
 
         try:
