@@ -1,5 +1,5 @@
-from managers.io_manager.classes.Menu import Menu
-from record import Record
+from managers.io_manager.classes.menu import Menu
+from models.record import Record
 import re, phonenumbers
 
 class VerifyAiInputMenu(Menu):
