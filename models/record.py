@@ -27,7 +27,7 @@ class Record:
             f"Recommendation: {self.recommendation}"
         )        
         
-    # message id
+    # record id
     @property
     def record_id(self):
         return self._record_id

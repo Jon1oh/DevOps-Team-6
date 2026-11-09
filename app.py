@@ -11,7 +11,12 @@ class App:
     def __init__(self):
         self.io_manager = IoManager()
         self.ai_manager = AiManager()
-        self.data_manager = DataManager(JsonRecordStorage())
+        print("Loading Database...")
+        self.data_manager = DataManager(JsonRecordStorage())    # records loaded on startup
+        if self.data_manager.status_message:                    # when record does not load properly
+            print(self.data_manager.status_message)
+        else:
+            print(f"Database Loaded: {len(self.data_manager.records)} records") 
         self.logic_manager = LogicManager()
         self.fallback_ai_menu = FallbackAiMenu(self.logic_manager, self.ai_manager.get_fallback_analyzer())
         self.verify_ai_input_menu = VerifyAiInputMenu()

@@ -55,9 +55,9 @@ class JsonRecordStorage(RecordStorage):
         except (json.JSONDecodeError, UnicodeDecodeError):
             preserved = self._backup.preserve_corrupt(self._main_file.path)
             if preserved:
-                reason = f"Data file was corrupt. Preserved at {preserved}."
+                reason = f"Main data file was corrupt. Retrieving from Backup."
             else:
-                reason = "Data file was corrupt; could not preserve its contents."
+                reason = "Main data file was corrupt; could not preserve its contents."
             return self._recover_from_backup(reason)
         except OSError:
             return self._recover_from_backup("Could not read the main data file.")
@@ -65,9 +65,9 @@ class JsonRecordStorage(RecordStorage):
         if not isinstance(data, list):
             preserved = self._backup.preserve_corrupt(self._main_file.path)
             if preserved:
-                reason = f"Data file had the wrong format. Preserved at {preserved}."
+                reason = f"Main data file had the wrong format. Retrieving from Backup."
             else:
-                reason = "Data file had the wrong format."
+                reason = "Main data file had the wrong format."
             return self._recover_from_backup(reason)
 
         if not data:
