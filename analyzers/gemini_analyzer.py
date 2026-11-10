@@ -9,7 +9,7 @@ load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module    
 
 class GeminiAiAnalyzer(AiAnalyzer):
-    def __init__(self, model="gemini-3.5-flash-lite"): 
+    def __init__(self, model="gemini-3.6"): 
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
     
@@ -42,7 +42,11 @@ class GeminiAiAnalyzer(AiAnalyzer):
         
     # log any API failiures in a log file
     def log_error(self, error):
-        with open("error.log", "a") as logfile:
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        data_folder = os.path.join(project_root, "data")
+        os.makedirs(data_folder, exist_ok=True)
+        log_path = os.path.join(data_folder, "error.log")
+        with open(log_path, "a") as logfile:
             logfile.write(
                 f"{datetime.now()} - API Error: {error}\n"
             )        
