@@ -40,23 +40,18 @@ class App:
                     if record is None:
                         continue
                     record.phone_number, record.country_code = self.logic_manager.split_country_code_phone_number(record.phone_number) # split phone number and country code                                        
-                    analyzer = self.ai_manager.get_analyzer() # either get Gemini or Fallback AI. Depending on Gemini API status
+                    analyzer = self.ai_manager.get_analyzer() # get Gemini analyzer
+                    ai_output = analyzer.analyze_message(record) # get Gemini AI output if API is available
                     
-                    if analyzer is None: # when Gemini API is unavailable
-                        ai_output = False
-                    else:                        
-                        ai_output = analyzer.analyze_message(record) # get the populated Record object                    
-                                        
-                    if ai_output is False: # call backup AI bot when the AI model API fails
-                        fallback_ai_output = self.fallback_ai_menu.run_fallback_workflow(record)
-                        if fallback_ai_output == "quit":
+                    if ai_output is False:
+                        print("Gemini is unavailable.")
+                        ai_output = self.fallback_ai_menu.run_fallback_workflow(record)
+                        if ai_output == "quit":
                             print("Exiting Program")
                             break
-                        elif fallback_ai_output is None: 
+                        elif ai_output is None:
                             continue
-                        else:
-                            ai_output = fallback_ai_output
-                            print("Our backup AI has successfully analyzed the message.")
+                        print("Our Fallback AI model has successfully analyzed the message.")
                     
                     is_valid_ai_output = self.logic_manager.check_ai_output(ai_output)
                     if not is_valid_ai_output:

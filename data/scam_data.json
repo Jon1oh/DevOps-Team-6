@@ -156,5 +156,21 @@
         ],
         "explanation": "The message impersonates the US Postal Service and creates artificial urgency by claiming a 24-hour limit to avoid a return fee. The provided URL (usps-update-track-service.com) is an unofficial, suspicious domain designed to phish personal and financial information.",
         "recommendation": "Do not click on the link or provide any personal details. Block the sender and verify package statuses directly on the official USPS website (usps.com)."
+    },
+    {
+        "record_id": 10,
+        "timestamp": "2026-11-10 12:02:25",
+        "phone_number": "12345678",
+        "country_code": "+65",
+        "message_content": "Congratulations! You have just won $10,000. Click here to claim your prize.",
+        "scam_probability": 95,
+        "risk_level": "HIGH",
+        "scam_type": "Unexpected Prize Money Scam",
+        "indicators": [
+            "Unexpected prizes or winnings",
+            "Suspicious links"
+        ],
+        "explanation": "The message claims the recipient has won a large sum of money ($10,000) from an unknown source without entering any contest, and prompts them to click a link to claim it. This is a classic hallmark of an unexpected prize scam designed to steal personal information or install malware via the link.",
+        "recommendation": "Do not click on the link. Block the sender and report the message as spam."
     }
 ]
