@@ -21,16 +21,6 @@ class GeminiAiAnalyzer(AiAnalyzer):
         )
         return response.text
     
-    # check if Gemini API is ready for use. Called once in AiManager.get_analyzer() to determine which AI Analyzer to use
-    def check_api_status(self):
-        print("Checking AI API Status. Please wait...\n")
-        try:
-            self.get_ai_output("Reply with the phrase: API IS OK.")
-            return True
-        except Exception as error:
-            self.log_error(error) 
-            return False
-
     # Retry function to get Gemini API output
     def get_ai_output_retry(self, prompt_to_ai):
         print(f"Retrying connection to Google {self._model} API once...")
@@ -123,9 +113,6 @@ class GeminiAiAnalyzer(AiAnalyzer):
         - Do not include markdown, code blocks, or any text outside the JSON object.
         """
         return prompt
-
-    def get_analyzer_name(self):
-        return "Gemini"
     
     def analyze_message(self, record: Record):
         prompt = self.build_prompt(record.message, record.country_code + record.phone_number)        
