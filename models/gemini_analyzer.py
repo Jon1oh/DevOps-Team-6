@@ -122,13 +122,10 @@ class GeminiAiAnalyzer(AiAnalyzer):
         - Do not include markdown, code blocks, or any text outside the JSON object.
         """
         return prompt
-
-    def get_analyzer_name(self):
-        return "Gemini"
     
     def analyze_message(self, record: Record):
         prompt = self.build_prompt(record.message, record.phone_number)        
-        print(f"Message analysis in progress using Google Gemini {self._model}. This may take a few seconds... \n")     
+        print(f"Message analysis in progress using Google Gemini {self._model}. This may take a while... \n")     
 
         try:
             response = self.get_ai_output(prompt)
