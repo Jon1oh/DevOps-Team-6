@@ -38,6 +38,6 @@ class FallbackAiMenu(Menu):
             case 1:
                 print("Using our In-House-Trained Custom AI Bot. It can make mistakes. Please verify important info.")
                 ai_output = self.fallback_ai_analyzer.analyze_message(record) 
-                return self.logic_manager.format_ai_output(ai_output)
+                return ai_output
             case _:
                 print("No such case have been created")

@@ -44,7 +44,6 @@ class App:
                     ai_output = analyzer.analyze_message(record) # get Gemini AI output if API is available
                     
                     if ai_output is False:
-                        print("Gemini is unavailable.")
                         ai_output = self.fallback_ai_menu.run_fallback_workflow(record)
                         if ai_output == "quit":
                             print("Exiting Program")
@@ -74,6 +73,6 @@ class App:
                 case _:
                     print("No such case have been created")
 
-
-app = App()
-app.main_loop()
+if __name__ == "__main__":
+    app = App()
+    app.main_loop()
