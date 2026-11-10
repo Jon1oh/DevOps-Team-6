@@ -11,7 +11,6 @@ class App:
     def __init__(self):
         self.io_manager = IoManager()
         self.ai_manager = AiManager()
-        print("Loading Database...")
         self.data_manager = DataManager(JsonRecordStorage())    # records loaded on startup
         if self.data_manager.status_message:                    # when record does not load properly
             print(self.data_manager.status_message)
