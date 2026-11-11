@@ -1,11 +1,15 @@
-import os, json
+import os, json, logging
 from models.record import Record
 from datetime import datetime
 from google import genai
 from interfaces.ai_analyzer import AiAnalyzer
+from dotenv import load_dotenv
+
+load_dotenv()
+logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module    
 
 class GeminiAiAnalyzer(AiAnalyzer):
-    def __init__(self, model="gemini-3.6-flash"):        
+    def __init__(self, model="gemini-3.6"): 
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
     
@@ -17,16 +21,6 @@ class GeminiAiAnalyzer(AiAnalyzer):
         )
         return response.text
     
-    # check if Gemini API is ready for use. Called once in AiManager.get_analyzer() to determine which AI Analyzer to use
-    def check_api_status(self):
-        print("Checking API Status. Please wait...\n")
-        try:
-            self.get_ai_output("Reply with the phrase: API IS OK.")
-            return True
-        except Exception as error:
-            self.log_error(error) 
-            return False
-
     # Retry function to get Gemini API output
     def get_ai_output_retry(self, prompt_to_ai):
         print(f"Retrying connection to Google {self._model} API once...")
@@ -48,7 +42,11 @@ class GeminiAiAnalyzer(AiAnalyzer):
         
     # log any API failiures in a log file
     def log_error(self, error):
-        with open("error.log", "a") as logfile:
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        data_folder = os.path.join(project_root, "data")
+        os.makedirs(data_folder, exist_ok=True)
+        log_path = os.path.join(data_folder, "error.log")
+        with open(log_path, "a") as logfile:
             logfile.write(
                 f"{datetime.now()} - API Error: {error}\n"
             )        
@@ -109,9 +107,6 @@ class GeminiAiAnalyzer(AiAnalyzer):
         Output restrictions:
         - Return only a JSON object in this format:
         {{
-            "phone_number": "",
-            "country_code": "",
-            "message_content": "",
             "scam_probability": 0, 
             "risk_level": "",
             "scam_type": "",
@@ -124,7 +119,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
         return prompt
     
     def analyze_message(self, record: Record):
-        prompt = self.build_prompt(record.message, record.phone_number)        
+        prompt = self.build_prompt(record.message, record.country_code + record.phone_number)        
         print(f"Message analysis in progress using Google Gemini {self._model}. This may take a while... \n")     
 
         try:
@@ -143,18 +138,12 @@ class GeminiAiAnalyzer(AiAnalyzer):
         except json.JSONDecodeError as error:
             self.log_error(error)
             ai_output = self.extract_json_object(response)
-        
-        record = Record( # create a new Record object to store the AI output
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S"), # format timestamp as YYYY-MM-DD HH:MM:SS
-            phone_number = ai_output["phone_number"],
-            country_code = ai_output["country_code"],
-            message = ai_output["message_content"],
-            scam_probability = ai_output["scam_probability"],
-            risk_level = ai_output["risk_level"],
-            scam_type = ai_output["scam_type"],
-            indicators = ai_output["indicators"],
-            explanation = ai_output["explanation"],
-            recommendation = ai_output["recommendation"]        
-        ) 
-        print(record)
+                
+        record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
+        record.scam_probability = ai_output["scam_probability"]
+        record.risk_level = ai_output["risk_level"]
+        record.scam_type = ai_output["scam_type"]
+        record.indicators = ai_output["indicators"]
+        record.explanation = ai_output["explanation"]
+        record.recommendation = ai_output["recommendation"]     
         return record
