@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ScamGuard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">🛡️</div>
+            <h2>ScamGuard</h2>
+            <p>AI Scam Detection</p>
+        </div>
+
+        <nav>
+            <a href="{{ url_for('dashboard') }}">⌂ Dashboard</a>
+            <a href="{{ url_for('scanner') }}">⌕ Scan Message</a>
+            <a href="{{ url_for('history') }}">◷ History</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span>🛡️</span>
+            <strong>Stay Safe Online</strong>
+            <p>Think. Check. Don't Click.</p>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <span>Internal Testing Platform</span>
+            <span class="online">● System Online</span>
+        </header>
+
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -172,5 +172,70 @@
         ],
         "explanation": "The message claims the recipient has won a large sum of money ($10,000) from an unknown source without entering any contest, and prompts them to click a link to claim it. This is a classic hallmark of an unexpected prize scam designed to steal personal information or install malware via the link.",
         "recommendation": "Do not click on the link. Block the sender and report the message as spam."
+    },
+    {
+        "record_id": 11,
+        "timestamp": "2026-11-11 23:04:13",
+        "phone_number": "83999339",
+        "country_code": "+65",
+        "message_content": "Notice: Deposit $1,000 now to unlock your high-return investment package.",
+        "scam_probability": 93,
+        "risk_level": "HIGH",
+        "scam_type": "Investment Scam",
+        "indicators": [
+            "Large financial reward",
+            "Requests payment or money transfer"
+        ],
+        "explanation": "The message contains characteristics commonly associated with scam messages. The detected indicators suggest that the recipient should exercise caution.",
+        "recommendation": "Do not click the link or provide personal information. Do not transfer money. Verify the message through the organisation's official website and report the message as suspicious."
+    },
+    {
+        "record_id": 12,
+        "timestamp": "2026-11-11 23:09:19",
+        "phone_number": "83999339",
+        "country_code": "+65",
+        "message_content": "Notice: Deposit $1,000 now to unlock your high-return investment package.",
+        "scam_probability": 93,
+        "risk_level": "HIGH",
+        "scam_type": "Investment Scam",
+        "indicators": [
+            "Large financial reward",
+            "Requests payment or money transfer",
+            "83999339 was found in 1 High Risk Incidents."
+        ],
+        "explanation": "The message contains characteristics commonly associated with scam messages. The detected indicators suggest that the recipient should exercise caution.",
+        "recommendation": "Do not click the link or provide personal information. Do not transfer money. Verify the message through the organisation's official website and report the message as suspicious."
+    },
+    {
+        "record_id": 13,
+        "timestamp": "2026-11-11 23:16:55",
+        "phone_number": "83999339",
+        "country_code": "+65",
+        "message_content": "Confirm your banking credentials to prevent unauthorized access.",
+        "scam_probability": 49,
+        "risk_level": "HIGH",
+        "scam_type": "Banking Scam",
+        "indicators": [
+            "NIL",
+            "83999339 was found in 2 High Risk Incidents."
+        ],
+        "explanation": "The message contains characteristics commonly associated with scam messages. The detected indicators suggest that the recipient should exercise caution.",
+        "recommendation": "Do not click the link or provide personal information. Do not transfer money. Verify the message through the organisation's official website and report the message as suspicious."
+    },
+    {
+        "record_id": 14,
+        "timestamp": "2026-11-11 23:19:21",
+        "phone_number": "83999339",
+        "country_code": "+65",
+        "message_content": "test",
+        "scam_probability": 49,
+        "risk_level": "HIGH",
+        "scam_type": "Investment Scam",
+        "indicators": [
+            "NIL",
+            "83999339 was found in 3 High Risk Incidents."
+        ],
+        "explanation": "The message contains characteristics commonly associated with scam messages. The detected indicators suggest that the recipient should exercise caution.",
+        "recommendation": "Be cautious with this message. Do not click suspicious links or provide personal information until the sender has been verified through an official source."
     }
 ]

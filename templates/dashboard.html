@@ -1,0 +1,82 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | ScamGuard{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <h1>Scam Detection Made <span>Smarter.</span></h1>
+    <p>Use AI to identify suspicious messages and detect potential scams.</p>
+    <a href="{{ url_for('scanner') }}" class="primary-btn">
+        Start Analysing →
+    </a>
+</section>
+
+<section class="stats-grid">
+
+    <div class="stat-card">
+        <p>Total Analysed</p>
+        <h2>{{ statistics.total }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>High Risk</p>
+        <h2 class="high">{{ statistics.high }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>Medium Risk</p>
+        <h2 class="medium">{{ statistics.medium }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>Low Risk</p>
+        <h2 class="low">{{ statistics.low }}</h2>
+    </div>
+
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <h2>Recent Analyses</h2>
+        <a href="{{ url_for('history') }}">View All →</a>
+    </div>
+
+    {% if recent_records %}
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Phone Number</th>
+                    <th>Scam Type</th>
+                    <th>Risk Level</th>
+                    <th>Probability</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for record in recent_records %}
+                <tr>
+                    <td>{{ record.get('phone_number', 'N/A') }}</td>
+                    <td>{{ record.get('scam_type', 'N/A') }}</td>
+                    <td>
+                        <span class="risk {{ record.get('risk_level', 'low')|lower }}">
+                            {{ record.get('risk_level', 'N/A') }}
+                        </span>
+                    </td>
+                    <td>{{ record.get('scam_probability', 0) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+        <p class="empty">No messages have been analysed yet.</p>
+    {% endif %}
+
+</section>
+
+{% endblock %}

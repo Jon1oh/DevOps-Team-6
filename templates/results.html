@@ -1,0 +1,87 @@
+
+{% extends "base.html" %}
+
+{% block title %}Analysis Results | ScamGuard{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <h1>Analysis Results</h1>
+    <p>AI analysis of the submitted message.</p>
+</section>
+
+<section class="panel result-panel">
+
+    {% set risk = result.get('risk_level', 'LOW')|upper %}
+
+    <div class="result-header">
+        <h2>Detection Summary</h2>
+        <span class="risk {{ risk|lower }}">{{ risk }} RISK</span>
+    </div>
+
+    <div class="probability">
+        <p>Scam Probability</p>
+        <h1>{{ result.get('scam_probability', 0) }}%</h1>
+    </div>
+
+    <div class="result-details">
+
+        <p>
+            <strong>Phone Number:</strong>
+            {{ result.get('phone_number', 'N/A') }}
+        </p>
+
+        <p>
+            <strong>Scam Type:</strong>
+            {{ result.get('scam_type', 'N/A') }}
+        </p>
+
+        <p><strong>Message:</strong></p>
+
+        <div class="message-box">
+            {{ result.get('message') or result.get('message_content', 'No message available.') }}
+        </div>
+
+        <h3>Detected Indicators</h3>
+
+        {% if result.get('indicators') %}
+            <ul>
+                {% for indicator in result.get('indicators') %}
+                    <li>{{ indicator }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No indicators provided.</p>
+        {% endif %}
+
+        <h3>AI Explanation</h3>
+
+        <p>
+            {{ result.get('explanation', 'No explanation available.') }}
+        </p>
+
+        <h3>Recommended Action</h3>
+
+        <p>
+            {{ result.get('recommendation', 'No recommendation available.') }}
+        </p>
+
+        {% if saved %}
+            <p class="success-message">
+                ✓ Analysis successfully saved.
+            </p>
+        {% else %}
+            <p class="error-message">
+                Analysis completed but saving failed: {{ save_message }}
+            </p>
+        {% endif %}
+
+    </div>
+
+    <a href="{{ url_for('scanner') }}" class="primary-btn">
+        Analyse Another Message
+    </a>
+
+</section>
+
+{% endblock %}

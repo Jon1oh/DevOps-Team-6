@@ -1,0 +1,136 @@
+
+{% extends "base.html" %}
+
+{% block title %}Scan Message | ScamGuard{% endblock %}
+
+{% block content %}
+
+<section class="page-heading">
+    <h1>AI Message Scanner</h1>
+    <p>Submit a suspicious message for AI-powered scam detection.</p>
+</section>
+
+<section class="panel scanner-panel">
+
+    {% if fallback_prompt %}
+
+        <!-- FALLBACK AI CONFIRMATION -->
+
+        <div class="fallback-confirmation">
+
+            <h2>⚠️ Gemini AI Unavailable</h2>
+
+            <p>
+                Gemini AI is currently unavailable.
+                Would you like to continue analysing your message
+                using our fallback machine learning model?
+            </p>
+
+            <div class="message-box">
+                <strong>Submitted Message:</strong>
+                <p>{{ original_message }}</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('scanner') }}">
+
+                <!-- YES: USE FALLBACK AI -->
+
+                <button
+                    type="submit"
+                    name="fallback_choice"
+                    value="yes"
+                    class="primary-btn full-width"
+                >
+                    ✓ Yes, Use Fallback AI
+                </button>
+
+                <!-- NO: CANCEL ANALYSIS -->
+
+                <button
+                    type="submit"
+                    name="fallback_choice"
+                    value="no"
+                    style="
+                        display: block;
+                        width: 100%;
+                        min-height: 60px;
+                        padding: 18px 24px;
+                        margin-top: 15px;
+                        background-color: #dc2626;
+                        color: #ffffff;
+                        border: none;
+                        border-radius: 10px;
+                        font-size: 18px;
+                        font-weight: 700;
+                        cursor: pointer;
+                    "
+                >
+                    ✕ No, Cancel Analysis
+                </button>
+
+            </form>
+
+        </div>
+
+    {% else %}
+
+        <!-- NORMAL SCANNER FORM -->
+
+        <h2>Analyse a Message</h2>
+
+        <p class="muted">
+            Provide the sender's phone number and message content.
+        </p>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('scanner') }}">
+
+            <label for="phone_number">Phone Number</label>
+
+            <input
+                type="text"
+                id="phone_number"
+                name="phone_number"
+                placeholder="e.g. +65 8123 4567"
+                value="{{ request.form.get('phone_number', '') }}"
+                required
+            >
+
+            <label for="message">Suspicious Message</label>
+
+            <textarea
+                id="message"
+                name="message"
+                rows="8"
+                placeholder="Paste the suspicious message here..."
+                required
+            >{{ request.form.get('message', '') }}</textarea>
+
+            <button type="submit" class="primary-btn full-width">
+                🛡 Analyse Message
+            </button>
+
+        </form>
+
+    {% endif %}
+
+</section>
+
+{% if not fallback_prompt %}
+
+<section class="panel tips">
+
+    <h3>Security Tips</h3>
+
+    <p>✓ Never share your passwords or OTPs.</p>
+    <p>✓ Avoid clicking suspicious links.</p>
+    <p>✓ Verify unexpected payment requests.</p>
+
+</section>
+
+{% endif %}
+
+{% endblock %}
