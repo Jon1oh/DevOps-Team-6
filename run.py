@@ -1,11 +1,8 @@
-
 from flask import Flask, render_template, request, session
 from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
-import os
-import secrets
-import time
+import os, secrets, time
 
 # Load environment variables BEFORE creating managers
 load_dotenv(Path(__file__).resolve().parent / ".env")
