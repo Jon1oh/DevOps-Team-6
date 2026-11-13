@@ -1,4 +1,5 @@
 import joblib, re, os
+from pathlib import Path
 from app.interfaces.ai_analyzer import AiAnalyzer
 from app.models.record import Record
 from datetime import datetime
@@ -6,8 +7,8 @@ from datetime import datetime
 class FallbackAiAnalyzer(AiAnalyzer):
     def __init__(self):
         # Load the trained machine learning model
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
-        model_file = os.path.join(project_root, "data", "scam_detection_model.pkl")
+        ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+        model_file = ROOT_DIR / "data" / "scam_detection_model.pkl"
 
         print("Loading Fallback AI model...")
         model_data = joblib.load(model_file)

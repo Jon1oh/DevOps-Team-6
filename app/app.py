@@ -12,12 +12,7 @@ class App:
         self._record_converter = record_converter
                     
     # analyze message with Gemini analyzer. If unavailable, use Fallback AI
-    def analyze_record(self, record):        
-        try:
-            record.phone_number, record.country_code = self._logic_manager.split_country_code_phone_number(record.phone_number)            
-        except ValueError:
-            return {"status": "error", "message": "Enter a valid international phone number."}
-
+    def analyze_record(self, record):
         try:
             analyzer = self._ai_manager.get_analyzer()
             ai_output = analyzer.analyze_message(record)
