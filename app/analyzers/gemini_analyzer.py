@@ -2,7 +2,7 @@ import os, json, logging
 from app.models.record import Record
 from datetime import datetime
 from google import genai
-from interfaces.ai_analyzer import AiAnalyzer
+from app.interfaces.ai_analyzer import AiAnalyzer
 from dotenv import load_dotenv
 
 load_dotenv()

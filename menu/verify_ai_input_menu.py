@@ -1,4 +1,4 @@
-from interfaces.menu import Menu
+from app.interfaces.menu import Menu
 from app.models.record import Record
 import re, phonenumbers
 

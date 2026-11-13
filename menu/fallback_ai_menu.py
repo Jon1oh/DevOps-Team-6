@@ -1,5 +1,5 @@
-from interfaces.menu import Menu
-from analyzers.fallback_ai_analyzer import FallbackAiAnalyzer
+from app.interfaces.menu import Menu
+from app.analyzers.fallback_ai_analyzer import FallbackAiAnalyzer
 from managers.logic_manager import LogicManager
 from app.models.record import Record
 
