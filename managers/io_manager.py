@@ -1,6 +1,7 @@
 import phonenumbers
 import re
 
+#this class handles all input validation and output of the application
 class io_manager:
     #this method checks if the phone number is valid
     def validate_number(self,number:str)-> phonenumbers.PhoneNumber:
@@ -21,5 +22,11 @@ class io_manager:
         local_number = str(parsed_number.national_number)
         return local_number, country_code 
             
-        
-    
+    def parse_message(self,message:str)->str:
+        message = re.sub(r'\s+', ' ', message).strip()
+        words = re.findall(r"[A-Za-z]+", message)
+        total_letters = sum(len(word) for word in words)
+        if total_letters >= 4:
+            return message
+        else:
+            raise ValueError
