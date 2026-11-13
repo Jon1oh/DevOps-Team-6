@@ -12,7 +12,7 @@
 
 <section class="panel result-panel">
 
-    {% set risk = result.get('risk_level', 'LOW')|upper %}
+    {% set risk = result.risk_level|default('LOW', true)|upper %}
 
     <div class="result-header">
         <h2>Detection Summary</h2>
@@ -21,32 +21,32 @@
 
     <div class="probability">
         <p>Scam Probability</p>
-        <h1>{{ result.get('scam_probability', 0) }}%</h1>
+        <h1>{{ result.scam_probability|default(0, true) }}%</h1>
     </div>
 
     <div class="result-details">
 
         <p>
             <strong>Phone Number:</strong>
-            {{ result.get('phone_number', 'N/A') }}
+            {{ result.phone_number|default('N/A', true) }}
         </p>
 
         <p>
             <strong>Scam Type:</strong>
-            {{ result.get('scam_type', 'N/A') }}
+            {{ result.scam_type|default('N/A', true) }}
         </p>
 
         <p><strong>Message:</strong></p>
 
         <div class="message-box">
-            {{ result.get('message') or result.get('message_content', 'No message available.') }}
+            {{ result.message|default('No message available.', true) }}
         </div>
 
         <h3>Detected Indicators</h3>
 
-        {% if result.get('indicators') %}
+        {% if result.indicators %}
             <ul>
-                {% for indicator in result.get('indicators') %}
+                {% for indicator in result.indicators %}
                     <li>{{ indicator }}</li>
                 {% endfor %}
             </ul>
@@ -57,13 +57,13 @@
         <h3>AI Explanation</h3>
 
         <p>
-            {{ result.get('explanation', 'No explanation available.') }}
+            {{ result.explanation|default('No message available.', true) }}
         </p>
 
         <h3>Recommended Action</h3>
 
         <p>
-            {{ result.get('recommendation', 'No recommendation available.') }}
+            {{ result.recommendation|default('No message available.', true) }}
         </p>
 
         {% if saved %}
