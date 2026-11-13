@@ -4,14 +4,14 @@ from managers.io_manager import IoManager
 from managers.ai_manager import AiManager
 from managers.data_manager import DataManager
 from managers.logic_manager import LogicManager
-from storage.json_record_storage import JsonRecordStorage
+from storage.sqlite_record_storage import SqliteRecordStorage
 from storage.record_converter import RecordConverter
 
 class App:
     def __init__(self):
         self.io_manager = IoManager()
         self.ai_manager = AiManager()
-        self.data_manager = DataManager(JsonRecordStorage())    # records loaded on startup
+        self.data_manager = DataManager(SqliteRecordStorage())  # records loaded on startup
         if self.data_manager.status_message:                    # when record does not load properly
             print(self.data_manager.status_message)
         else:
