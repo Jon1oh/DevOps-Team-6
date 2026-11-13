@@ -25,8 +25,8 @@ class Record:
             f"Indicators: {self.indicators}\n"
             f"Explanation: {self.explanation}\n"
             f"Recommendation: {self.recommendation}"
-        )        
-        
+        )       
+            
     # message id
     @property
     def record_id(self):

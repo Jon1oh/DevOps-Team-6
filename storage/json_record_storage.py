@@ -11,7 +11,7 @@ from storage.backup_database import BackupDatabase
 from storage.record_converter import RecordConverter
 from storage.record_storage import RecordStorage
 from storage.safe_json_file import SafeJsonFile
-from models.record import Record
+from app.models.record import Record
 
 
 class JsonRecordStorage(RecordStorage):

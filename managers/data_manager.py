@@ -2,7 +2,7 @@
 from storage.record_converter import RecordConverter
 from storage.record_storage import RecordStorage
 from storage.scam_statistics_calculator import ScamStatisticsCalculator
-from models.record import Record
+from app.models.record import Record
 
 
 class DataManager:
