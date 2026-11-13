@@ -99,12 +99,15 @@ class LogicManager():
     def split_country_code_phone_number(self, phone_number):
         try:
             parsed_number = phonenumbers.parse(phone_number)
-            country_code = f"+{parsed_number.country_code}"
-            local_number = str(parsed_number.national_number)
-            return local_number, country_code
+        except phonenumbers.NumberParseException as error:
+            raise ValueError("Enter a valid international phone number.") from error
+        
+        if not phonenumbers.is_valid_number(parsed_number):
+            raise ValueError("Eenter a valid international phone number")
 
-        except phonenumbers.NumberParseException:
-            return phone_number, ""
+        country_code = f"+{parsed_number.country_code}"
+        local_number = str(parsed_number.national_number)
+        return local_number, country_code    
         
     # Escalates Risk Level to HIGH if Phone Number was previously involved in a High Risk Incident
     # Function should take in a records dictionary that states the different risk levels associated with the phone number

@@ -59,14 +59,14 @@
             <tbody>
                 {% for record in recent_records %}
                 <tr>
-                    <td>{{ record.get('phone_number', 'N/A') }}</td>
-                    <td>{{ record.get('scam_type', 'N/A') }}</td>
+                    <td>{{ record.phone_number|default('N/A', true) }}</td>
+                    <td>{{ record.scam_type|default('N/A', true) }}</td>
                     <td>
-                        <span class="risk {{ record.get('risk_level', 'low')|lower }}">
-                            {{ record.get('risk_level', 'N/A') }}
+                        <span class="risk {{ record.risk_level|default('low', true)|lower }}">
+                            {{ record.risk_level|default('N/A', true) }}
                         </span>
                     </td>
-                    <td>{{ record.get('scam_probability', 0) }}%</td>
+                    <td>{{ record.scam_probability|default(0, true) }}%</td>
                 </tr>
                 {% endfor %}
             </tbody>
