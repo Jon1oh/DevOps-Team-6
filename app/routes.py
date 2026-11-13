@@ -1,7 +1,7 @@
 from flask import render_template, request, session
-from .app import flask_app, analysis_service
+from . import flask_app, analysis_service
 from .utils import handle_fallback_choice, save_pending_scan, render_result, clean_expired_scans
-from models.record import Record
+from .models.record import Record
 from datetime import datetime
 
 @flask_app.route("/")

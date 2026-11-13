@@ -1,6 +1,6 @@
 import joblib, re, os
 from interfaces.ai_analyzer import AiAnalyzer
-from models.record import Record
+from app.models.record import Record
 from datetime import datetime
 
 class FallbackAiAnalyzer(AiAnalyzer):
