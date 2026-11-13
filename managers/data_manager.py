@@ -106,6 +106,39 @@ class DataManager:
             self._records.remove(record)           # keep the list matching the file
         return ok, message
 
+    def update_record(self, record_id: int, changes: dict) -> tuple[bool, str]:
+        """Change some fields of an existing record and save the list.
+
+        `changes` uses the JSON key names, e.g. {"scam_type": "Phishing Scam"}.
+        The record_id itself cannot be changed. The changed record goes through
+        the same RecordConverter checks as a new record.
+        Returns (True, "") on success or (False, "reason").
+        """
+        record = self.find_record(record_id)
+        if record is None:
+            return False, f"No record with record_id {record_id}."
+        if not isinstance(changes, dict) or not changes:
+            return False, "No changes were given."
+
+        updated_data = RecordConverter.to_dict(record)
+        for key, value in changes.items():
+            if key == "record_id":
+                return False, "record_id cannot be changed."
+            if key not in RecordConverter.SCHEMA:
+                return False, f"Unknown field: {key}"
+            updated_data[key] = value
+
+        updated_record, error = RecordConverter.from_dict(updated_data)
+        if updated_record is None:
+            return False, error
+
+        position = self._records.index(record)
+        self._records[position] = updated_record
+        ok, message = self._storage.save_all(self._records)
+        if not ok:
+            self._records[position] = record        # keep the list matching the storage
+        return ok, message
+
     def remove_record(self, record_id: int) -> tuple[bool, str]:
         """Remove the record with this record_id from the list and save the list.
 
