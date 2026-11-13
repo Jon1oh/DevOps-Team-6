@@ -1,9 +1,10 @@
 class Record:
-    def __init__(self, record_id=None, timestamp=None, phone_number="", country_code="", message="", scam_probability=0, risk_level="", scam_type="", indicators=None, explanation="", recommendation=""):
+    def __init__(self, record_id=None, timestamp=None, phone_number="", country_name="", country_code="", message="", scam_probability=0, risk_level="", scam_type="", indicators=None, explanation="", recommendation=""):
         self.record_id = record_id # initially assigned as None. Will be handled separately by Data Manager later
         self.timestamp = timestamp
         self.phone_number = phone_number
         self.country_code = country_code
+        self.coutnry_name = country_name
         self.message = message
         self.scam_probability = scam_probability
         self.risk_level = risk_level

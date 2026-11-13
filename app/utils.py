@@ -40,9 +40,9 @@ def handle_fallback_choice(choice):
     if scan_data is None:
         return render_template("scanner.html", error="Your pending scan has expired or is no longer available. Please submit your message again.")
     if choice == "no":
-        return render_template("scanner.html", error="Fallback analysis cancelled. You can try again later.")
+        return render_template("scanner.html", error="Message analysis cancelled. You can try again later.")
     if choice == "yes":
-        return render_result(analysis_service.analyze_with_fallback_ai(scan_data["phone_number"], scan_data["message"]))
+        return render_result(analysis_service.analyze_with_fallback_ai(scan_data))
 
     return render_template("scanner.html", error="Invalid fallback selection.")
 
