@@ -23,6 +23,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>Country Code</th>
                     <th>Phone Number</th>
                     <th>Message</th>
                     <th>Scam Type</th>
@@ -34,6 +35,7 @@
             <tbody>
                 {% for record in records %}
                 <tr>
+                    <td>{{ record.country_code|default('N/A', true) }}</td>
                     <td>{{ record.phone_number|default('N/A', true) }}</td>
                     <td class="message-cell">
                         {{ record.message|default('N/A', true) }}
