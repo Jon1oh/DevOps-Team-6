@@ -84,31 +84,7 @@ class LogicManager():
             ai_output.scam_probability = 49 # Give it the highest Scam Proabability Score within the range of "LOW"
         
         return ai_output
-        
-    # check if phone_number field from AI output still contains a country code. If yes, remove it and only keep the number.
-    def remove_country_code_in_phone_number(self, ai_output: Record):
-        phone_number = ai_output.phone_number
-        country_code = ai_output.country_code
-        
-        if phone_number.startswith(country_code):
-            ai_output.phone_number = phone_number[len(country_code):] # Ensure phone_number does not contain country code
                 
-        return ai_output
-    
-    # This function splits a full international phone number (like +6591234567) into its local number and country code, and falls back gracefully if it can’t.
-    def split_country_code_phone_number(self, phone_number):
-        try:
-            parsed_number = phonenumbers.parse(phone_number)
-        except phonenumbers.NumberParseException as error:
-            raise ValueError("Enter a valid international phone number.") from error
-        
-        if not phonenumbers.is_valid_number(parsed_number):
-            raise ValueError("Eenter a valid international phone number")
-
-        country_code = f"+{parsed_number.country_code}"
-        local_number = str(parsed_number.national_number)
-        return local_number, country_code    
-        
     # Escalates Risk Level to HIGH if Phone Number was previously involved in a High Risk Incident
     # Function should take in a records dictionary that states the different risk levels associated with the phone number
     # e.g., records = {"HIGH": 1, "MEDIUM": 0, "LOW": 0}
