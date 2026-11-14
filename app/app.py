@@ -1,18 +1,28 @@
 import logging
 
 class App:
-    def __init__(self, ai_manager, data_manager, logic_manager, record_converter):
+    def __init__(self, ai_manager, data_manager, logic_manager, record_converter,io_manager):
         self._ai_manager = ai_manager
         self._data_manager = data_manager # records loaded on startup
         if self._data_manager.status_message: # when record does not load properly
             print(self._data_manager.status_message)
         else:
             print(f"Database Loaded: {len(self._data_manager.records)} records") 
+        self.io_manager = io_manager
         self._logic_manager = logic_manager
         self._record_converter = record_converter
                     
     # analyze message with Gemini analyzer. If unavailable, use Fallback AI
     def analyze_record(self, record):
+        # input validation
+        try:
+            record.phone_number, record.country_code = self.io_manager.split_number(record.phone_number)
+        except ValueError:
+            return {"status": "error", "message": "Enter a valid international phone number."}
+        try:
+            record.message = self.io_manager.parse_message(record.message)
+        except ValueError:
+            return {"status": "error", "message": "Enter a more meaningful message"}
         try:
             analyzer = self._ai_manager.get_analyzer()
             ai_output = analyzer.analyze_message(record)

@@ -1,5 +1,6 @@
 import secrets, time
 from flask import render_template, session
+from .models.record import Record
 from . import analysis_service
 
 # Temporary server-side storage for pending fallback scans.
@@ -10,12 +11,11 @@ pending_scans = {}
 PENDING_SCAN_TIMEOUT = 900
 
 
-def save_pending_scan(phone_number, message):
+def save_pending_scan(record):
     """Keep what the user typed on the server and return the random token for the session."""
     token = secrets.token_urlsafe(32)
     pending_scans[token] = {
-        "phone_number": phone_number,
-        "message": message,
+        "record":record,
         "created_at": time.time()
     }
     return token
@@ -35,14 +35,14 @@ def clean_expired_scans():
 def handle_fallback_choice(choice):
     """The user answered the 'use the fallback AI?' prompt."""
     token = session.pop("pending_scan_token", None)
-    scan_data = pending_scans.pop(token, None) if token else None
-
+    scan_data = pending_scans.pop(token, None) if token else None    
     if scan_data is None:
         return render_template("scanner.html", error="Your pending scan has expired or is no longer available. Please submit your message again.")
     if choice == "no":
         return render_template("scanner.html", error="Message analysis cancelled. You can try again later.")
     if choice == "yes":
-        return render_result(analysis_service.analyze_with_fallback_ai(scan_data))
+        record = scan_data["record"]
+        return render_result(analysis_service.analyze_with_fallback_ai(record))
 
     return render_template("scanner.html", error="Invalid fallback selection.")
 

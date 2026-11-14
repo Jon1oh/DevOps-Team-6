@@ -27,19 +27,18 @@ def scanner():
     # initial message submission
     phone_number = request.form.get("phone_number", "").strip()
     message = request.form.get("message", "").strip()
+    
     if not phone_number or not message:
         return render_template("scanner.html", error="Please enter both a phone number and message.")
-    
     record = Record(
         timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
-        phone_number=phone_number, 
+        phone_number=phone_number,
         message=message
     )
     result = analysis_service.analyze_record(record)
- 
     # prompt user before using fallback AI
     if result["status"] == "fallback_required":
-        session["pending_scan_token"] = save_pending_scan(phone_number, message) # the session only holds a random token
+        session["pending_scan_token"] = save_pending_scan(record) # the session only holds a random token
         return render_template("scanner.html", fallback_prompt=True, original_phone_number=phone_number, original_message=message)
  
     return render_result(result)

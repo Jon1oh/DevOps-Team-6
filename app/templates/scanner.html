@@ -31,7 +31,7 @@
                 <p>{{ original_message }}</p>
             </div>
 
-            <form method="POST" action="{{ url_for('io_manager.scanner') }}">
+            <form method="POST" action="{{ url_for('scanner') }}">
 
                 <!-- YES: USE FALLBACK AI -->
 
@@ -86,7 +86,7 @@
             <div class="error-message">{{ error }}</div>
         {% endif %}
 
-        <form method="POST" action="{{ url_for('io_manager.scanner') }}">
+        <form method="POST" action="{{ url_for('scanner') }}">
 
             <label for="phone_number">Phone Number</label>
 

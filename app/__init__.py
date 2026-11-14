@@ -14,19 +14,17 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 
+flask_app = Flask(__name__)
+flask_app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
+
 ai_manager = AiManager()
 data_manager = DataManager(JsonRecordStorage())
 logic_manager = LogicManager()
 record_converter = RecordConverter()
+io_manager = IoManager()
 
+analysis_service = App(ai_manager, data_manager, logic_manager, record_converter,io_manager)
 
-analysis_service = App(ai_manager, data_manager, logic_manager,record_converter)
-
-def create_app():
-    flask_app = Flask(__name__)
-    flask_app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
-    io_mgr = IoManager(analysis_service)
-    # Register the blueprint
-    flask_app.register_blueprint(io_mgr.blueprint)
-    return flask_app
+# Import last so the route decorators register on this Flask app.
+from . import routes
 

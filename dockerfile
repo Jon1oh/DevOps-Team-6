@@ -4,4 +4,5 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 # copy the entire project automatically. Saves time from updating the Dockerfile every time a new folder is created.
 COPY . .
-CMD ["python","app.py"]
+EXPOSE 8000
+CMD ["python","run.py"]
