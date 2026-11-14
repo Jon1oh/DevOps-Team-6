@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Check Text | ScamGuard{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ocr.css') }}">
+<div class="page-heading">
+    <h1>Check the extracted text</h1>
+    <p>The text below was read from your screenshot. Fix any mistakes before checking it.</p>
+</div>
+
+<div class="panel scanner-panel">
+    <form method="POST">
+        <label for="phone">Phone number</label>
+        <input type="tel" id="phone" name="phone" placeholder="+65 9123 4567"
+               value="{{ phone | default('') }}" required>
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="6"
+                  placeholder="Paste or type the message here..." required>{{ message | default('') }}</textarea>
+
+        <button type="submit" class="primary-btn full-width">Check for scam</button>
+    </form>
+
+    <div class="tips">
+        <p>💡 Screenshot text isn't always read perfectly. Check numbers like 0/O and 1/l.</p>
+    </div>
+</div>
+{% endblock %}

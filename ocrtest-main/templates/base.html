@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!-- STAND-IN ONLY: lets the OCR pages be previewed on their own.
+     When merging, delete this file and use the website's base.html instead. -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ScamGuard{% endblock %}</title>
+    <!-- The website's own stylesheet: gives these pages the same look -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">🛡️</div>
+            <h2>ScamGuard</h2>
+            <p>AI scam message checker</p>
+        </div>
+        <nav>
+            <a href="#">🏠 Dashboard</a>
+            <a href="#">🔍 Scanner</a>
+            <a href="{{ url_for('home_page') }}">📷 Scan screenshot</a>
+            <a href="#">📜 History</a>
+        </nav>
+        <div class="sidebar-footer">
+            <span>🔒</span>
+            <strong>Stay safe</strong>
+            <p>Never click links in messages you weren't expecting.</p>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="topbar">
+            <span>{% block topbar %}Screenshot scanner{% endblock %}</span>
+            <span class="online">● Online</span>
+        </div>
+        {% block content %}{% endblock %}
+    </main>
+</div>
+</body>
+</html>

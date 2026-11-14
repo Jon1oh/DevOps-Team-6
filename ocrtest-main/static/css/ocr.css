@@ -1,0 +1,104 @@
+/* Styles only the OCR pages need.
+   Everything else (colours, sidebar, panels, buttons, inputs) comes from style.css. */
+
+/* Form fields use the page font (browsers default textareas to a typewriter font) */
+input, textarea, button {
+    font-family: inherit;
+}
+
+/* The two crop panels side by side */
+.crop-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.crop-panel h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.crop-panel .muted {
+    margin-bottom: 15px;
+}
+
+/* The area Cropper.js draws inside */
+.img-container {
+    width: 100%;
+    height: 55vh;
+    background: #0e1930;
+    border: 1px solid #293b60;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.img-container img {
+    display: block;
+    max-width: 100%;
+}
+
+/* style.css makes every input 100% wide; checkboxes should stay small */
+.crop-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 0;
+    cursor: pointer;
+}
+
+.crop-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    accent-color: #3478f6;
+    cursor: pointer;
+}
+
+/* A disabled button should look disabled */
+.primary-btn:disabled {
+    background: #34496d;
+    color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* The upload area on the first page */
+.upload-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    padding: 35px 20px;
+    border: 2px dashed #34496d;
+    border-radius: 12px;
+    background: #0e1930;
+    color: #cbd5e1;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upload-box:hover {
+    border-color: #3b82f6;
+}
+
+.upload-icon {
+    font-size: 36px;
+}
+
+.upload-box input[type="file"] {
+    margin-top: 10px;
+    max-width: 400px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Stack the crop panels on narrow screens */
+@media (max-width: 900px) {
+    .crop-grid {
+        grid-template-columns: 1fr;
+    }
+}
