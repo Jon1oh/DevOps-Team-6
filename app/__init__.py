@@ -5,6 +5,7 @@ from flask import Flask
 from managers.ai_manager import AiManager
 from managers.data_manager import DataManager
 from managers.logic_manager import LogicManager
+from managers.io_manager import IoManager
 from storage.json_record_storage import JsonRecordStorage
 from storage.record_converter import RecordConverter
 from .app import App
@@ -21,11 +22,10 @@ record_converter = RecordConverter()
 
 analysis_service = App(ai_manager, data_manager, logic_manager,record_converter)
 
-from managers.io_manager import iomanager
 def create_app():
     flask_app = Flask(__name__)
     flask_app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
-    io_mgr = iomanager(analysis_service)
+    io_mgr = IoManager(analysis_service)
     # Register the blueprint
     flask_app.register_blueprint(io_mgr.blueprint)
     return flask_app

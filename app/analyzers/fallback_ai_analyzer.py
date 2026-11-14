@@ -1,4 +1,4 @@
-import joblib, re, os
+import joblib, re
 from pathlib import Path
 from app.interfaces.ai_analyzer import AiAnalyzer
 from app.models.record import Record

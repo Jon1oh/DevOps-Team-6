@@ -1,12 +1,8 @@
-import os, json, logging
+import os, json
 from app.models.record import Record
 from datetime import datetime
 from google import genai
 from app.interfaces.ai_analyzer import AiAnalyzer
-from dotenv import load_dotenv
-
-load_dotenv()
-logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module    
 
 class GeminiAiAnalyzer(AiAnalyzer):
     def __init__(self, model="gemini-3.5-flash-lite"): 

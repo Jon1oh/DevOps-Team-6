@@ -1,13 +1,12 @@
 from datetime import datetime
-import secrets, time
-import re
+import secrets, time, re
 from flask import Blueprint, render_template, request, session
 import phonenumbers
 # Import your helpers and models
 from app.models.record import Record
 
 #this class handles all input validation and output of the application
-class iomanager:
+class IoManager:
     def __init__(self,analysis_service):
         self.blueprint : Blueprint = Blueprint('io_manager', __name__)
         self.analysis_service = analysis_service
