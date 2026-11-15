@@ -105,8 +105,6 @@ class LogicManager():
             
     # Ensure data in all fields are in the correct format.
     def format_ai_output(self, ai_output: Record):                
-        # Ensure phone_number does not contain country code
-        self.remove_country_code_in_phone_number(ai_output)
         
         # Display scam_type with no underscore and in title format
         # Our Backup AI will return scam_type with an underscore ("_") instead of spacing
