@@ -49,6 +49,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>Country Name</th>
                     <th>Phone Number</th>
                     <th>Scam Type</th>
                     <th>Risk Level</th>
@@ -59,6 +60,7 @@
             <tbody>
                 {% for record in recent_records %}
                 <tr>
+                    <td>{{ record.country_name|default('N/A', true) }}</td>
                     <td>{{ record.phone_number|default('N/A', true) }}</td>
                     <td>{{ record.scam_type|default('N/A', true) }}</td>
                     <td>

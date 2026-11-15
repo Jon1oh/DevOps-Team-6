@@ -1,7 +1,7 @@
 import logging
 
 class App:
-    def __init__(self, ai_manager, data_manager, logic_manager, record_converter,io_manager):
+    def __init__(self, ai_manager, data_manager, logic_manager, record_converter, io_manager):
         self._ai_manager = ai_manager
         self._data_manager = data_manager # records loaded on startup
         if self._data_manager.status_message: # when record does not load properly

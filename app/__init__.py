@@ -23,7 +23,7 @@ logic_manager = LogicManager()
 record_converter = RecordConverter()
 io_manager = IoManager()
 
-analysis_service = App(ai_manager, data_manager, logic_manager, record_converter,io_manager)
+analysis_service = App(ai_manager, data_manager, logic_manager, record_converter, io_manager)
 
 # Import last so the route decorators register on this Flask app.
 from . import routes
