@@ -59,9 +59,13 @@ ALLOWED_TYPES = {".png", ".jpg", ".jpeg"}
 MIN_UPLOAD_BYTES = 1024            # 1 KB
 MAX_UPLOAD_BYTES = 5242880         # 5 MB
 
+# Flask rejects anything over 6 MB before reading it (error 413, handled below)
+flask_app.config["MAX_CONTENT_LENGTH"] = 6291456
+
 # Show the upload form, and save the image when it is submitted.
 @flask_app.route("/screenshot", methods=["GET", "POST"])
 def screenshot_page():
+    """Show the upload form, and save the image when it is submitted."""
     if request.method == "GET":
         return render_template("screenshot.html")
 
@@ -80,6 +84,11 @@ def screenshot_page():
         return render_template("screenshot.html", error="That file is too large. Please choose an image under 5 MB.")
     if size < MIN_UPLOAD_BYTES:
         return render_template("screenshot.html", error="That file is too small to be a screenshot.")
+
+    # A random name, so two users never overwrite each other's file
+    filename = os.urandom(16).hex() + extension
+    file.save(os.path.join(UPLOAD_FOLDER, filename))
+    return redirect(url_for("crop_page", filename=filename))
 
 # Send the uploaded image to the browser so Cropper.js can show it.
 @flask_app.route("/screenshot/image/<filename>")
