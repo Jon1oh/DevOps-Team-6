@@ -1,5 +1,4 @@
 # LogicManager will ensure whatever reaches the user is valid, consistent, and trustworthy.
-import phonenumbers
 from app.models.record import Record
 
 class LogicManager():
@@ -47,14 +46,7 @@ class LogicManager():
             
         return True
     
-    
-    def remove_country_code_in_phone_number(self, ai_output: Record):
-        phone_number = ai_output.phone_number
-        country_code = ai_output.country_code
-        
-        if phone_number.startswith(country_code):
-            ai_output.phone_number = phone_number[len(country_code):] # Ensure phone_number does not contain country code
-    # Validates AI's Risk Level
+        # Validates AI's Risk Level
     def _validate_risk_level(self, ai_output: Record):
         has_indicators = len(ai_output.indicators) > 0
         if ai_output.scam_probability >= 80 and has_indicators:

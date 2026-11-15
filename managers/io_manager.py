@@ -1,8 +1,6 @@
-import re
-import phonenumbers
-# Import your helpers and models
+import re, phonenumbers
 
-#this class handles all input validation and output of the application
+# this class handles all input validation and output of the application
 class IoManager:
     #this method checks if the phone number is valid
     def validate_number(self,number:str)-> phonenumbers.PhoneNumber:
