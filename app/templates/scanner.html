@@ -10,6 +10,20 @@
     <p>Submit a suspicious message for AI-powered scam detection.</p>
 </section>
 
+{% if not fallback_prompt %}
+
+<section class="panel tips">
+
+    <h3>Security Tips</h3>
+
+    <p>✓ Never share your passwords or OTPs.</p>
+    <p>✓ Avoid clicking suspicious links.</p>
+    <p>✓ Verify unexpected payment requests.</p>
+
+</section>
+
+{% endif %}
+
 <section class="panel scanner-panel">
 
     {% if fallback_prompt %}
@@ -118,19 +132,5 @@
     {% endif %}
 
 </section>
-
-{% if not fallback_prompt %}
-
-<section class="panel tips">
-
-    <h3>Security Tips</h3>
-
-    <p>✓ Never share your passwords or OTPs.</p>
-    <p>✓ Avoid clicking suspicious links.</p>
-    <p>✓ Verify unexpected payment requests.</p>
-
-</section>
-
-{% endif %}
 
 {% endblock %}
