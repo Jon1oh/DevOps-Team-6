@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Crop Screenshot | ScamGuard{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<div class="page-heading">
+    <h1>Crop the screenshot</h1>
+    <p>Drag a box around each part, then tick its checkbox to lock it in.</p>
+</div>
+
+{% if error %}
+    <p class="error-message">{{ error }}</p>
+{% endif %}
+
+<form id="cropForm" method="post" action="{{ url_for('crop_page', filename=filename) }}">
+    <div class="crop-grid">
+        <!-- Box 1: phone number -->
+        <div class="panel crop-panel">
+            <h2>1. Phone number</h2>
+            <p class="muted">Crop only the sender's number.</p>
+            <div class="img-container">
+                <img id="imageToCrop1" src="{{ url_for('uploaded_image', filename=filename) }}" alt="Screenshot for the phone number">
+            </div>
+            <input type="hidden" name="x1" id="x1">
+            <input type="hidden" name="y1" id="y1">
+            <input type="hidden" name="width1" id="width1">
+            <input type="hidden" name="height1" id="height1">
+            <label class="crop-toggle">
+                <input type="checkbox" id="toggleCrop1"> Lock phone number crop
+            </label>
+        </div>
+
+        <!-- Box 2: message (same image, different box) -->
+        <div class="panel crop-panel">
+            <h2>2. Message</h2>
+            <p class="muted">Crop only the message text.</p>
+            <div class="img-container">
+                <img id="imageToCrop2" src="{{ url_for('uploaded_image', filename=filename) }}" alt="Screenshot for the message">
+            </div>
+            <input type="hidden" name="x2" id="x2">
+            <input type="hidden" name="y2" id="y2">
+            <input type="hidden" name="width2" id="width2">
+            <input type="hidden" name="height2" id="height2">
+            <label class="crop-toggle">
+                <input type="checkbox" id="toggleCrop2"> Lock message crop
+            </label>
+        </div>
+    </div>
+
+    <button type="button" id="cropButton" class="primary-btn full-width" disabled>Read text from both crops</button>
+</form>
+
+<script>
+    const cropper1 = new Cropper(document.getElementById('imageToCrop1'), {
+        aspectRatio: NaN, viewMode: 1, responsive: true,
+    });
+    const cropper2 = new Cropper(document.getElementById('imageToCrop2'), {
+        aspectRatio: NaN, viewMode: 1, responsive: true,
+    });
+
+    const checkbox1 = document.getElementById('toggleCrop1');
+    const checkbox2 = document.getElementById('toggleCrop2');
+    const button = document.getElementById('cropButton');
+
+    // A ticked checkbox locks that crop; the button works only when both are locked.
+    function updateState() {
+        checkbox1.checked ? cropper1.disable() : cropper1.enable();
+        checkbox2.checked ? cropper2.disable() : cropper2.enable();
+        button.disabled = !(checkbox1.checked && checkbox2.checked);
+    }
+    checkbox1.addEventListener('change', updateState);
+    checkbox2.addEventListener('change', updateState);
+
+    // Copy each box's position into the hidden fields, then send the form.
+    function fillBox(cropper, number) {
+        const data = cropper.getData(true);
+        document.getElementById('x' + number).value = data.x;
+        document.getElementById('y' + number).value = data.y;
+        document.getElementById('width' + number).value = data.width;
+        document.getElementById('height' + number).value = data.height;
+    }
+
+    button.addEventListener('click', function () {
+        fillBox(cropper1, '1');
+        fillBox(cropper2, '2');
+        document.getElementById('cropForm').submit();
+    });
+</script>
+{% endblock %}

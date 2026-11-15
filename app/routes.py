@@ -1,7 +1,11 @@
-from flask import render_template, request, session
+import os
+import tempfile
+
+from flask import render_template, request, session, abort, redirect, send_from_directory, url_for
 from . import flask_app, analysis_service
 from .utils import handle_fallback_choice, save_pending_scan, render_result, clean_expired_scans
 from .models.record import Record
+from .ocr_reader import OcrReader
 from datetime import datetime
 
 @flask_app.route("/")
@@ -42,3 +46,92 @@ def scanner():
         return render_template("scanner.html", fallback_prompt=True, original_phone_number=phone_number, original_message=message)
  
     return render_result(result)
+
+# ===== Screenshot scanner (OCR): upload -> crop -> pre-filled Scanner =====
+
+ocr_reader = OcrReader()
+
+# Uploads go in the system temp folder, created automatically if missing
+UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), "scamguard_ocr")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+ALLOWED_TYPES = {".png", ".jpg", ".jpeg"}
+MIN_UPLOAD_BYTES = 1024            # 1 KB
+MAX_UPLOAD_BYTES = 5242880         # 5 MB
+
+# Flask rejects anything over 6 MB before reading it (error 413, handled below)
+flask_app.config["MAX_CONTENT_LENGTH"] = 6291456
+
+# Show the upload form, and save the image when it is submitted.
+@flask_app.route("/screenshot", methods=["GET", "POST"])
+def screenshot_page():
+    """Show the upload form, and save the image when it is submitted."""
+    if request.method == "GET":
+        return render_template("screenshot.html")
+
+    file = request.files.get("file")
+    if file is None or file.filename == "":
+        return render_template("screenshot.html", error="Please choose an image.")
+
+    extension = os.path.splitext(file.filename)[1].lower()
+    if extension not in ALLOWED_TYPES:
+        return render_template("screenshot.html", error="Please upload a PNG or JPG image.")
+
+    file.seek(0, os.SEEK_END)   # jump to the end of the file...
+    size = file.tell()          # ...the position there is the size in bytes
+    file.seek(0)                # go back to the start so it can be saved
+    if size > MAX_UPLOAD_BYTES:
+        return render_template("screenshot.html", error="That file is too large. Please choose an image under 5 MB.")
+    if size < MIN_UPLOAD_BYTES:
+        return render_template("screenshot.html", error="That file is too small to be a screenshot.")
+
+    # A random name, so two users never overwrite each other's file
+    filename = os.urandom(16).hex() + extension
+    file.save(os.path.join(UPLOAD_FOLDER, filename))
+    return redirect(url_for("crop_page", filename=filename))
+
+# Send the uploaded image to the browser so Cropper.js can show it.
+@flask_app.route("/screenshot/image/<filename>")
+def uploaded_image(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
+
+# Show the two croppers, then read the text from both boxes.
+@flask_app.route("/screenshot/crop/<filename>", methods=["GET", "POST"])
+def crop_page(filename):
+    filename = os.path.basename(filename)    # keep only the file name, blocks names like "..\\secret"
+    image_path = os.path.join(UPLOAD_FOLDER, filename)
+    if not os.path.isfile(image_path):
+        abort(404)
+
+    if request.method == "GET":
+        return render_template("crop.html", filename=filename)
+
+    try:
+        phone_box = _read_box(request.form, "1")
+        message_box = _read_box(request.form, "2")
+    except (KeyError, ValueError):
+        return render_template("crop.html", filename=filename,
+                               error="Please draw both crop boxes and try again.")
+
+    try:
+        phone = ocr_reader.read_area(image_path, *phone_box)
+        message = ocr_reader.read_area(image_path, *message_box)
+    finally:
+        os.remove(image_path)   # Delete screenshots
+
+    error = None
+    if not phone and not message:
+        error = "No text could be read. Try cropping again more tightly, or type it in below."
+
+    # Show the Scanner page with the text filled in so the user can check it and press "Analyse Message" as normal.
+    return render_template("scanner.html", ocr_phone=phone, ocr_message=message,
+                           from_screenshot=True, error=error)
+
+# Flask raises 413 when an upload is bigger than MAX_CONTENT_LENGTH
+@flask_app.errorhandler(413)
+def file_too_large(error):
+    return render_template("screenshot.html", error="That file is too large. Please choose an image under 5 MB."), 413
+
+# Get (x, y, width, height) for crop box 1 or 2 from the submitted form.
+def _read_box(form, number):
+    return tuple(int(float(form[name + number])) for name in ("x", "y", "width", "height"))
