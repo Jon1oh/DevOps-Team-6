@@ -86,6 +86,12 @@
             <div class="error-message">{{ error }}</div>
         {% endif %}
 
+        {% if from_screenshot %}
+            <div class="tips">
+                <p>💡 This text was read from your screenshot. Check it (e.g. 0/O, 1/l) before analysing.</p>
+            </div>
+        {% endif %}
+
         <form method="POST" action="{{ url_for('scanner') }}">
 
             <label for="phone_number">Phone Number</label>
@@ -95,7 +101,7 @@
                 id="phone_number"
                 name="phone_number"
                 placeholder="e.g. +65 8123 4567"
-                value="{{ request.form.get('phone_number', '') }}"
+                value="{{ ocr_phone or request.form.get('phone_number', '') }}"
                 required
             >
 
@@ -107,7 +113,7 @@
                 rows="8"
                 placeholder="Paste the suspicious message here..."
                 required
-            >{{ request.form.get('message', '') }}</textarea>
+            >{{ ocr_message or request.form.get('message', '') }}</textarea>
 
             <button type="submit" class="primary-btn full-width">
                 🛡 Analyse Message
