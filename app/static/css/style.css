@@ -59,6 +59,15 @@ body {
     padding: 15px;
     border-radius: 9px;
     transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar nav a .bi {
+    width: 20px;
+    font-size: 1.1rem;
+    text-align: center;
 }
 
 .sidebar nav a:hover {
