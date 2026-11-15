@@ -1,11 +1,8 @@
 import os
-import tempfile
-
 from flask import render_template, request, session, abort, redirect, send_from_directory, url_for
-from . import flask_app, analysis_service
+from . import flask_app, analysis_service, ocr, ALLOWED_TYPES, MAX_UPLOAD_BYTES, MIN_UPLOAD_BYTES, UPLOAD_FOLDER
 from .utils import handle_fallback_choice, save_pending_scan, render_result, clean_expired_scans
 from .models.record import Record
-from .ocr_reader import OcrReader
 from datetime import datetime
 
 @flask_app.route("/")
@@ -46,21 +43,6 @@ def scanner():
         return render_template("scanner.html", fallback_prompt=True, original_phone_number=phone_number, original_message=message)
  
     return render_result(result)
-
-# ===== Screenshot scanner (OCR): upload -> crop -> pre-filled Scanner =====
-
-ocr_reader = OcrReader()
-
-# Uploads go in the system temp folder, created automatically if missing
-UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), "scamguard_ocr")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-ALLOWED_TYPES = {".png", ".jpg", ".jpeg"}
-MIN_UPLOAD_BYTES = 1024            # 1 KB
-MAX_UPLOAD_BYTES = 5242880         # 5 MB
-
-# Flask rejects anything over 6 MB before reading it (error 413, handled below)
-flask_app.config["MAX_CONTENT_LENGTH"] = 6291456
 
 # Show the upload form, and save the image when it is submitted.
 @flask_app.route("/screenshot", methods=["GET", "POST"])
@@ -114,8 +96,8 @@ def crop_page(filename):
                                error="Please draw both crop boxes and try again.")
 
     try:
-        phone = ocr_reader.read_area(image_path, *phone_box)
-        message = ocr_reader.read_area(image_path, *message_box)
+        phone = ocr.read_area(image_path, *phone_box)
+        message = ocr.read_area(image_path, *message_box)
     finally:
         os.remove(image_path)   # Delete screenshots
 
