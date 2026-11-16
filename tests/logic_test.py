@@ -5,6 +5,7 @@ from models.record import Record
 # Setting up our environment - ai_output() will be ran for every function that needs it and will be reset once the function ends
 @pytest.fixture
 def ai_output():
+    record_id = None
     timestamp = "2026-09-18 14:30:00"
     phone_number = "+14155550123"
     country_code = "+1"
@@ -15,7 +16,7 @@ def ai_output():
     indicators = ["Overseas phone number", "Unexpected delivery notification", "Suspicious link", "Requests personal information"]
     explanation = "The message comes from an overseas number and requests the recipient's delivery information through a suspicious link."
     recommendation = "Do not click the link or provide your address or personal information. Check your parcel status through the courier's official website or application."
-    ai_output = Record(timestamp, phone_number, country_code, message, scam_probability, risk_level, scam_type, indicators, explanation, recommendation)
+    ai_output = Record(record_id, timestamp, phone_number, country_code, message, scam_probability, risk_level, scam_type, indicators, explanation, recommendation)
     return ai_output
 
 # Test Cases for - test_validate_risk_level function
