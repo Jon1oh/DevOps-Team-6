@@ -1,0 +1,48 @@
+# Runs the automated tests on every push and pull request.
+# Job 1 runs pytest directly on Python 3.11 (with Tesseract for the OCR test).
+# Job 2 builds the Docker image and runs the same tests inside the container,
+# which proves the tests pass in the Docker environment (brief section 8).
+# No API key is needed: the tests use a fake Gemini client, not the live API.
+
+name: Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  pytest:
+    name: Run pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install Tesseract OCR
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest tests -v
+
+  docker:
+    name: Build Docker image and run tests inside it
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Build the image
+        run: docker build -f dockerfile -t ai_scam_detector .
+
+      - name: Run tests in the container
+        run: docker run --rm ai_scam_detector python -m pytest tests -v
