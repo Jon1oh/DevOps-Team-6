@@ -1,6 +1,5 @@
 import secrets, time
 from flask import render_template, session
-from .models.record import Record
 from . import analysis_service
 
 # Temporary server-side storage for pending fallback scans.
