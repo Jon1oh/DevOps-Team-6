@@ -1,8 +1,8 @@
 """DataManager: holds the list of scam records and is what the app talks to (Phase 2b)."""
-from storage.record_converter import RecordConverter
-from storage.record_storage import RecordStorage
-from storage.scam_statistics_calculator import ScamStatisticsCalculator
-from models.record import Record
+from app.storage.record_converter import RecordConverter
+from app.storage.record_storage import RecordStorage
+from app.storage.scam_statistics_calculator import ScamStatisticsCalculator
+from app.models.record import Record
 
 
 class DataManager:

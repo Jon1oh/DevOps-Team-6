@@ -1,3 +1,6 @@
+import phonenumbers
+from phonenumbers import geocoder
+
 class Record:
     def __init__(self, record_id=None, timestamp=None, phone_number="", country_code="", message="", scam_probability=0, risk_level="", scam_type="", indicators=None, explanation="", recommendation=""):
         self.record_id = record_id # initially assigned as None. Will be handled separately by Data Manager later
@@ -16,6 +19,7 @@ class Record:
         return (
             f"Record ID: {self.record_id}\n"
             f"Timestamp: {self.timestamp}\n"
+            f"Country Name: {self.country_name}"
             f"Phone Number: {self.phone_number}\n"
             f"Country Code: {self.country_code}\n"
             f"Message: {self.message}\n"
@@ -25,8 +29,8 @@ class Record:
             f"Indicators: {self.indicators}\n"
             f"Explanation: {self.explanation}\n"
             f"Recommendation: {self.recommendation}"
-        )        
-        
+        )       
+            
     # message id
     @property
     def record_id(self):
@@ -125,3 +129,14 @@ class Record:
     @recommendation.setter
     def recommendation(self, value):
         self._recommendation = value
+    
+    # Country Name
+    @property
+    def country_name(self):
+        full_number = f"{self.country_code}{self.phone_number}"
+        try:
+            parsed_number = phonenumbers.parse(full_number, None)
+        except phonenumbers.NumberParseException:
+            return "Unknown"
+
+        return geocoder.country_name_for_number(parsed_number, "en") or "Unknown"

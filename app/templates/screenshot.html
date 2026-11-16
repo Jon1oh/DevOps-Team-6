@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Scan Screenshot | ScamGuard{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <h1>Scan a screenshot</h1>
+    <p>Upload a screenshot of a suspicious SMS. You'll crop the phone number and the message next.</p>
+</div>
+
+<div class="panel scanner-panel">
+    <h2>Upload an image</h2>
+    <p class="muted">PNG or JPG, between 1 KB and 5 MB.</p>
+
+    {% if error %}
+        <p class="error-message">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('screenshot_page') }}" enctype="multipart/form-data">
+        <label for="file" class="upload-box">
+            <span class="upload-icon">🖼️</span>
+            <span>Click to choose a screenshot</span>
+            <input type="file" id="file" name="file" accept=".png,.jpg,.jpeg" required>
+        </label>
+        <button type="submit" class="primary-btn full-width">Upload image</button>
+    </form>
+
+    <div class="tips">
+        <p>💡 Make sure the phone number and the message are both visible and not blurry.</p>
+    </div>
+</div>
+
+<script>
+    // Warn straight away if the chosen file is too big or too small.
+    // routes.py checks again on the server, because browser checks can be bypassed.
+    const MIN_BYTES = 1024;               // 1 KB
+    const MAX_BYTES = 5 * 1024 * 1024;    // 5 MB
+
+    document.getElementById('file').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        if (file.size > MAX_BYTES) {
+            this.setCustomValidity('That file is too large. Please choose an image under 5 MB.');
+        } else if (file.size < MIN_BYTES) {
+            this.setCustomValidity('That file is too small to be a screenshot.');
+        } else {
+            this.setCustomValidity('');
+        }
+        this.reportValidity();
+    });
+</script>
+{% endblock %}

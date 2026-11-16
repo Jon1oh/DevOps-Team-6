@@ -4,7 +4,7 @@
 
 import pytest
 from managers.logic_manager import LogicManager
-from models.record import Record
+from app.models.record import Record
 
 # Setting up our environment - ai_output() will be ran for every function that needs it and will be reset once the function ends
 @pytest.fixture

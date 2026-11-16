@@ -1,176 +1,19 @@
 [
     {
         "record_id": 1,
-        "timestamp": "2026-09-07 15:30:00",
-        "phone_number": "+6591234567",
-        "country_code": "+65",
-        "message_content": "Congratulati0ns! You have win a $5,000 cash prize!!! Click this link to cl@im your reward: http://cashprice-govsg.com",
-        "scam_probability": 96,
-        "risk_level": "HIGH",
-        "scam_type": "Prize Scam",
-        "indicators": [
-            "Unexpected prize claim",
-            "Spelling mistakes",
-            "Suspicious link",
-            "Large financial reward"
-        ],
-        "explanation": "The message claims that the recipient has won a large prize without any prior participation and directs them to a suspicious link.",
-        "recommendation": "Do not click the link or provide personal information. Verify the promotion through the organisation's official website and report the message as suspicious."
-    },
-    {
-        "record_id": 2,
-        "timestamp": "2026-09-09 10:15:00",
-        "phone_number": "+6587654321",
-        "country_code": "+65",
-        "message_content": "Your bank account has been temporarily suspended. Verify your account immediately using this link: http://db5-bank-login.com",
-        "scam_probability": 92,
-        "risk_level": "LOW",
-        "scam_type": "Bank Impersonation Scam",
-        "indicators": [
-            "Impersonates a bank",
-            "Creates urgency",
-            "Requests account verification",
-            "Suspicious login link"
-        ],
-        "explanation": "The message impersonates a bank and uses an urgent account suspension claim to encourage the recipient to access a suspicious login page.",
-        "recommendation": "Do not click the link or enter banking credentials. Open your bank's official application or website directly to check your account."
-    },
-    {
-        "record_id": 3,
-        "timestamp": "2026-09-12 18:45:00",
-        "phone_number": "+6588123456",
-        "country_code": "+65",
-        "message_content": "We found your resume online and would like to offer you a work-from-home position. Earn up to $500 per day!! Contact us for more information.",
-        "scam_probability": 68,
-        "risk_level": "MEDIUM",
-        "scam_type": "Job Scam",
-        "indicators": [
-            "Unsolicited job offer",
-            "Unusually HIGH income claim",
-            "Vague job description"
-        ],
-        "explanation": "The message offers unusually HIGH earnings for a vague work-from-home position without providing details about the employer or job responsibilities.",
-        "recommendation": "Do not provide personal information or pay any fees. Research the company independently using official sources before continuing."
-    },
-    {
-        "record_id": 4,
-        "timestamp": "2026-09-15 09:20:00",
-        "phone_number": "+447700900123",
-        "country_code": "+44",
-        "message_content": "Your account has been selected for a special investment opportunity. Deposit $200 today and receive guaranteed returns of $2,000.",
-        "scam_probability": 89,
-        "risk_level": "HIGH",
-        "scam_type": "Investment Scam",
-        "indicators": [
-            "Overseas phone number",
-            "Guaranteed returns",
-            "Unsolicited investment offer",
-            "Requests money"
-        ],
-        "explanation": "The message originates from an overseas phone number and promises unusually HIGH guaranteed returns while requesting an upfront payment.",
-        "recommendation": "Do not transfer money or provide financial information. Verify the investment company independently through official sources and report the suspicious message."
-    },
-    {
-        "record_id": 5,
-        "timestamp": "2026-09-18 14:30:00",
-        "phone_number": "+14155550123",
-        "country_code": "+1",
-        "message_content": "Your parcel is waiting for delivery. Please confirm delivery address by clicking the link below: http://sh0ppedelivery.com",
-        "scam_probability": 72,
-        "risk_level": "MEDIUM",
-        "scam_type": "Delivery/Parcel Scam",
-        "indicators": [
-            "Overseas phone number",
-            "Unexpected delivery notification",
-            "Suspicious link",
-            "Requests personal information"
-        ],
-        "explanation": "The message comes from an overseas number and requests the recipient's delivery information through a suspicious link.",
-        "recommendation": "Do not click the link or provide your address or personal information. Check your parcel status through the courier's official website or application."
-    },
-    {
-        "record_id": 6,
-        "timestamp": "2026-10-02 11:40:00",
-        "phone_number": "+6591234567",
-        "country_code": "+65",
-        "message_content": "Your account has been suspended. Please click this link to verify: http://acount_recovery.com",
-        "scam_probability": 90,
-        "risk_level": "HIGH",
-        "scam_type": "Bank Impersonation Scam",
-        "indicators": [
-            "Urgent language",
-            "Suspicious link"
-        ],
-        "explanation": "The message impersonates a bank and asks the recipient to verify their account",
-        "recommendation": "Do not click the link. Contact the bank through its official website."
-    },
-    {
-        "record_id": 7,
-        "timestamp": "Unknown",
+        "timestamp": "2026-11-15 11:25:15",
         "phone_number": "98220762",
         "country_code": "+65",
-        "message_content": "hello, see you tomorrow for lunch!",
-        "scam_probability": 12,
-        "risk_level": "LOW",
-        "scam_type": "Not a Scam",
-        "indicators": [
-            "No obvious scam indicators detected"
-        ],
-        "explanation": "The message was classified as a normal message and does not contain enough characteristics to be identified as a scam.",
-        "recommendation": "The message does not appear highly suspicious based on the current model prediction. However, remain cautious and verify unexpected requests before taking action."
-    },
-    {
-        "record_id": 8,
-        "timestamp": "2026-11-07 17:05:32",
-        "phone_number": "7700900077",
-        "country_code": "+44",
-        "message_content": "AusPost: Your package could not be delivered due to an unpaid fee of $2.45. Update details now: http://bit.ly/auspost-redelivery-fee",
-        "scam_probability": 98,
-        "risk_level": "HIGH",
-        "scam_type": "Parcel Delivery Scam",
-        "indicators": [
-            "Urgency or pressure tactics",
-            "Requests for money",
-            "Requests for personal information",
-            "Suspicious links",
-            "Impersonation of banks, government agencies, delivery companies, employers, or known organizations"
-        ],
-        "explanation": "The message claims to originate from Australia Post (AusPost) but is sent from a UK phone number (+44). It employs a common phishing tactic by requesting a small delivery fee payment and uses a shortened URL (bit.ly) instead of an official official AusPost domain to capture sensitive personal and banking details.",
-        "recommendation": "Do not click the link, pay any money, or enter personal information. Block the sender's phone number and delete the message. If expecting a delivery, check the tracking status directly on the official Australia Post website."
-    },
-    {
-        "record_id": 9,
-        "timestamp": "2026-11-08 20:44:33",
-        "phone_number": "8005550199",
-        "country_code": "+1",
-        "message_content": "USPS Alert: Your package #US9482103K could not be delivered due to an incorrect shipping address. Update your details within 24 hours to avoid a return-to-sender fee: https://usps-update-track-service.com",
+        "message_content": "Please note: Your bank detected a problem. Send the verification code to secure your account.",
         "scam_probability": 95,
         "risk_level": "HIGH",
-        "scam_type": "Parcel Delivery Scam",
+        "scam_type": "Banking Scam",
         "indicators": [
-            "Urgency or pressure tactics",
-            "Threats or consequences",
-            "Requests for personal information",
-            "Suspicious links",
-            "Impersonation of banks, government agencies, delivery companies, employers, or known organizations"
+            "Impersonation of banks",
+            "Requests for passwords, OTPs, or account verification",
+            "Urgency or pressure tactics"
         ],
-        "explanation": "The message impersonates the US Postal Service and creates artificial urgency by claiming a 24-hour limit to avoid a return fee. The provided URL (usps-update-track-service.com) is an unofficial, suspicious domain designed to phish personal and financial information.",
-        "recommendation": "Do not click on the link or provide any personal details. Block the sender and verify package statuses directly on the official USPS website (usps.com)."
-    },
-    {
-        "record_id": 10,
-        "timestamp": "2026-11-10 12:02:25",
-        "phone_number": "12345678",
-        "country_code": "+65",
-        "message_content": "Congratulations! You have just won $10,000. Click here to claim your prize.",
-        "scam_probability": 95,
-        "risk_level": "HIGH",
-        "scam_type": "Unexpected Prize Money Scam",
-        "indicators": [
-            "Unexpected prizes or winnings",
-            "Suspicious links"
-        ],
-        "explanation": "The message claims the recipient has won a large sum of money ($10,000) from an unknown source without entering any contest, and prompts them to click a link to claim it. This is a classic hallmark of an unexpected prize scam designed to steal personal information or install malware via the link.",
-        "recommendation": "Do not click on the link. Block the sender and report the message as spam."
+        "explanation": "The message claims to be from a bank reporting a problem and urgently requests a verification code to secure the account. Legitimate banks never ask customers to send verification codes or OTPs via SMS or phone calls. This is a classic tactic used by scammers to gain unauthorized access to bank accounts.",
+        "recommendation": "Do not reply to the message or share any verification codes, passwords, or personal information. Contact your bank directly using the official customer service number found on the back of your card or their official website to verify if there are any issues with your account."
     }
 ]
