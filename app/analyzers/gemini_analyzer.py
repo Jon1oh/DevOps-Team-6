@@ -1,4 +1,4 @@
-import os, json
+import os, json, logging
 from app.models.record import Record
 from datetime import datetime
 from google import genai
@@ -8,6 +8,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
     def __init__(self, model="gemini-3.5-flash-lite"): 
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
+        self._logger = logging.getLogger(__name__)
     
     # Get response from Gemini API model
     def get_ai_output(self, prompt_to_ai):
@@ -24,7 +25,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
             return self.get_ai_output(prompt_to_ai)
         except Exception as error:
             print("The API is still unavailable.")
-            self.log_error(error)
+            self._logger.exception(error)
             return False
 
     # grab only the JSON object in the AI output if there are strings before and after it
@@ -36,17 +37,6 @@ class GeminiAiAnalyzer(AiAnalyzer):
             json_object = json.loads(json_string)
             return json_object # return the JSON string as a JSON object
         
-    # log any API failiures in a log file
-    def log_error(self, error):
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        data_folder = os.path.join(project_root, "data")
-        os.makedirs(data_folder, exist_ok=True)
-        log_path = os.path.join(data_folder, "error.log")
-        with open(log_path, "a") as logfile:
-            logfile.write(
-                f"{datetime.now()} - API Error: {error}\n"
-            )        
-
     # prompt containing user's message and phone number input
     def build_prompt(self, message, phone_number):
         prompt = f"""
@@ -122,7 +112,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
             response = self.get_ai_output(prompt)
         except Exception as error:
             print("The API is unavailable. Retrying once...")
-            self.log_error(error)
+            self._logger.exception(error)
             response = self.get_ai_output_retry(prompt) # retry once if the 2nd API call fails
             
         if response is False:
@@ -132,7 +122,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
         try:
             ai_output = json.loads(response)
         except json.JSONDecodeError as error:
-            self.log_error(error)
+            self._logger.exception(error)
             ai_output = self.extract_json_object(response)
                 
         record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS

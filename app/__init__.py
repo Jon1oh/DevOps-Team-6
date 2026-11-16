@@ -9,9 +9,11 @@ from managers.io_manager import IoManager
 from storage.json_record_storage import JsonRecordStorage
 from storage.record_converter import RecordConverter
 from .ocr_reader import OcrReader
+from .config import configure_logging
 from .app import App
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+configure_logging()
 load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module
 
@@ -32,9 +34,9 @@ logic_manager = LogicManager()
 record_converter = RecordConverter()
 io_manager = IoManager()
 ocr = OcrReader()
+logger = logging.getLogger(__name__)
 
-analysis_service = App(ai_manager, data_manager, logic_manager, record_converter, io_manager)
+analysis_service = App(ai_manager, data_manager, logic_manager, record_converter, io_manager, logger)
 
 # Import last so the route decorators register on this Flask app.
 from . import routes
-

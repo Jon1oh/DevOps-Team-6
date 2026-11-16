@@ -1,7 +1,5 @@
-import logging
-
 class App:
-    def __init__(self, ai_manager, data_manager, logic_manager, record_converter, io_manager):
+    def __init__(self, ai_manager, data_manager, logic_manager, record_converter, io_manager, logger):
         self._ai_manager = ai_manager
         self._data_manager = data_manager # records loaded on startup
         if self._data_manager.status_message: # when record does not load properly
@@ -11,6 +9,7 @@ class App:
         self.io_manager = io_manager
         self._logic_manager = logic_manager
         self._record_converter = record_converter
+        self._logger = logger
                     
     # analyze message with Gemini analyzer. If unavailable, use Fallback AI
     def analyze_record(self, record):
@@ -27,7 +26,7 @@ class App:
             analyzer = self._ai_manager.get_analyzer()
             ai_output = analyzer.analyze_message(record)
         except Exception:
-            logging.exception("Primary AI analysis failed.")
+            self._logger.exception("Primary AI analysis failed.")
             return {"status": "fallback_required", "record": record}
 
         if ai_output is False or ai_output is None:
@@ -41,7 +40,7 @@ class App:
             analyzer = self._ai_manager.get_fallback_analyzer()
             ai_output = analyzer.analyze_message(record)
         except Exception as error:
-            logging.exception("Fallback AI analysis failed.")
+            self._logger.exception("Fallback AI analysis failed.")
             return {"status": "error", "message": str(error)}
 
         if ai_output is False or ai_output is None:
