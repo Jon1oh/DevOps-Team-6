@@ -6,8 +6,8 @@ from managers.ai_manager import AiManager
 from managers.data_manager import DataManager
 from managers.logic_manager import LogicManager
 from managers.io_manager import IoManager
-from storage.json_record_storage import JsonRecordStorage
-from storage.record_converter import RecordConverter
+from app.storage.json_record_storage import JsonRecordStorage
+from app.storage.record_converter import RecordConverter
 from .ocr_reader import OcrReader
 from .config import configure_logging
 from .app import App
