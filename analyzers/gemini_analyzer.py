@@ -9,6 +9,9 @@ load_dotenv()
 logging.getLogger().setLevel(logging.ERROR) # hide warning messages from the Gemini SDK which uses Python's logging module    
 
 class GeminiAiAnalyzer(AiAnalyzer):
+    # fields the AI response must contain before they are copied into the Record
+    REQUIRED_FIELDS = ("scam_probability", "risk_level", "scam_type", "indicators", "explanation", "recommendation")
+
     def __init__(self, model="gemini-3.6"): 
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
@@ -40,6 +43,29 @@ class GeminiAiAnalyzer(AiAnalyzer):
             json_object = json.loads(json_string)
             return json_object # return the JSON string as a JSON object
         
+    # turn the AI's text response into a dictionary. Returns None if the response is malformed or missing fields
+    def parse_ai_output(self, response):
+        if not isinstance(response, str):
+            self.log_error("AI response was empty or not text")
+            return None
+        try:
+            ai_output = json.loads(response)
+        except json.JSONDecodeError as error:
+            self.log_error(error)
+            try:
+                ai_output = self.extract_json_object(response)
+            except json.JSONDecodeError as error:
+                self.log_error(error)
+                return None
+        if not isinstance(ai_output, dict):
+            self.log_error("AI response did not contain a JSON object")
+            return None
+        missing_fields = [field for field in self.REQUIRED_FIELDS if field not in ai_output]
+        if missing_fields:
+            self.log_error(f"AI response is missing fields: {', '.join(missing_fields)}")
+            return None
+        return ai_output
+
     # log any API failiures in a log file
     def log_error(self, error):
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -132,12 +158,12 @@ class GeminiAiAnalyzer(AiAnalyzer):
         if response is False:
             return False # return to IO manager, prompt user if they want to use our custom AI bot or return to main menu
         
-        # Check the AI Model API output. If response is a JSON string, convert it to JSON object. Else, call fallback function
-        try:
-            ai_output = json.loads(response)
-        except json.JSONDecodeError as error:
-            self.log_error(error)
-            ai_output = self.extract_json_object(response)
+        # Check the AI Model API output. Malformed output or missing fields are logged and
+        # handled like an unavailable API, so the user is offered the fallback AI instead of a crash
+        ai_output = self.parse_ai_output(response)
+        if ai_output is None:
+            print("The AI response could not be read.")
+            return False
                 
         record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS
         record.scam_probability = ai_output["scam_probability"]
