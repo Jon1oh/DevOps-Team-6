@@ -28,6 +28,9 @@
             <label class="crop-toggle">
                 <input type="checkbox" id="toggleCrop1"> Lock phone number crop
             </label>
+            <button type="button" id="resetCrop1" class="primary-btn crop-reset-btn">
+                Reset phone number crop
+            </button>            
         </div>
 
         <!-- Box 2: message (same image, different box) -->
@@ -44,6 +47,9 @@
             <label class="crop-toggle">
                 <input type="checkbox" id="toggleCrop2"> Lock message crop
             </label>
+            <button type="button" id="resetCrop2" class="primary-btn crop-reset-btn">
+                Reset message crop
+            </button>        
         </div>
     </div>
 
@@ -61,6 +67,8 @@
     const checkbox1 = document.getElementById('toggleCrop1');
     const checkbox2 = document.getElementById('toggleCrop2');
     const button = document.getElementById('cropButton');
+    const resetButton1 = document.getElementById('resetCrop1');
+    const resetButton2 = document.getElementById('resetCrop2');
 
     // A ticked checkbox locks that crop; the button works only when both are locked.
     function updateState() {
@@ -84,6 +92,25 @@
         fillBox(cropper1, '1');
         fillBox(cropper2, '2');
         document.getElementById('cropForm').submit();
+    });
+
+    function resetCrop(cropper, checkbox, number) {
+        checkbox.checked = false;
+        updateState(); // unlock this cropper and update the Read button
+
+        cropper.reset();
+
+        ['x', 'y', 'width', 'height'].forEach(function (field) {
+            document.getElementById(field + number).value = '';
+        });
+    }
+
+    resetButton1.addEventListener('click', function () {
+        resetCrop(cropper1, checkbox1, '1');
+    });
+
+    resetButton2.addEventListener('click', function () {
+        resetCrop(cropper2, checkbox2, '2');
     });
 </script>
 {% endblock %}

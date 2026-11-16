@@ -561,3 +561,7 @@ input, textarea, button {
         grid-template-columns: 1fr;
     }
 }
+
+.crop-reset-btn {
+    margin-top: 12px
+}
