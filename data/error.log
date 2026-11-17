@@ -113,3 +113,115 @@
 2026-11-11 23:16:51.036194 - API Error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3.6 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}
 2026-11-11 23:19:02.880729 - API Error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3.6 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}
 2026-11-11 23:19:03.109281 - API Error: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'models/gemini-3.6 is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.', 'status': 'NOT_FOUND'}}
+2026-11-17 06:40:58,031 INFO werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.17.0.2:8000
+2026-11-17 06:40:58,032 INFO werkzeug: [33mPress CTRL+C to quit[0m
+2026-11-17 06:41:18,138 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:18] "GET /screenshot HTTP/1.1" 200 -
+2026-11-17 06:41:18,149 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:18] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:41:19,377 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:19] "GET /screenshot HTTP/1.1" 200 -
+2026-11-17 06:41:19,387 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:19] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:41:20,492 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:20] "GET / HTTP/1.1" 200 -
+2026-11-17 06:41:20,504 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:20] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:41:35,345 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:35] "GET /screenshot HTTP/1.1" 200 -
+2026-11-17 06:41:35,354 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:41:35] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:54:19,810 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:19] "GET / HTTP/1.1" 200 -
+2026-11-17 06:54:19,824 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:19] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:54:22,241 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:22] "GET /scanner HTTP/1.1" 200 -
+2026-11-17 06:54:22,250 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:22] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:54:25,834 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:25] "GET /screenshot HTTP/1.1" 200 -
+2026-11-17 06:54:25,845 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:25] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:54:30,944 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:30] "[32mPOST /screenshot HTTP/1.1[0m" 302 -
+2026-11-17 06:54:30,951 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:30] "GET /screenshot/crop/7ac3ceae9809fb5cbe5c0bfb3bc97f62.png HTTP/1.1" 200 -
+2026-11-17 06:54:30,965 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:30] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:54:30,965 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:30] "GET /screenshot/image/7ac3ceae9809fb5cbe5c0bfb3bc97f62.png HTTP/1.1" 200 -
+2026-11-17 06:54:30,985 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:30] "[36mGET /screenshot/image/7ac3ceae9809fb5cbe5c0bfb3bc97f62.png HTTP/1.1[0m" 304 -
+2026-11-17 06:54:30,991 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:30] "[36mGET /screenshot/image/7ac3ceae9809fb5cbe5c0bfb3bc97f62.png HTTP/1.1[0m" 304 -
+2026-11-17 06:54:30,998 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:30] "[36mGET /screenshot/image/7ac3ceae9809fb5cbe5c0bfb3bc97f62.png HTTP/1.1[0m" 304 -
+2026-11-17 06:54:55,211 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:55] "POST /screenshot/crop/7ac3ceae9809fb5cbe5c0bfb3bc97f62.png HTTP/1.1" 200 -
+2026-11-17 06:54:55,220 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:54:55] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:55:00,424 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:00] "POST /scanner HTTP/1.1" 200 -
+2026-11-17 06:55:00,434 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:00] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:55:11,621 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:11] "GET /scanner HTTP/1.1" 200 -
+2026-11-17 06:55:11,633 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:11] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:55:13,553 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:13] "GET / HTTP/1.1" 200 -
+2026-11-17 06:55:13,562 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:13] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:55:17,551 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:17] "GET /history HTTP/1.1" 200 -
+2026-11-17 06:55:17,559 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 06:55:17] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 06:59:50,461 INFO werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.17.0.2:8000
+2026-11-17 06:59:50,462 INFO werkzeug: [33mPress CTRL+C to quit[0m
+2026-11-17 07:00:11,932 INFO werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.17.0.2:8000
+2026-11-17 07:00:11,933 INFO werkzeug: [33mPress CTRL+C to quit[0m
+2026-11-17 07:00:52,718 INFO werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.17.0.2:8000
+2026-11-17 07:00:52,719 INFO werkzeug: [33mPress CTRL+C to quit[0m
+2026-11-17 07:08:04,262 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:04] "GET /screenshot HTTP/1.1" 200 -
+2026-11-17 07:08:04,273 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:04] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:08:30,864 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:30] "[32mPOST /screenshot HTTP/1.1[0m" 302 -
+2026-11-17 07:08:30,872 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:30] "GET /screenshot/crop/8c9cb33bbe5e50a4da7b4c252f304bc0.png HTTP/1.1" 200 -
+2026-11-17 07:08:30,885 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:30] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:08:30,885 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:30] "GET /screenshot/image/8c9cb33bbe5e50a4da7b4c252f304bc0.png HTTP/1.1" 200 -
+2026-11-17 07:08:30,903 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:30] "[36mGET /screenshot/image/8c9cb33bbe5e50a4da7b4c252f304bc0.png HTTP/1.1[0m" 304 -
+2026-11-17 07:08:30,912 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:30] "[36mGET /screenshot/image/8c9cb33bbe5e50a4da7b4c252f304bc0.png HTTP/1.1[0m" 304 -
+2026-11-17 07:08:30,917 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:30] "[36mGET /screenshot/image/8c9cb33bbe5e50a4da7b4c252f304bc0.png HTTP/1.1[0m" 304 -
+2026-11-17 07:08:48,544 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:48] "POST /screenshot/crop/8c9cb33bbe5e50a4da7b4c252f304bc0.png HTTP/1.1" 200 -
+2026-11-17 07:08:48,554 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:08:48] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:09:21,077 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:09:21] "POST /scanner HTTP/1.1" 200 -
+2026-11-17 07:09:21,090 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:09:21] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:09:30,566 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:09:30] "POST /scanner HTTP/1.1" 200 -
+2026-11-17 07:09:30,576 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:09:30] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:09:40,073 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:09:40] "GET / HTTP/1.1" 200 -
+2026-11-17 07:09:40,084 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:09:40] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:10:13,578 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:13] "GET /screenshot HTTP/1.1" 200 -
+2026-11-17 07:10:13,590 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:13] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:10:18,701 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:18] "[32mPOST /screenshot HTTP/1.1[0m" 302 -
+2026-11-17 07:10:18,708 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:18] "GET /screenshot/crop/32c1fddbd5ed81bb2434a72fa2bcad48.png HTTP/1.1" 200 -
+2026-11-17 07:10:18,723 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:18] "GET /screenshot/image/32c1fddbd5ed81bb2434a72fa2bcad48.png HTTP/1.1" 200 -
+2026-11-17 07:10:18,725 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:18] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:10:18,751 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:18] "[36mGET /screenshot/image/32c1fddbd5ed81bb2434a72fa2bcad48.png HTTP/1.1[0m" 304 -
+2026-11-17 07:10:18,758 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:18] "[36mGET /screenshot/image/32c1fddbd5ed81bb2434a72fa2bcad48.png HTTP/1.1[0m" 304 -
+2026-11-17 07:10:18,764 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:18] "[36mGET /screenshot/image/32c1fddbd5ed81bb2434a72fa2bcad48.png HTTP/1.1[0m" 304 -
+2026-11-17 07:10:27,647 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:27] "POST /screenshot/crop/32c1fddbd5ed81bb2434a72fa2bcad48.png HTTP/1.1" 200 -
+2026-11-17 07:10:27,658 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:10:27] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:11:00,467 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:11:00] "POST /scanner HTTP/1.1" 200 -
+2026-11-17 07:11:00,478 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:11:00] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:11:07,037 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:11:07] "GET / HTTP/1.1" 200 -
+2026-11-17 07:11:07,050 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:11:07] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:14:39,698 INFO werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.17.0.2:8000
+2026-11-17 07:14:39,698 INFO werkzeug: [33mPress CTRL+C to quit[0m
+2026-11-17 07:15:31,286 INFO werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://172.17.0.2:8000
+2026-11-17 07:15:31,287 INFO werkzeug: [33mPress CTRL+C to quit[0m
+2026-11-17 07:16:16,841 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:16] "GET / HTTP/1.1" 200 -
+2026-11-17 07:16:16,852 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:16] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:16:18,073 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:18] "GET /scanner HTTP/1.1" 200 -
+2026-11-17 07:16:18,083 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:18] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:16:19,661 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:19] "GET /screenshot HTTP/1.1" 200 -
+2026-11-17 07:16:19,670 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:19] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:16:29,521 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:29] "[32mPOST /screenshot HTTP/1.1[0m" 302 -
+2026-11-17 07:16:29,529 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:29] "GET /screenshot/crop/5cb82804c1b49f7a5d7cb07d6133c162.png HTTP/1.1" 200 -
+2026-11-17 07:16:29,543 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:29] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:16:29,544 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:29] "GET /screenshot/image/5cb82804c1b49f7a5d7cb07d6133c162.png HTTP/1.1" 200 -
+2026-11-17 07:16:29,557 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:29] "[36mGET /screenshot/image/5cb82804c1b49f7a5d7cb07d6133c162.png HTTP/1.1[0m" 304 -
+2026-11-17 07:16:29,565 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:29] "[36mGET /screenshot/image/5cb82804c1b49f7a5d7cb07d6133c162.png HTTP/1.1[0m" 304 -
+2026-11-17 07:16:29,572 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:29] "[36mGET /screenshot/image/5cb82804c1b49f7a5d7cb07d6133c162.png HTTP/1.1[0m" 304 -
+2026-11-17 07:16:39,778 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:39] "POST /screenshot/crop/5cb82804c1b49f7a5d7cb07d6133c162.png HTTP/1.1" 200 -
+2026-11-17 07:16:39,789 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:39] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:16:48,167 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:48] "POST /scanner HTTP/1.1" 200 -
+2026-11-17 07:16:48,179 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:16:48] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -
+2026-11-17 07:17:06,300 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:17:06] "GET / HTTP/1.1" 200 -
+2026-11-17 07:17:06,313 INFO werkzeug: 172.17.0.1 - - [17/Nov/2026 07:17:06] "[36mGET /static/css/style.css?v=2 HTTP/1.1[0m" 304 -

@@ -19,7 +19,7 @@ class Record:
         return (
             f"Record ID: {self.record_id}\n"
             f"Timestamp: {self.timestamp}\n"
-            f"Country Name: {self.country_name}"
+            f"Country Name: {self.country_name}\n"
             f"Phone Number: {self.phone_number}\n"
             f"Country Code: {self.country_code}\n"
             f"Message: {self.message}\n"

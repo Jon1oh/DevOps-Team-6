@@ -1,24 +1,22 @@
-"""SafeJsonFile: reads and writes ONE JSON file safely (Phase 2b)."""
+# SafeJsonFile: reads and writes ONE JSON file safely.
 
 import json
 import os
 import tempfile
 
 class SafeJsonFile:
-    """Writes file Atomically by writing to temporary file first then swapping it after it is successfully written
-    
-    It knows nothing about scam records: it just stores lists and dictionaries.
-    """
+    """Writes file Atomically by writing to temporary file first then swapping it after it is successfully written."""
     def __init__(self, path: str) -> None:
+        """Which file to use."""
         self._path = path
 
     @property
     def path(self) -> str:
-        """For the file's location (read-only)"""
+        """Return the file path (read-only)"""
         return self._path
 
     def is_empty(self) -> bool:
-        """Check if the existing file is empty"""
+        """Return True if the existing file is empty"""
         return os.path.exists(self._path) and os.path.getsize(self._path) == 0
 
     def read(self) -> object:
@@ -27,9 +25,9 @@ class SafeJsonFile:
             return json.load(file)   
          
     def write(self, entries: list) -> None:
-        """Replace the file's content atomically.
+        """Write to a temp file, then swap it in.
 
-        the original file is left untouched if there is an error if the write fails.
+        The original file is left untouched if there is an error if the write fails.
         """
         directory = os.path.dirname(os.path.abspath(self._path))
         os.makedirs(directory, exist_ok=True)

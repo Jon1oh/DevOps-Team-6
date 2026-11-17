@@ -1,3 +1,5 @@
+# BackupDatabase: manages backup_database.json which is used for recovery.
+
 import json
 import os
 
@@ -12,11 +14,11 @@ class BackupDatabase:
 
     @property
     def path(self) -> str:
-        """The path for backup file"""
+        """Return the path for backup file"""
         return self._file.path
 
     def update(self, records: list[Record]) -> bool:
-        """Replace the backup with `records`. Returns True if it worked.
+        """Replace the backup with these records. Returns True if it worked.
  
         The write is atomic.
         """
@@ -42,7 +44,7 @@ class BackupDatabase:
 
     @staticmethod
     def preserve_corrupt(file_path: str) -> str:
-        """Rename a corrupt file to *.corrupt.json so its contents are not lost.
+        """Rename a corrupt file to .corrupt.json so its contents are not lost.
  
         e.g. scam_data.json -> scam_data.corrupt.json
         Returns the new name, or "" if the rename failed.

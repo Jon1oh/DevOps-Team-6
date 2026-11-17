@@ -1,9 +1,4 @@
-"""JsonRecordStorage: saves and loads Records in a JSON file (Phase 2b).
-
-It creates two helper objects for itself (composition):
-- a SafeJsonFile that reads and atomically writes scam_data.json
-- a BackupDatabase that looks after backup_database.json
-"""
+# JsonRecordStorage: saves records to scam_data.json and backup_database.json acts as a fallback.
 
 import json
 
@@ -15,22 +10,12 @@ from app.models.record import Record
 
 
 class JsonRecordStorage(RecordStorage):
-    """Stores Record objects in scam_data.json, with a backup file.
+    """a RecordStorage that uses JSON files. Creates and owns its SafeJsonFile and BackupDatabase."""
 
-    - load() returns the saved records and never crashes.
-    - save_all() writes the whole list: the main file first, then the backup.
-    - status_message tells io_manager what happened during the last load,
-      e.g. "Skipped 2 invalid record(s)." ("" means everything was normal).
-    """
-
-    def __init__(
-        self,
-        data_file: str = "./data/scam_data.json",
-        backup_file: str = "./data/backup_database.json",
-    ) -> None:
+    def __init__(self, data_file: str = "./data/scam_data.json", backup_file: str = "./data/backup_database.json",) -> None:
+        # Create the main file and backup.
         super().__init__()          # sets up status_message from RecordStorage
-        # Composition: this storage CREATES and OWNS both helpers.
-        # They are made here, used only here, and disappear with this object.
+
         self._main_file = SafeJsonFile(data_file)
         self._backup = BackupDatabase(backup_file)
 
@@ -81,11 +66,7 @@ class JsonRecordStorage(RecordStorage):
         return records
 
     def save_all(self, records: list[Record]) -> tuple[bool, str]:
-        """Replace the saved records with `records`. Writes the main file, then the backup.
-
-        Returns (True, "") on success, (True, "warning") if only the backup
-        failed, or (False, "reason") if nothing could be saved.
-        """
+        """Validate and save to the main file then update the backup."""
         for record in records:
             is_valid, error = RecordConverter.check_record(record)
             if not is_valid:
@@ -111,7 +92,7 @@ class JsonRecordStorage(RecordStorage):
     # ------------------------------------------------------------------
 
     def _recover_from_backup(self, reason: str) -> list[Record]:
-        """Restore the main file from the backup and set the status message."""
+        """Restore the main file with records from the backup and set the status message."""
         backup_records = self._backup.load_valid_records()
 
         if not backup_records:

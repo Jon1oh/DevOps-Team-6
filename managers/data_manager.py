@@ -1,4 +1,4 @@
-"""DataManager: holds the list of scam records and is what the app talks to (Phase 2b)."""
+# DataManager: keeps the scam records in memory and saves every change through a storage
 from app.storage.record_converter import RecordConverter
 from app.interfaces.record_storage import RecordStorage
 from app.storage.scam_statistics_calculator import ScamStatisticsCalculator
@@ -6,20 +6,17 @@ from app.models.record import Record
 
 
 class DataManager:
-    """Keeps the main list of Record objects, like Inventory keeps its products.
+    """Holds the list of Record objects that the rest of the app uses
 
-    - The list is loaded ONCE from the storage when DataManager is created,
+    - The list is loaded once from the storage when DataManager is created,
       and every method works on that list.
-    - After every change, the whole list is written back through the storage,
-      so the list and the file always match.
+    - After every change, the whole list is written back through the storage
 
-    The storage is given to DataManager through the constructor
-    (aggregation): it can be ANY RecordStorage child (JsonRecordStorage,
-    TemporaryRecordStorage, ...), and DataManager never checks which one it got
-    (polymorphism), so a new storage class needs no change here (OCP).
+    The storage is given to DataManager through the constructor.
     """
 
     def __init__(self, storage: RecordStorage) -> None:
+        """Load all records once from the given storage."""
         print("Loading Database...")        
         self._storage: RecordStorage = storage
         # The main list of records: loaded once, then kept in memory.
@@ -31,25 +28,24 @@ class DataManager:
 
     @property
     def records(self) -> list[Record]:
-        """Every record in memory. A copy of the list is returned, so outside
-        code cannot add or remove records without going through DataManager."""
+        """Return a copy of the records"""
         return list(self._records)
 
     @property
     def status_message(self) -> str:
-        """What happened when the records were loaded,
+        """Return what happened when the records were loaded,
         e.g. "Skipped 2 invalid record(s)." ("" means everything was normal)."""
         return self._storage.status_message
 
     def find_record(self, record_id: int) -> Record | None:
-        """Return the record with this record_id, or None if there is none."""
+        """Return the record with this record_id, or None."""
         for record in self._records:
             if record.record_id == record_id:
                 return record
         return None
 
     def next_id(self) -> int:
-        """Return the next free record_id: highest id in the list + 1, or 1 if empty."""
+        """Return the next free record_id: highest id in the list + 1, or 1 if list empty."""
         highest = 0
         for record in self._records:
             if record.record_id > highest:
@@ -57,10 +53,7 @@ class DataManager:
         return highest + 1
 
     def count_risk_levels(self, phone_number: str) -> dict[str, int]:
-        """Count past HIGH/MEDIUM/LOW results for one phone number.
-
-        e.g. {"HIGH": 2, "MEDIUM": 0, "LOW": 1}
-        """
+        """Count past HIGH/MEDIUM/LOW results for one phone number."""
         counts = {"HIGH": 0, "MEDIUM": 0, "LOW": 0}
         for record in self._records:
             if record.phone_number == phone_number:
@@ -68,32 +61,25 @@ class DataManager:
         return counts
 
     def summary(self, records: list[Record] | None = None) -> dict:
-        """Return the summary dictionary for io_manager.print_message_summary().
-
-        Uses the records in memory unless a list is passed in.
-        The calculator is created only when needed and not kept, so
-        DataManager does not own it (association, not composition).
-        """
+        """Return the summary statistics"""
         if records is None:
             records = self._records
         return ScamStatisticsCalculator().summary(records)
 
     # ------------------------------------------------------------------
-    # Changing the list (each change is saved straight away)
+    # Updating the list (each change is saved straight away)
     # ------------------------------------------------------------------
 
     def save_record(self, data: dict) -> tuple[bool, str]:
-        """Turn a dictionary (e.g. the final AI output) into a Record, add it
+        """Turn a dictionary (the final AI output) into a Record, add it
         to the list and save the list.
 
-        The record always gets the next free id; any id in `data` is ignored,
-        so ids never repeat. Returns (ok, message).
+        The record always gets the next free id
         """
         if not isinstance(data, dict):
             return False, "Record is not a dictionary."
 
         new_data = dict(data)                      # never change the caller's dict
-        new_data.pop("message_id", None)           # old name: never trust it either
         new_data["record_id"] = self.next_id()
 
         record, error = RecordConverter.from_dict(new_data)
@@ -107,7 +93,7 @@ class DataManager:
         return ok, message
 
     def remove_record(self, record_id: int) -> tuple[bool, str]:
-        """Remove the record with this record_id from the list and save the list.
+        """Remove the record and save the list.
 
         Returns (True, "") on success or (False, "reason").
         """

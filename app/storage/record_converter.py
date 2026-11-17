@@ -1,7 +1,8 @@
-"""RecordConverter: turns Record objects into JSON dictionaries and back (Phase 2b).
+# RecordConverter: turns Record objects into JSON dictionaries and back.
 
-The teammate's Record class (record.py) holds the data. This class holds the
-rules for STORING that data:
+""" 
+record.py holds the data. This class holds the rules for storing that data:
+
 - the JSON key names (record_id, message_content, ...),
 - standardising (defaults, upper-case risk level, country code from phone),
 - validation (correct types, HIGH/MEDIUM/LOW, 0-100, message not empty).
@@ -13,12 +14,7 @@ from app.models.record import Record
 
 
 class RecordConverter:
-    """Converts between Record objects and the dictionaries in scam_data.json.
-
-    All methods are class methods: you call them on the class itself,
-    e.g. RecordConverter.to_dict(record). The class keeps the storage schema
-    in one place, so every storage class uses exactly the same rules.
-    """
+    """Converts between Record objects and the dictionaries in scam_data.json."""
 
     VALID_RISK_LEVELS = ("HIGH", "MEDIUM", "LOW")
 
@@ -58,11 +54,7 @@ class RecordConverter:
 
     @classmethod
     def to_dict(cls, record: Record) -> dict:
-        """Return a Record as a dictionary with the JSON key names.
-
-        Record calls the message text `message`; the JSON file calls it
-        `message_content`. All other names match.
-        """
+        """Return a Record as a dictionary with the JSON key names."""
         return {
             "record_id": record.record_id,
             "timestamp": record.timestamp,
@@ -86,7 +78,6 @@ class RecordConverter:
         """Standardise and validate a dictionary, then build a Record.
 
         Returns (record, "") if the data is valid, or (None, "reason") if not.
-        The caller's dictionary is never changed.
         """
         if not isinstance(data, dict):
             return None, "Record is not a dictionary."
@@ -134,31 +125,23 @@ class RecordConverter:
 
     @classmethod
     def check_record(cls, record: object) -> tuple[bool, str]:
-        """Check a Record object before it is saved. Returns (ok, reason)."""
+        """Check if a Record object is valid before it is saved. Returns (ok, reason)."""
         if not isinstance(record, Record):
             return False, "Only Record objects can be saved."
         return cls.validate(cls.to_dict(record))
 
     # ------------------------------------------------------------------
-    # The rules (same as Phase 1 standardize_record / validate_record)
+    # The rules 
     # ------------------------------------------------------------------
 
     @classmethod
     def standardize(cls, data: dict) -> dict:
-        """Return a cleaned-up COPY of `data`.
+        """Return a cleaned-up copy
 
-        - renames the old key "message_id" to "record_id" (files saved
-          before the rename still load)
         - fills in country_code from the phone number if it is missing
         - upper-cases risk_level ("High" -> "HIGH")
-        - fills any still-missing key with a safe default
         """
         fixed = dict(data)
-
-        # Old files use "message_id". Use it only if there is no "record_id".
-        if "message_id" in fixed:
-            old_id = fixed.pop("message_id")
-            fixed.setdefault("record_id", old_id)
 
         if not fixed.get("country_code"):
             fixed["country_code"] = cls.country_code_from_phone(
@@ -180,7 +163,6 @@ class RecordConverter:
             if key not in data:
                 return False, f"Missing field: {key}"
             value = data[key]
-            # bool is a kind of int in Python (True == 1), so reject it explicitly.
             if isinstance(value, bool) or not isinstance(value, expected_type):
                 return False, f"Wrong type for field: {key}"
 
@@ -196,7 +178,7 @@ class RecordConverter:
 
     @staticmethod
     def country_code_from_phone(phone_number: str) -> str:
-        """Return the calling code of a number, e.g. "+6591234567" -> "+65"."""
+        """Return the country code of a number, e.g. "+6591234567" -> "+65"."""
         if not isinstance(phone_number, str):
             return "Unknown"
         try:

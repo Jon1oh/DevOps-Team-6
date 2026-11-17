@@ -458,7 +458,9 @@ button.secondary-btn:hover {
     background: #b91c1c !important;
 }
 
-} /* ===== Screenshot scanner (OCR) pages ===== */
+} 
+
+/* ===== Screenshot scanner (OCR) pages ===== */
 
 /* Form fields use the page font (browsers default textareas to a typewriter font) */
 input, textarea, button {
@@ -497,7 +499,6 @@ input, textarea, button {
     max-width: 100%;
 }
 
-/* Checkboxes stay small (other inputs are 100% wide) */
 .crop-toggle {
     display: flex;
     align-items: center;
@@ -514,7 +515,6 @@ input, textarea, button {
     cursor: pointer;
 }
 
-/* A disabled button should look disabled */
 .primary-btn:disabled {
     background: #34496d;
     color: #94a3b8;

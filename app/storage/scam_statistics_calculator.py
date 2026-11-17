@@ -1,4 +1,4 @@
-"""ScamStatisticsCalculator: summary numbers for a list of ScamRecords."""
+# ScamStatisticsCalculator: Calculates summary numbers for a list of ScamRecords.
 
 import phonenumbers
 from phonenumbers import geocoder
@@ -6,15 +6,10 @@ from phonenumbers import geocoder
 from app.models.record import Record
 
 class ScamStatisticsCalculator:
-    """Calculates percentages and most-common results.
- 
-    It never opens a file. It is given a list of Record objects, works on
-    them, and gives back numbers. It does not keep the records afterwards
-    (association: it uses ScamRecords without owning them).
-    """
+    """Calculates percentages and most-common results."""
 
     def __init__(self, decimal_places: int = 2) -> None:
-        # How many decimal places percentages are rounded to (Phase 1 used 2).
+        """Set the decimal place for percentages to be rounded up."""
         self._decimal_places = decimal_places
  
     # ------------------------------------------------------------------
@@ -22,7 +17,7 @@ class ScamStatisticsCalculator:
     # ------------------------------------------------------------------
 
     def summary(self, records: list[Record]) -> dict:
-        """Return the summary dictionary with the same keys as Phase 1."""
+        """Return the breakdowns, percentages and most-common values."""
         risk_counts = self.count_by(records, "risk_level")
         scam_counts = self.count_by(records, "scam_type")
         origin_counts = self.count_by(records, "country_code")
@@ -47,13 +42,10 @@ class ScamStatisticsCalculator:
             "origin_country_labels": labels,
         }
 
-   # ------------------------------------------------------------------
-    # Building blocks (each one can be tested on its own)
-    # ------------------------------------------------------------------
- 
+
     @staticmethod
     def count_by(records: list[Record], field: str) -> dict[str, int]:
-        """Count how many records have each value of `field`.
+        """Count records by one field
  
         e.g. count_by(records, "risk_level") -> {"HIGH": 3, "LOW": 1}
         Empty values are counted as "Unknown". Anything that is not a
@@ -86,10 +78,10 @@ class ScamStatisticsCalculator:
         return result
  
     def most_common(self, records: list[Record], field: str) -> tuple[str, float] | None:
-        """Return (value, percentage) for the most common value of `field`.
+        """Return the most common value and its percentages.
  
-        e.g. ("Phishing", 50.0). Ties are broken alphabetically, so the result
-        is the same every run. Returns None when there are no records.
+        Same percentages are then ranked alphabetically.
+        Returns None when there are no records.
         """
         percentages = self.percentages(self.count_by(records, field))
         if not percentages:
@@ -110,8 +102,7 @@ class ScamStatisticsCalculator:
     @staticmethod
     def country_name(country_code: str) -> str:
         """Convert a calling code to its main country, e.g. "+65" -> "Singapore".
- 
-        Shared codes such as "+1" return the main country (United States).
+
         Returns "Unknown" if the code is not real.
         """
         if not isinstance(country_code, str) or not country_code.lstrip("+").isdigit():
@@ -123,5 +114,5 @@ class ScamStatisticsCalculator:
         return geocoder.country_name_for_number(example, "en") or "Unknown"
  
     def country_label(self, country_code: str) -> str:
-        """Return the code with its country, e.g. "+65" -> "+65 (Singapore)"."""
+        """Return the code with its country, e.g. "+65 (Singapore)"."""
         return f"{country_code} ({self.country_name(country_code)})"
