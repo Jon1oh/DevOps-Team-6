@@ -17,7 +17,6 @@ class DataManager:
 
     def __init__(self, storage: RecordStorage) -> None:
         """Load all records once from the given storage."""
-        print("Loading Database...")        
         self._storage: RecordStorage = storage
         # The main list of records: loaded once, then kept in memory.
         self._records: list[Record] = storage.load()

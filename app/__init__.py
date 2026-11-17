@@ -29,6 +29,7 @@ flask_app.config["MAX_CONTENT_LENGTH"] = 6291456 # Flask rejects anything over 6
 
 error_logger = ErrorLogger()
 ai_manager = AiManager(error_logger)
+print("Loading Database...")
 data_manager = DataManager(JsonRecordStorage())
 logic_manager = LogicManager()
 record_converter = RecordConverter()
