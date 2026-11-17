@@ -5,7 +5,7 @@ from google import genai
 from app.interfaces.ai_analyzer import AiAnalyzer
 
 class GeminiAiAnalyzer(AiAnalyzer):
-    def __init__(self, error_logger, model="gemini-3.6-flash"): 
+    def __init__(self, error_logger, model="gemini-3.5-flash-lite"): 
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
         self._logger = error_logger
