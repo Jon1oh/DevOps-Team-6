@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | ScamGuard{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>Scam Detection Made <span>Smarter.</span></h1>
+    <p>Use AI to identify suspicious messages and detect potential scams.</p>
+    <a href="{{ url_for('scanner') }}" class="primary-btn">
+        Start Analysing →
+    </a>
+</section>
+
+<section class="stats-grid">
+
+    <div class="stat-card">
+        <p>Total Analysed</p>
+        <h2>{{ statistics.total }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>High Risk</p>
+        <h2 class="high">{{ statistics.high }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>Medium Risk</p>
+        <h2 class="medium">{{ statistics.medium }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <p>Low Risk</p>
+        <h2 class="low">{{ statistics.low }}</h2>
+    </div>
+
+</section>
+
+<section class="panel">
+    <div class="panel-heading">
+        <h2>Recent Analyses</h2>
+        <a href="{{ url_for('history') }}">View All →</a>
+    </div>
+
+    {% if recent_records %}
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Country Name</th>
+                    <th>Phone Number</th>
+                    <th>Scam Type</th>
+                    <th>Risk Level</th>
+                    <th>Probability</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for record in recent_records %}
+                <tr>
+                    <td>{{ record.country_name|default('N/A', true) }}</td>
+                    <td>{{ record.phone_number|default('N/A', true) }}</td>
+                    <td>{{ record.scam_type|default('N/A', true) }}</td>
+                    <td>
+                        <span class="risk {{ record.risk_level|default('low', true)|lower }}">
+                            {{ record.risk_level|default('N/A', true) }}
+                        </span>
+                    </td>
+                    <td>{{ record.scam_probability|default(0, true) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+        <p class="empty">No messages have been analysed yet.</p>
+    {% endif %}
+
+</section>
+
+{% endblock %}

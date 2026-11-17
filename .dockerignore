@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+
+# Git
+.git/
+.gitignore
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+.pytest_cache/
+
+# Documentation (optional)
+README.md
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Secrets: never copy the API key into the image.
+# Pass it at run time instead:  docker run --env-file .env ...
+.env
