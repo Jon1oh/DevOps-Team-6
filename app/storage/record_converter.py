@@ -60,6 +60,7 @@ class RecordConverter:
             "timestamp": record.timestamp,
             "phone_number": record.phone_number,
             "country_code": record.country_code,
+            "country_name": record.country_name,
             "message_content": record.message,
             "scam_probability": record.scam_probability,
             "risk_level": record.risk_level,
