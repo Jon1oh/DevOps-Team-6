@@ -21,7 +21,7 @@ from managers.data_manager import DataManager
 from app.models.record import Record
 from app.storage.json_record_storage import JsonRecordStorage
 from app.storage.record_converter import RecordConverter
-from app.storage.record_storage import RecordStorage
+from app.interfaces.record_storage import RecordStorage
 from app.storage.scam_statistics_calculator import ScamStatisticsCalculator
 
 

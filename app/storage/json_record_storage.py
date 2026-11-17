@@ -9,7 +9,7 @@ import json
 
 from app.storage.backup_database import BackupDatabase
 from app.storage.record_converter import RecordConverter
-from app.storage.record_storage import RecordStorage
+from app.interfaces.record_storage import RecordStorage
 from app.storage.safe_json_file import SafeJsonFile
 from app.models.record import Record
 
