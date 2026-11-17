@@ -5,10 +5,10 @@ from google import genai
 from app.interfaces.ai_analyzer import AiAnalyzer
 
 class GeminiAiAnalyzer(AiAnalyzer):
-    def __init__(self, model="gemini-3.5-flash-lite"): 
+    def __init__(self, error_logger, model="gemini-3.6-flash"): 
         self._client = genai.Client(api_key=os.getenv("GEMINI_API_KEY")) # get the API key
         self._model = model
-        self._logger = logging.getLogger(__name__)
+        self._logger = error_logger
     
     # Get response from Gemini API model
     def get_ai_output(self, prompt_to_ai):
@@ -25,7 +25,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
             return self.get_ai_output(prompt_to_ai)
         except Exception as error:
             print("The API is still unavailable.")
-            self._logger.exception(error)
+            self._logger.log_error(f"API Error: {error}")
             return False
 
     # grab only the JSON object in the AI output if there are strings before and after it
@@ -112,7 +112,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
             response = self.get_ai_output(prompt)
         except Exception as error:
             print("The API is unavailable. Retrying once...")
-            self._logger.exception(error)
+            self._logger.log_error(f"API Error: {error}")
             response = self.get_ai_output_retry(prompt) # retry once if the 2nd API call fails
             
         if response is False:
@@ -122,7 +122,7 @@ class GeminiAiAnalyzer(AiAnalyzer):
         try:
             ai_output = json.loads(response)
         except json.JSONDecodeError as error:
-            self._logger.exception(error)
+            self._logger.log_error(f"JSONDecode Error: {error}")
             ai_output = self.extract_json_object(response)
                 
         record.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # format timestamp as YYYY-MM-DD HH:MM:SS

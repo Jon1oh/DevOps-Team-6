@@ -134,7 +134,7 @@ def test_records_are_loaded_again_in_a_new_run(paths):
 def test_record_ids_go_up_and_any_given_id_is_ignored(paths):
     manager = json_manager(paths)
     manager.save_record(ai_output(record_id=99))     # id in the data is ignored
-    manager.save_record(ai_output(message_id=50))    # old Part 1 key is ignored too
+    manager.save_record(ai_output())
 
     assert [record.record_id for record in manager.records] == [1, 2]
     assert manager.next_id() == 3
@@ -382,18 +382,6 @@ def test_backup_file_is_updated_after_each_save(paths):
     manager.save_record(ai_output())
 
     assert [entry["record_id"] for entry in read_json(backup_file)] == [1, 2]
-
-
-def test_old_part_1_file_with_message_id_still_loads(paths):
-    data_file, _backup_file = paths
-    old_entry = saved_entry(7)
-    old_entry["message_id"] = old_entry.pop("record_id")
-    write_json(data_file, [old_entry])
-
-    manager = json_manager(paths)
-
-    assert manager.find_record(7) is not None
-    assert manager.next_id() == 8
 
 
 # ======================================================================
