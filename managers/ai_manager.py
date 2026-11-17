@@ -3,8 +3,8 @@ from app.analyzers.fallback_ai_analyzer import FallbackAiAnalyzer
 
 class AiManager:
     # Composition: The GeminiAiAnalyzer and FallbackAiAnalyzer classes are created and managed internally by AIManager. Their lifecylces are tied to it
-    def __init__(self):
-        self._gemini_analyzer = GeminiAiAnalyzer() # create an instance of GeminiAIAnalyzer
+    def __init__(self, error_logger):
+        self._gemini_analyzer = GeminiAiAnalyzer(error_logger) # create an instance of GeminiAIAnalyzer
         self._fallback_analyzer = FallbackAiAnalyzer() # create an instance of FallbackAiAnalyzer
     
     # return Gemini Analyzer class as the main analyzer
