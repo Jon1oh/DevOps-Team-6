@@ -2,44 +2,46 @@ import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+LOG_FILE = PROJECT_ROOT / "data" / "error.log"
 
 def configure_logging():
-    project_root = Path(__file__).resolve().parent.parent
-    log_dir = project_root / "data"
-    log_dir.mkdir(parents=True, exist_ok=True)
+    LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
-
-    # Remove existing handlers so repeated setup does not duplicate entries.
-    for handler in root_logger.handlers[:]:
-        root_logger.removeHandler(handler)
-        handler.close()
+    root_logger.setLevel(logging.ERROR)
 
     formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s %(name)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+        "%(asctime)s %(levelname)s %(name)s: %(message)s"
     )
 
-    app_handler = RotatingFileHandler(
-        log_dir / "app.log",
-        maxBytes=1_000_000,
-        backupCount=3,
-        encoding="utf-8",
+    file_handler = next(
+        (handler for handler in root_logger.handlers
+         if getattr(handler, "_scamguard_file", False)),
+        None,
     )
-    app_handler.setLevel(logging.INFO)
-    app_handler.setFormatter(formatter)
-    root_logger.addHandler(app_handler)
+    if file_handler is None:
+        file_handler = RotatingFileHandler(
+            LOG_FILE,
+            maxBytes=1_000_000,
+            backupCount=3,
+            encoding="utf-8",
+        )
+        file_handler._scamguard_file = True
+        root_logger.addHandler(file_handler)
 
-    error_handler = RotatingFileHandler(
-        log_dir / "error.log",
-        maxBytes=1_000_000,
-        backupCount=3,
-        encoding="utf-8",
+    file_handler.setLevel(logging.ERROR)
+    file_handler.setFormatter(formatter)
+
+    console_handler = next(
+        (handler for handler in root_logger.handlers
+         if getattr(handler, "_scamguard_console", False)),
+        None,
     )
-    error_handler.setLevel(logging.ERROR)
-    error_handler.setFormatter(formatter)
-    root_logger.addHandler(error_handler)
+    if console_handler is None:
+        console_handler = logging.StreamHandler()
+        console_handler._scamguard_console = True
+        root_logger.addHandler(console_handler)
 
-    # Keep Werkzeug request logs out of the application log files.
-    logging.getLogger("werkzeug").propagate = False
+    console_handler.setLevel(logging.ERROR)
+    console_handler.setFormatter(formatter)
