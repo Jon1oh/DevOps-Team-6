@@ -15,7 +15,6 @@ Run from the project root:  python -m pytest tests/test_ai_analyzers.py -v
 """
 
 import json
-import logging
 from datetime import datetime
 from types import SimpleNamespace
 
@@ -64,6 +63,17 @@ class FakeGeminiClient:
         self.models = FakeModels()
 
 
+class FakeErrorLogger:
+    """Stands in for app.logger.ErrorLogger: keeps the messages in a list
+    instead of writing to data/error.log, so tests never touch real files."""
+
+    def __init__(self):
+        self.messages = []
+
+    def log_error(self, error):
+        self.messages.append(str(error))
+
+
 VALID_AI_JSON = {
     "scam_probability": 92,
     "risk_level": "HIGH",
@@ -77,10 +87,15 @@ SCAM_MESSAGE = "Congratulations! You won $5,000. Claim now at http://cashprice-g
 
 
 @pytest.fixture
-def gemini(monkeypatch):
+def error_logger():
+    return FakeErrorLogger()
+
+
+@pytest.fixture
+def gemini(monkeypatch, error_logger):
     """A GeminiAiAnalyzer that uses the fake client instead of Google."""
     monkeypatch.setattr(gemini_module.genai, "Client", FakeGeminiClient)
-    return GeminiAiAnalyzer(model="test-model")
+    return GeminiAiAnalyzer(error_logger, model="test-model")
 
 
 def set_responses(analyzer, *outcomes):
@@ -119,14 +134,13 @@ def test_valid_json_response_fills_the_record(gemini):
         "```json\n" + json.dumps(VALID_AI_JSON) + "\n```",
     ],
 )
-def test_json_wrapped_in_extra_text_is_still_read(gemini, wrapped_response, caplog):
+def test_json_wrapped_in_extra_text_is_still_read(gemini, wrapped_response, error_logger):
     set_responses(gemini, wrapped_response)
 
-    with caplog.at_level(logging.ERROR):
-        record = gemini.analyze_message(new_record())
+    record = gemini.analyze_message(new_record())
 
     assert record.risk_level == "HIGH"
-    assert caplog.records                     # the first parse attempt is logged
+    assert error_logger.messages[0].startswith("JSONDecode Error")   # first parse attempt logged
 
 
 def test_prompt_contains_message_and_full_phone_number_and_asks_for_json(gemini):
@@ -140,20 +154,22 @@ def test_prompt_contains_message_and_full_phone_number_and_asks_for_json(gemini)
     assert "Return only a JSON object" in prompt
 
 
-def test_api_failure_then_successful_retry(gemini):
+def test_api_failure_then_successful_retry(gemini, error_logger):
     fake_models = set_responses(gemini, TimeoutError("timed out"), json.dumps(VALID_AI_JSON))
 
     record = gemini.analyze_message(new_record())
 
     assert record.risk_level == "HIGH"
     assert len(fake_models.prompts) == 2       # first call + one retry
+    assert error_logger.messages == ["API Error: timed out"]
 
 
-def test_api_failure_twice_returns_false(gemini):
+def test_api_failure_twice_returns_false(gemini, error_logger):
     fake_models = set_responses(gemini, ConnectionError("no network"), ConnectionError("still down"))
 
     assert gemini.analyze_message(new_record()) is False
     assert len(fake_models.prompts) == 2       # retried exactly once
+    assert error_logger.messages == ["API Error: no network", "API Error: still down"]
 
 
 # ======================================================================
@@ -224,10 +240,10 @@ def test_both_analyzers_share_the_same_interface(gemini, fallback):
 # ======================================================================
 
 def test_ai_manager_creates_and_keeps_one_of_each_analyzer(monkeypatch):
-    monkeypatch.setattr(ai_manager_module, "GeminiAiAnalyzer", lambda: "gemini analyzer")
+    monkeypatch.setattr(ai_manager_module, "GeminiAiAnalyzer", lambda error_logger: "gemini analyzer")
     monkeypatch.setattr(ai_manager_module, "FallbackAiAnalyzer", lambda: "fallback analyzer")
 
-    manager = AiManager()
+    manager = AiManager(FakeErrorLogger())
 
     assert manager.get_analyzer() == "gemini analyzer"
     assert manager.get_fallback_analyzer() == "fallback analyzer"
@@ -257,12 +273,12 @@ class BrokenAnalyzer:
 
 
 @pytest.fixture
-def service_parts(gemini, fallback, tmp_path):
+def service_parts(gemini, fallback, error_logger, tmp_path):
     """Real managers on temporary data files, Gemini replaced by the fake client."""
     data_manager = DataManager(JsonRecordStorage(str(tmp_path / "scam_data.json"),
                                                  str(tmp_path / "backup_database.json")))
     service = AnalysisService(FakeAiManager(gemini, fallback), data_manager, LogicManager(),
-                              RecordConverter(), IoManager(), logging.getLogger("test"))
+                              RecordConverter(), IoManager(), error_logger)
     return service, data_manager
 
 
@@ -313,15 +329,14 @@ def test_service_rejects_invalid_input_before_calling_the_ai(service_parts, gemi
         None,                                                   # empty response
     ],
 )
-def test_malformed_ai_output_offers_the_fallback_instead_of_crashing(service_parts, gemini, bad_response, caplog):
+def test_malformed_ai_output_offers_the_fallback_instead_of_crashing(service_parts, gemini, bad_response, error_logger):
     service, data_manager = service_parts
     set_responses(gemini, bad_response)
 
-    with caplog.at_level(logging.ERROR):
-        result = service.analyze_record(website_record())
+    result = service.analyze_record(website_record())
 
     assert result["status"] == "fallback_required"
-    assert "Primary AI analysis failed." in caplog.text   # logged for the error log
+    assert "Primary AI analysis failed." in error_logger.messages   # written to the error log
     assert data_manager.records == []                       # nothing half-saved
 
 
@@ -344,14 +359,15 @@ def test_fallback_analysis_completes_and_is_saved(service_parts):
     assert len(data_manager.records) == 1
 
 
-def test_fallback_failure_returns_an_error_not_a_crash(gemini, tmp_path):
+def test_fallback_failure_returns_an_error_not_a_crash(gemini, error_logger, tmp_path):
     data_manager = DataManager(JsonRecordStorage(str(tmp_path / "d.json"), str(tmp_path / "b.json")))
     service = AnalysisService(FakeAiManager(gemini, BrokenAnalyzer()), data_manager, LogicManager(),
-                              RecordConverter(), IoManager(), logging.getLogger("test"))
+                              RecordConverter(), IoManager(), error_logger)
 
     result = service.analyze_with_fallback_ai(new_record())
 
     assert result == {"status": "error", "message": "model file damaged"}
+    assert "Fallback AI analysis failed." in error_logger.messages
 
 
 def test_ai_output_with_wrong_field_types_is_rejected(service_parts, gemini):
