@@ -21,9 +21,6 @@ Thumbs.db
 # Test artifacts
 .pytest_cache/
 
-# Local test files (optional)
-tests/
-
 # Documentation (optional)
 README.md
 
@@ -31,3 +28,7 @@ README.md
 build/
 dist/
 *.egg-info/
+
+# Secrets: never copy the API key into the image.
+# Pass it at run time instead:  docker run --env-file .env ...
+.env
