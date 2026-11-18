@@ -91,6 +91,7 @@ class LogicManager():
         if phone_records["HIGH"] > 0:
             indicator_list = ai_output.indicators # Indicator List grabbed from AI Output via Getter
             ai_output.risk_level = self.HIGH
+            ai_output.scam_probability = 90
             message = f"{ai_output.phone_number} was found in {phone_records['HIGH']} High Risk Incidents."
             indicator_list.append(message)
             ai_output.indicators = indicator_list # Set Indicator List after appending message
