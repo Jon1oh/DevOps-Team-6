@@ -565,3 +565,10 @@ input, textarea, button {
 .crop-reset-btn {
     margin-top: 12px
 }
+
+.message-cell a,
+.message-cell a:visited,
+.message-cell a:hover,
+.message-cell a:active {
+    color: #fff;
+}

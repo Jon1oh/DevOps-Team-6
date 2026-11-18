@@ -34,8 +34,10 @@
                     <td>{{ record.country_name|default('N/A', true) }}</td>
                     <td>{{ record.phone_number|default('N/A', true) }}</td>
                     <td class="message-cell">
-                        {{ record.message|default('N/A', true) }}
-                    </td>
+                        <a href="{{ url_for('record_detail', record_id=record.record_id) }}">
+                            {{ record.message|default('N/A', true) }}
+                        </a>
+                    </td>                    
                     <td>{{ record.scam_type|default('N/A', true) }}</td>
                     <td>
                         <span class="risk {{ record.risk_level|default('low', true)|lower }}">

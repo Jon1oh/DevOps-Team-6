@@ -15,6 +15,20 @@ def history():
     records = analysis_service.get_history_records()
     return render_template("history.html", records=records)
 
+@flask_app.route("/history/<int:record_id>")
+def record_detail(record_id):
+    record = analysis_service.get_record_by_id(record_id)
+
+    if record is None:
+        abort(404)
+
+    return render_template(
+        "results.html",
+        result=record,
+        saved=None,
+        is_history_detail=True,
+    )
+    
 @flask_app.route("/scanner", methods=["GET", "POST"])
 def scanner():
     if request.method == "GET":

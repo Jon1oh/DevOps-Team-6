@@ -89,3 +89,7 @@ class App:
     # get the records from data manager in reverse order, starting with the newest record
     def get_history_records(self):
         return self._data_manager.records[::-1] 
+
+    # get the analysuis results for each individual record
+    def get_record_by_id(self, record_id):
+        return self._data_manager.find_record(record_id)

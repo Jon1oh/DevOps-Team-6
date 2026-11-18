@@ -1,9 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Analysis Results | ScamGuard{% endblock %}
+
+{% set detail_view = is_history_detail|default(false) %}
+
+{% block title %}
+    {{ "Analysis Details" if detail_view else "Analysis Results" }} | ScamGuard
+{% endblock %}
+
 {% block content %}
 <section class="page-heading">
-    <h1>Analysis Results</h1>
-    <p>AI analysis of the submitted message.</p>
+    <h1>{{ "Analysis Details" if detail_view else "Analysis Results" }}</h1>
+    <p>
+        {{ "Saved analysis for this message." if detail_view
+           else "AI analysis of the submitted message." }}
+    </p>
 </section>
 
 <section class="panel result-panel">
@@ -21,7 +30,6 @@
     </div>
 
     <div class="result-details">
-
         <p>
             <strong>Phone Number:</strong>
             {{ result.phone_number|default('N/A', true) }}
@@ -33,7 +41,6 @@
         </p>
 
         <p><strong>Message:</strong></p>
-
         <div class="message-box">
             {{ result.message|default('No message available.', true) }}
         </div>
@@ -51,33 +58,27 @@
         {% endif %}
 
         <h3>AI Explanation</h3>
-
-        <p>
-            {{ result.explanation|default('No message available.', true) }}
-        </p>
+        <p>{{ result.explanation|default('No message available.', true) }}</p>
 
         <h3>Recommended Action</h3>
+        <p>{{ result.recommendation|default('No message available.', true) }}</p>
 
-        <p>
-            {{ result.recommendation|default('No message available.', true) }}
-        </p>
-
-        {% if saved %}
-            <p class="success-message">
-                ✓ Analysis successfully saved.
-            </p>
-        {% else %}
-            <p class="error-message">
-                Analysis completed but saving failed: {{ save_message }}
-            </p>
+        {% if saved is defined and saved is not none %}
+            {% if saved %}
+                <p class="success-message">✓ Analysis successfully saved.</p>
+            {% else %}
+                <p class="error-message">
+                    Analysis completed but saving failed: {{ save_message }}
+                </p>
+            {% endif %}
         {% endif %}
-
     </div>
 
-    <a href="{{ url_for('scanner') }}" class="primary-btn">
-        Analyse Another Message
-    </a>
+    {% if detail_view %}
+        <a href="{{ url_for('history') }}" class="primary-btn">Back to History</a>
+    {% else %}
+        <a href="{{ url_for('scanner') }}" class="primary-btn">Analyse Another Message</a>
+    {% endif %}
 
 </section>
-
 {% endblock %}
