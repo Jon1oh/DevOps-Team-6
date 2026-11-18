@@ -412,7 +412,7 @@ def test_record_to_dict_and_back_gives_the_same_data():
     record, _error = RecordConverter.from_dict(saved_entry(5))
 
     expected_entry = saved_entry(5)
-    expected_entry["country_name"] = "Singapore"     # added 
+    expected_entry["country_name"] = "Singapore"      
 
     assert RecordConverter.to_dict(record) == expected_entry
 
