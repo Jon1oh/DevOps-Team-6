@@ -1,4 +1,4 @@
-import os, json, logging
+import os, json
 from app.models.record import Record
 from datetime import datetime
 from google import genai
